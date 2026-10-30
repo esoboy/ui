@@ -1,0 +1,37 @@
+@layer components {
+    :where([data-slot="switch"]) {
+        @apply relative inline-flex shrink-0 appearance-none items-center rounded-full border border-transparent transition-all outline-none;
+        @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50;
+        background-color: light-dark(var(--color-input), color-mix(in oklab, var(--color-input) 80%, transparent));
+
+        /* A larger hit area, as in shadcn. */
+        &::after {
+            @apply absolute -inset-x-3 -inset-y-2;
+            content: "";
+        }
+
+        /* The thumb. */
+        &::before {
+            @apply pointer-events-none block rounded-full ring-0 transition-transform;
+            content: "";
+            background-color: light-dark(var(--color-background), var(--color-foreground));
+        }
+
+        &:checked {
+            @apply bg-primary;
+
+            &::before {
+                translate: calc(100% - 2px);
+                background-color: light-dark(var(--color-background), var(--color-primary-foreground));
+            }
+        }
+    }
+
+    :where([data-slot="switch"][data-size="default"]) {
+        @apply h-[18.4px] w-[32px] before:size-4;
+    }
+
+    :where([data-slot="switch"][data-size="sm"]) {
+        @apply h-[14px] w-[24px] before:size-3;
+    }
+}

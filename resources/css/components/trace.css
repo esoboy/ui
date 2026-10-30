@@ -1,0 +1,90 @@
+/*
+ * Trace: lines of steps (reasoning, tool calls, sources), plain or inside a link or
+ * button, and collapsible groups that slide open.
+ */
+@layer components {
+    :where([data-slot="trace"]) {
+        @apply flex w-full min-w-0 flex-col gap-2;
+    }
+
+    /* A link or button holding a line. */
+    :where([data-slot="trace"] > :has(> [data-slot="trace-line"])) {
+        @apply flex w-fit max-w-full min-w-0 rounded-md text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50;
+    }
+
+    :where([data-slot="trace-line"]) {
+        @apply flex w-fit max-w-full min-w-0 items-center gap-2 text-sm text-muted-foreground transition-colors;
+    }
+
+    :where(:is(a, button) > [data-slot="trace-line"]) {
+        @apply cursor-pointer;
+    }
+
+    :where(:is(a, button):hover > [data-slot="trace-line"]) {
+        @apply text-foreground;
+    }
+
+    :where([data-slot="trace-line"][data-status="error"]),
+    :where(:is(a, button):hover > [data-slot="trace-line"][data-status="error"]) {
+        @apply text-destructive;
+    }
+
+    :where([data-slot="trace-line"][data-status="pending"]) {
+        @apply opacity-60;
+    }
+
+    :where([data-slot="trace-line"][data-status="running"] > [data-slot="trace-title"]) {
+        @apply shimmer motion-reduce:shimmer-none;
+    }
+
+    :where([data-slot="trace-icon"]) {
+        @apply flex size-4 shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-slot="trace-title"] ~ [data-slot="trace-icon"]) {
+        @apply -ml-1;
+    }
+
+    :where([data-slot="trace-title"]) {
+        @apply min-w-0 truncate;
+    }
+
+    :where([data-slot="trace-description"]) {
+        @apply shrink-0 text-muted-foreground/70 tabular-nums;
+    }
+
+    :where([data-slot="trace-collapsible"]) {
+        @apply flex w-full min-w-0 flex-col;
+    }
+
+    :where([data-slot="trace-collapsible-trigger"]) {
+        @apply flex w-fit max-w-full min-w-0 cursor-pointer items-center gap-1 rounded-md text-left text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 has-[[data-status=error]]:text-destructive;
+
+        & > [data-slot="trace-icon"] {
+            @apply transition-transform;
+        }
+
+        &[aria-expanded="true"] > [data-slot="trace-icon"] {
+            @apply rotate-90;
+        }
+    }
+
+    /* Slides open and shut: height animates to auto, display waits for it. */
+    :where([data-slot="trace-collapsible-content"]) {
+        @apply h-auto min-w-0 overflow-hidden;
+        interpolate-size: allow-keywords;
+        transition: height 200ms, display 200ms allow-discrete;
+
+        &[hidden] {
+            @apply h-0;
+        }
+
+        @starting-style {
+            @apply h-0;
+        }
+    }
+
+    :where([data-slot="trace-collapsible-content-inner"]) {
+        @apply mt-2 mb-1 ml-[calc(--spacing(2)-1px)] min-w-0 border-l pr-1 pl-4 leading-relaxed wrap-break-word text-muted-foreground;
+    }
+}

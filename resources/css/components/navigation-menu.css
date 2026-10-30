@@ -1,0 +1,52 @@
+/*
+ * Navigation Menu: each item's content is its own popover under its trigger, opened
+ * by hover or click.
+ */
+@layer components {
+    :where([data-slot="navigation-menu"]) {
+        @apply relative flex max-w-max flex-1 items-center justify-center;
+    }
+
+    :where([data-slot="navigation-menu-list"]) {
+        @apply flex flex-1 list-none items-center justify-center gap-0;
+    }
+
+    :where([data-slot="navigation-menu-item"]) {
+        @apply relative;
+    }
+
+    /* Links come first so a link placed directly in an item takes the trigger style below. */
+    :where([data-slot="navigation-menu-link"]) {
+        @apply flex items-center gap-2 rounded-lg p-2 text-sm transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1;
+        @apply data-active:bg-muted/50 data-active:hover:bg-muted data-active:focus:bg-muted [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-slot="navigation-menu-trigger"], [data-slot="navigation-menu-item"] > [data-slot="navigation-menu-link"]) {
+        @apply inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50;
+    }
+
+    :where([data-slot="navigation-menu-trigger"][aria-expanded="true"]) {
+        @apply bg-muted/50 hover:bg-muted focus:bg-muted;
+    }
+
+    :where([data-slot="navigation-menu-trigger-icon"]) {
+        @apply relative top-px ml-1 size-3 transition duration-300;
+    }
+
+    :where([data-slot="navigation-menu-trigger"][aria-expanded="true"] > [data-slot="navigation-menu-trigger-icon"]) {
+        @apply rotate-180;
+    }
+
+    :where([data-slot="navigation-menu-content"]):popover-open {
+        @apply block;
+    }
+
+    :where([data-slot="navigation-menu-content"]) {
+        @apply h-auto w-auto overflow-hidden rounded-lg border-0 bg-popover p-1 text-popover-foreground shadow ring-1 ring-foreground/10 outline-none;
+        @apply **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none;
+    }
+
+    :where([data-slot="navigation-menu-content"] [data-slot="navigation-menu-link"]) {
+        @apply rounded-md;
+    }
+}

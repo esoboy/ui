@@ -1,0 +1,38 @@
+/*
+ * Menubar: a row of triggers, each opening Dropdown Menu's items. Checkbox and radio
+ * items put their check on the left here, and labels are larger.
+ */
+@layer components {
+    :where([data-slot="menubar"]) {
+        @apply flex h-8 items-center gap-0.5 rounded-lg border p-[3px];
+    }
+
+    :where([data-slot="menubar-trigger"]) {
+        @apply flex items-center rounded-sm px-1.5 py-[2px] text-sm font-medium outline-hidden select-none hover:bg-muted focus-visible:bg-muted;
+    }
+
+    :where([data-slot="menubar-trigger"]:has(+ :popover-open)) {
+        @apply bg-muted;
+    }
+
+    :where([data-slot="menubar-content"]) {
+        @apply min-w-36 rounded-lg border-0 bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none;
+    }
+
+    /* shadcn's alignOffset -4; [data-align] outranks popover.css resetting the margin. */
+    :where([data-slot="menubar-content"])[data-align="start"] {
+        margin-inline-start: -4px;
+    }
+
+    :where([data-slot="menubar-content"]) :where([data-slot="dropdown-menu-checkbox-item"], [data-slot="dropdown-menu-radio-item"]) {
+        @apply pr-1.5 pl-7;
+    }
+
+    :where([data-slot="menubar-content"]) :where([data-slot="dropdown-menu-item-indicator"]) {
+        @apply right-auto left-1.5 size-4;
+    }
+
+    :where([data-slot="menubar-content"]) :where([data-slot="dropdown-menu-label"]) {
+        @apply text-sm text-foreground;
+    }
+}

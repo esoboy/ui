@@ -1,0 +1,147 @@
+/*
+ * Questionnaire: one question at a time, choices as bordered rows over a native radio or
+ * checkbox, a freeform input, an error, and actions laid out as Previous | Skip Next.
+ */
+@layer components {
+    :where([data-slot="questionnaire"]) {
+        @apply flex w-full min-w-0 flex-col gap-4;
+    }
+
+    :where([data-slot="questionnaire-progress"]) {
+        @apply min-h-[1lh] w-fit min-w-[14ch] text-xs font-medium text-muted-foreground tabular-nums;
+    }
+
+    :where([data-slot="questionnaire-item"]) {
+        @apply flex min-w-0 flex-col gap-4 border-0 p-0 outline-none;
+    }
+
+    :where([data-slot="questionnaire-title"]) {
+        @apply font-heading text-base leading-snug font-medium text-pretty;
+    }
+
+    :where([data-slot="questionnaire-title"]:not(:has(~ [data-slot="questionnaire-description"]))) {
+        @apply mb-4;
+    }
+
+    :where([data-slot="questionnaire-description"]) {
+        @apply text-sm text-pretty text-muted-foreground;
+    }
+
+    :where([data-slot="questionnaire-choices"]) {
+        @apply grid min-w-0 gap-2;
+    }
+
+    :where([data-slot="questionnaire-choice"]) {
+        @apply relative flex min-h-11 cursor-pointer items-start gap-2.5 rounded-lg border border-input bg-transparent px-3 py-2.5 text-start text-sm transition-colors outline-none select-none hover:bg-muted/50;
+        @apply has-[>input:focus-visible]:border-ring has-[>input:focus-visible]:ring-3 has-[>input:focus-visible]:ring-ring/50;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 20%, transparent));
+
+        &:has(> input:checked) {
+            @apply border-primary/40 bg-muted;
+        }
+
+        &:has(> input:disabled) {
+            @apply pointer-events-none cursor-not-allowed opacity-50;
+        }
+    }
+
+    :where([data-slot="questionnaire-item"][aria-invalid="true"] [data-slot="questionnaire-choice"]) {
+        @apply border-destructive;
+    }
+
+    :where([data-slot="questionnaire-choice-input"]) {
+        @apply absolute inset-0 z-10 size-full cursor-pointer opacity-0;
+    }
+
+    :where([data-slot="questionnaire-choice-indicator"]) {
+        @apply pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[4px] border border-input;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+    }
+
+    :where([data-slot="questionnaire-choice"]:has([data-slot="questionnaire-choice-description"]) :is([data-slot="questionnaire-choice-indicator"], [data-slot="questionnaire-choice-shortcut"])) {
+        @apply translate-y-0.5;
+    }
+
+    :where([data-slot="questionnaire-choice"][data-type="radio"] [data-slot="questionnaire-choice-indicator"]) {
+        @apply rounded-full;
+    }
+
+    :where([data-slot="questionnaire-choice"]:has(> input:checked) [data-slot="questionnaire-choice-indicator"]) {
+        @apply border-primary bg-primary text-primary-foreground;
+    }
+
+    :where([data-slot="questionnaire-choice-indicator-dot"]) {
+        @apply hidden size-2 rounded-full bg-primary-foreground;
+    }
+
+    :where([data-slot="questionnaire-choice-indicator-check"]) {
+        @apply hidden size-3.5;
+    }
+
+    :where([data-slot="questionnaire-choice"][data-type="radio"]:has(> input:checked) [data-slot="questionnaire-choice-indicator-dot"]),
+    :where([data-slot="questionnaire-choice"][data-type="checkbox"]:has(> input:checked) [data-slot="questionnaire-choice-indicator-check"]) {
+        @apply block;
+    }
+
+    :where([data-slot="questionnaire-choice-label"]) {
+        @apply flex min-w-0 flex-1 flex-col gap-0.5 leading-snug;
+    }
+
+    :where([data-slot="questionnaire-choice-description"]) {
+        @apply text-muted-foreground;
+    }
+
+    :where([data-slot="questionnaire-choice-shortcut"]) {
+        @apply pointer-events-none ms-auto hidden size-5 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-md border border-input bg-background font-mono text-[0.625rem] leading-none font-medium text-muted-foreground;
+    }
+
+    :where([data-slot="questionnaire-choice"][data-shortcut] [data-slot="questionnaire-choice-shortcut"]) {
+        @apply inline-flex;
+    }
+
+    :where([data-slot="questionnaire-input-wrapper"]) {
+        @apply relative w-full min-w-0;
+    }
+
+    :where([data-slot="questionnaire-input"]) {
+        @apply h-8 min-h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-[color,box-shadow,background-color] outline-none sm:min-h-0 md:text-sm;
+        @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50;
+        @apply disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50;
+        @apply selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        &:disabled {
+            background-color: light-dark(color-mix(in oklab, var(--color-input) 50%, transparent), color-mix(in oklab, var(--color-input) 80%, transparent));
+        }
+
+        &[aria-invalid="true"] {
+            @apply ring-3;
+            border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+    }
+
+    :where([data-slot="questionnaire-error"]) {
+        @apply mt-2 text-sm text-destructive;
+    }
+
+    :where([data-slot="questionnaire-actions"]) {
+        @apply grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 sm:min-h-8;
+    }
+
+    :where([data-questionnaire]) {
+        @apply row-start-1 min-h-11 sm:min-h-0;
+    }
+
+    :where([data-questionnaire="previous"]) {
+        @apply col-start-1 justify-self-start;
+    }
+
+    :where([data-questionnaire="skip"]) {
+        @apply col-start-2 justify-self-end;
+    }
+
+    :where([data-questionnaire="next"], [data-questionnaire="submit"]) {
+        @apply col-start-3 justify-self-end;
+    }
+}

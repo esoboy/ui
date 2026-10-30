@@ -1,0 +1,45 @@
+@layer components {
+    :where([data-slot="scroll-area"]) {
+        @apply relative block;
+    }
+
+    :where([data-slot="scroll-area-viewport"]) {
+        @apply size-full overflow-scroll rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    /* Like Base UI, a scrollbar only shows while the area is hovered or scrolling. */
+    :where([data-slot="scroll-area-scrollbar"]) {
+        @apply invisible absolute flex touch-none p-px transition-colors select-none;
+    }
+
+    :where([data-slot="scroll-area"]:is(:hover, [data-scrolling]) > [data-slot="scroll-area-scrollbar"], [data-slot="scroll-area-scrollbar"][data-dragging]) {
+        @apply visible;
+    }
+
+    :where([data-slot="scroll-area-scrollbar"][data-orientation="vertical"]) {
+        @apply top-0 bottom-(--scroll-area-corner-height,0px) h-auto w-2.5 border-l border-l-transparent;
+        inset-inline-end: 0;
+    }
+
+    :where([data-slot="scroll-area-scrollbar"][data-orientation="horizontal"]) {
+        @apply bottom-0 h-2.5 flex-col border-t border-t-transparent;
+        inset-inline: 0 var(--scroll-area-corner-width, 0px);
+    }
+
+    :where([data-slot="scroll-area-thumb"]) {
+        @apply relative flex-1 rounded-full bg-border;
+    }
+
+    :where([data-orientation="vertical"] > [data-slot="scroll-area-thumb"]) {
+        height: var(--scroll-area-thumb-height);
+    }
+
+    :where([data-orientation="horizontal"] > [data-slot="scroll-area-thumb"]) {
+        width: var(--scroll-area-thumb-width);
+    }
+}

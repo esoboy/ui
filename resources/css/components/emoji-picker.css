@@ -1,0 +1,80 @@
+/*
+ * Emoji Picker: shadcn's registry picker (Liveblocks' Frimousse). Each category lays its
+ * emojis out in --emoji-picker-columns columns under a header that stays while it scrolls.
+ */
+@layer components {
+    :where([data-slot="emoji-picker"]) {
+        @apply isolate flex h-full w-fit flex-col overflow-hidden rounded-md bg-popover text-popover-foreground;
+    }
+
+    :where([data-slot="emoji-picker-search-wrapper"]) {
+        @apply flex h-9 items-center gap-2 border-b px-3;
+
+        & > svg {
+            @apply size-4 shrink-0 opacity-50;
+        }
+    }
+
+    :where([data-slot="emoji-picker-search"]) {
+        @apply flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    /* As wide as the columns before the emojis arrive, so the picker doesn't grow when they do. */
+    :where([data-slot="emoji-picker-viewport"]) {
+        @apply relative flex-1 overflow-y-auto overscroll-contain outline-hidden;
+        min-width: calc(var(--emoji-picker-columns, 9) * --spacing(7) + --spacing(2));
+    }
+
+    :where([data-slot="emoji-picker-loading"]) {
+        @apply absolute inset-0 flex items-center justify-center text-muted-foreground;
+
+        & > svg {
+            @apply size-4 animate-spin;
+        }
+    }
+
+    :where([data-slot="emoji-picker-empty"]) {
+        @apply absolute inset-0 flex items-center justify-center text-sm text-muted-foreground;
+    }
+
+    :where([data-slot="emoji-picker-list"]) {
+        @apply pb-1 select-none;
+    }
+
+    /* Only the categories in view are laid out; the others keep their height from their row count. */
+    :where([data-slot="emoji-picker-category"]) {
+        content-visibility: auto;
+        contain-intrinsic-block-size: auto calc(var(--emoji-picker-rows, 1) * --spacing(7) + --spacing(8.5));
+    }
+
+    :where([data-slot="emoji-picker-category-header"]) {
+        @apply sticky top-0 bg-popover px-3 pt-3.5 pb-2 text-xs leading-none text-muted-foreground;
+    }
+
+    :where([data-slot="emoji-picker-emojis"]) {
+        @apply grid px-1;
+        grid-template-columns: repeat(var(--emoji-picker-columns, 9), --spacing(7));
+    }
+
+    /* Scrolled to with the arrow keys, an emoji clears the category header above it. */
+    :where([data-slot="emoji-picker-emoji"]) {
+        @apply flex size-7 scroll-mt-10 scroll-mb-1 items-center justify-center rounded-sm text-base data-active:bg-accent;
+    }
+
+    /* Its own width doesn't count, so a long label never widens the picker. */
+    :where([data-slot="emoji-picker-footer"]) {
+        @apply flex w-0 min-w-full items-center gap-1 border-t p-2;
+    }
+
+    :where([data-slot="emoji-picker-active-emoji"]) {
+        @apply flex size-7 flex-none items-center justify-center text-lg;
+    }
+
+    :where([data-slot="emoji-picker-active-label"]) {
+        @apply truncate text-xs text-secondary-foreground;
+    }
+
+    :where([data-slot="emoji-picker-placeholder"]) {
+        @apply ml-1.5 flex h-7 items-center truncate text-xs text-muted-foreground;
+    }
+}

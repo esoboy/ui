@@ -1,0 +1,9 @@
+@layer components {
+    :where([data-slot="hover-card-content"]):popover-open {
+        @apply block;
+    }
+
+    :where([data-slot="hover-card-content"]) {
+        @apply w-64 rounded-lg border-0 bg-popover p-2.5 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-hidden;
+    }
+}

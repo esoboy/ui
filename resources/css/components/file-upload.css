@@ -1,0 +1,121 @@
+/*
+ * File Upload and Image Upload. Not in shadcn: built from its pieces, a dashed drop
+ * area like Empty and Attachment's idle state, files as Attachments, Progress's bar.
+ */
+@layer components {
+    :where([data-slot="file-upload"]) {
+        @apply flex w-full min-w-0 flex-col gap-3;
+    }
+
+    :where([data-slot="file-upload-dropzone"]) {
+        @apply relative flex w-full min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-input p-6 text-center text-sm transition-colors hover:bg-muted/50;
+        @apply has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-ring/50;
+        @apply has-[input:disabled]:pointer-events-none has-[input:disabled]:opacity-50;
+
+        &[data-dragging] {
+            @apply border-ring bg-muted/50;
+        }
+
+        &[aria-invalid="true"] {
+            border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+        }
+    }
+
+    :where([data-slot="file-upload-input"]) {
+        @apply sr-only;
+    }
+
+    :where([data-slot="file-upload-icon"]) {
+        @apply mb-2 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-slot="file-upload-title"]) {
+        @apply font-medium;
+    }
+
+    :where([data-slot="file-upload-description"]) {
+        @apply text-muted-foreground;
+    }
+
+    :where([data-slot="file-upload-progress"]) {
+        @apply mt-3 w-full max-w-48;
+    }
+
+    :where([data-slot="file-upload-progress"] [data-slot="progress-indicator"]) {
+        width: var(--file-upload-progress, 0%);
+    }
+
+    :where([data-file-upload-pending]) {
+        @apply contents;
+    }
+
+    :where([data-slot="file-upload"][data-orientation="vertical"] [data-slot="attachment-group"]) {
+        @apply flex-wrap overflow-visible;
+    }
+
+    /* Image Upload: a box showing the image, a camera on hover, a spinner while uploading. */
+    :where([data-slot="image-upload"]) {
+        @apply relative inline-flex size-24 shrink-0 flex-col gap-2;
+    }
+
+    :where([data-slot="image-upload-dropzone"]) {
+        @apply relative flex aspect-square w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-input bg-muted/50 text-muted-foreground transition-colors;
+        @apply has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-ring/50;
+        @apply has-[input:disabled]:pointer-events-none has-[input:disabled]:opacity-50;
+
+        &:has([data-slot="image-upload-image"]:not([hidden])) {
+            @apply border-solid;
+        }
+
+        &[data-dragging] {
+            @apply border-ring bg-muted;
+        }
+
+        &[aria-invalid="true"] {
+            border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+        }
+    }
+
+    :where([data-slot="image-upload"][data-shape="circle"] [data-slot="image-upload-dropzone"]) {
+        @apply rounded-full;
+    }
+
+    :where([data-slot="image-upload-image"]) {
+        @apply size-full object-cover;
+    }
+
+    :where([data-slot="image-upload-placeholder"]) {
+        @apply flex [&_svg]:size-6;
+    }
+
+    :where([data-slot="image-upload-overlay"]) {
+        @apply absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition-opacity [&_svg]:size-5;
+
+        & > [data-overlay="uploading"] {
+            @apply hidden animate-spin;
+        }
+    }
+
+    :where([data-slot="image-upload-dropzone"]:has([data-slot="image-upload-image"]:not([hidden])):is(:hover, :focus-within) [data-slot="image-upload-overlay"]),
+    :where([data-uploading] [data-slot="image-upload-overlay"]) {
+        @apply opacity-100;
+    }
+
+    :where([data-uploading] [data-slot="image-upload-overlay"]) {
+        & > [data-overlay="change"] {
+            @apply hidden;
+        }
+
+        & > [data-overlay="uploading"] {
+            @apply block;
+        }
+    }
+
+    :where([data-image-upload-remove]) {
+        @apply absolute -top-2 -right-2 z-10 rounded-full shadow-sm ring-1 ring-foreground/10;
+    }
+
+    :where([data-slot="image-upload"][data-shape="circle"] [data-image-upload-remove]) {
+        @apply top-0 right-0;
+    }
+}

@@ -1,0 +1,56 @@
+@layer components {
+    :where([data-slot="date-picker"]) {
+        @apply contents;
+    }
+
+    /* The trigger as in shadcn's date picker example. */
+    [data-slot="date-picker"] :where([data-date-picker-trigger]) {
+        @apply w-[212px] justify-between text-left font-normal;
+
+        &[data-empty="true"] {
+            @apply text-muted-foreground;
+        }
+
+        &[aria-invalid="true"] {
+            @apply ring-3;
+            border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+    }
+
+    :where([data-slot="date-picker-value"]) {
+        @apply min-w-0 truncate;
+    }
+
+    /* The range trigger leads with a calendar icon, as in shadcn's range example. */
+    [data-slot="date-picker"][data-mode="range"] :where([data-date-picker-trigger]) {
+        @apply w-auto justify-start;
+    }
+
+    [data-slot="date-picker"] :where([data-date-picker-content]) {
+        @apply w-auto p-0;
+    }
+
+    /* The time inputs under the calendar, as in shadcn's Calendar with time example. */
+    :where([data-slot="date-picker-time"]) {
+        @apply border-t p-3;
+    }
+
+    /* The addon shows the clock, so the browser's picker button goes. */
+    [data-slot="date-picker-time"] :where(input[type="time"]) {
+        @apply appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none;
+    }
+
+    /* A date and a time don't fit the date-only trigger. */
+    [data-slot="date-picker"][data-time] :where([data-date-picker-trigger]) {
+        @apply w-auto min-w-[212px];
+    }
+
+    :where([data-slot="date-picker-presets"]) {
+        @apply flex flex-wrap gap-2 rounded-b-[inherit] border-t bg-muted/50 p-3;
+
+        & > [data-slot="button"] {
+            @apply flex-1;
+        }
+    }
+}

@@ -1,0 +1,65 @@
+@layer components {
+    :where([data-slot="tabs"]) {
+        @apply flex gap-2;
+    }
+
+    :where([data-slot="tabs"][data-orientation="horizontal"]) {
+        @apply flex-col;
+    }
+
+    :where([data-slot="tabs-list"]) {
+        @apply inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground;
+    }
+
+    :where([data-orientation="horizontal"] > [data-slot="tabs-list"]) {
+        @apply h-8;
+    }
+
+    :where([data-orientation="vertical"] > [data-slot="tabs-list"]) {
+        @apply h-fit flex-col;
+    }
+
+    :where([data-slot="tabs-list"][data-variant="default"]) {
+        @apply bg-muted;
+    }
+
+    :where([data-slot="tabs-list"][data-variant="line"]) {
+        @apply gap-1 rounded-none bg-transparent;
+    }
+
+    :where([data-slot="tabs-trigger"]) {
+        @apply relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium whitespace-nowrap transition-all;
+        @apply hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring;
+        @apply disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50;
+        @apply has-data-[icon=inline-end]:pr-1 has-data-[icon=inline-start]:pl-1;
+        @apply [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4;
+        @apply after:absolute after:bg-foreground after:opacity-0 after:transition-opacity;
+        color: light-dark(color-mix(in oklab, var(--color-foreground) 60%, transparent), var(--color-muted-foreground));
+    }
+
+    :where([data-slot="tabs-trigger"][data-active]) {
+        @apply text-foreground;
+        border-color: light-dark(transparent, var(--color-input));
+        background-color: light-dark(var(--color-background), color-mix(in oklab, var(--color-input) 30%, transparent));
+    }
+
+    :where([data-orientation="vertical"] [data-slot="tabs-trigger"]) {
+        @apply w-full justify-start after:inset-y-0 after:-right-1 after:w-0.5;
+    }
+
+    :where([data-orientation="horizontal"] [data-slot="tabs-trigger"]) {
+        @apply after:inset-x-0 after:bottom-[-5px] after:h-0.5;
+    }
+
+    :where([data-variant="default"] > [data-slot="tabs-trigger"][data-active]) {
+        @apply shadow-sm;
+    }
+
+    :where([data-variant="line"] > [data-slot="tabs-trigger"][data-active]) {
+        @apply border-transparent bg-transparent shadow-none after:opacity-100;
+    }
+
+    :where([data-slot="tabs-content"]) {
+        @apply flex-1 text-sm outline-none;
+    }
+}

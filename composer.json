@@ -1,0 +1,57 @@
+{
+    "name": "esoboy/ui",
+    "description": "shadcn/ui style component library for Laravel and Livewire.",
+    "keywords": ["laravel", "livewire", "blade", "components", "ui", "shadcn"],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "ext-intl": "*",
+        "bacon/bacon-qr-code": "^3.1",
+        "illuminate/support": "^13.0",
+        "illuminate/view": "^13.0",
+        "livewire/blaze": "^1.0",
+        "livewire/livewire": "^4.4",
+        "symfony/html-sanitizer": "^7.4|^8.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.13",
+        "laravel/pint": "^1.32",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Esoboy\\Ui\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Esoboy\\Ui\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Esoboy\\Ui\\UiServiceProvider"
+            ],
+            "aliases": {
+                "Ui": "Esoboy\\Ui\\Facades\\Ui"
+            }
+        }
+    },
+    "scripts": {
+        "lint": "pint",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "test": "pest"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

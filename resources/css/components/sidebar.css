@@ -1,0 +1,360 @@
+/*
+ * Sidebar. From md up the container is fixed beside a gap that reserves its width;
+ * below md it is a popover the provider opens as a sheet. The provider toggles
+ * data-state / data-collapsible on [data-slot="sidebar"], which everything keys off.
+ */
+@layer components {
+    :where([data-slot="sidebar-wrapper"]) {
+        @apply flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar;
+    }
+
+    /* collapsible="none": a plain column. */
+    :where([data-slot="sidebar"]:not([data-state])) {
+        @apply flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground;
+    }
+
+    /* The popover inside must keep a box on mobile, so the wrapper steps aside instead of hiding. */
+    :where([data-slot="sidebar"][data-state]) {
+        @apply contents text-sidebar-foreground md:block;
+    }
+
+    :where([data-slot="sidebar-gap"]) {
+        @apply relative hidden w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear md:block;
+    }
+
+    :where([data-collapsible="offcanvas"] > [data-slot="sidebar-gap"]) {
+        @apply w-0;
+    }
+
+    :where([data-side="right"] > [data-slot="sidebar-gap"]) {
+        @apply rotate-180;
+    }
+
+    :where([data-collapsible="icon"][data-variant="sidebar"] > [data-slot="sidebar-gap"]) {
+        @apply w-(--sidebar-width-icon);
+    }
+
+    :where([data-collapsible="icon"]:is([data-variant="floating"], [data-variant="inset"]) > [data-slot="sidebar-gap"]) {
+        @apply w-[calc(var(--sidebar-width-icon)+(--spacing(4)))];
+    }
+
+    :where([data-slot="sidebar-container"]) {
+        @apply overflow-visible bg-transparent text-inherit;
+    }
+
+    :where([data-slot="sidebar-inner"]) {
+        @apply flex size-full flex-col bg-sidebar;
+    }
+
+    @media (width >= 48rem) {
+        /* Shown regardless of the popover, which only opens on mobile. */
+        :where([data-slot="sidebar-container"]) {
+            @apply fixed inset-y-0 z-10 m-0 flex h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear;
+        }
+
+        :where([data-slot="sidebar-container"][data-side="left"]) {
+            @apply right-auto left-0;
+        }
+
+        :where([data-slot="sidebar-container"][data-side="right"]) {
+            @apply right-0 left-auto;
+        }
+
+        :where([data-collapsible="offcanvas"] > [data-slot="sidebar-container"][data-side="left"]) {
+            @apply left-[calc(var(--sidebar-width)*-1)];
+        }
+
+        :where([data-collapsible="offcanvas"] > [data-slot="sidebar-container"][data-side="right"]) {
+            @apply right-[calc(var(--sidebar-width)*-1)];
+        }
+
+        :where([data-variant="sidebar"][data-side="left"] > [data-slot="sidebar-container"]) {
+            @apply border-r;
+        }
+
+        :where([data-variant="sidebar"][data-side="right"] > [data-slot="sidebar-container"]) {
+            @apply border-l;
+        }
+
+        :where([data-variant="sidebar"][data-collapsible="icon"] > [data-slot="sidebar-container"]) {
+            @apply w-(--sidebar-width-icon);
+        }
+
+        :where(:is([data-variant="floating"], [data-variant="inset"]) > [data-slot="sidebar-container"]) {
+            @apply p-2;
+        }
+
+        :where(:is([data-variant="floating"], [data-variant="inset"])[data-collapsible="icon"] > [data-slot="sidebar-container"]) {
+            @apply w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)];
+        }
+
+        :where([data-variant="floating"] [data-slot="sidebar-inner"]) {
+            @apply rounded-lg shadow-sm ring-1 ring-sidebar-border;
+        }
+    }
+
+    /* Mobile: a sheet from the sidebar's side, 18rem wide, sliding 2.5rem in like Sheet. */
+    @media (width < 48rem) {
+        :where([data-slot="sidebar-container"]) {
+            --sidebar-width: 18rem;
+            @apply inset-y-0 m-0 h-full max-h-none w-(--sidebar-width) bg-sidebar p-0 opacity-0 shadow-lg duration-200 ease-in-out;
+            transition-property: opacity, translate, display, overlay;
+            transition-behavior: allow-discrete;
+
+            &:popover-open {
+                @apply flex opacity-100;
+                translate: 0 0;
+
+                @starting-style {
+                    @apply opacity-0;
+                }
+            }
+
+            &::backdrop {
+                background-color: transparent;
+                transition-property: background-color, backdrop-filter, display, overlay;
+                transition-duration: inherit;
+                transition-behavior: allow-discrete;
+            }
+
+            &:popover-open::backdrop {
+                @apply bg-black/10 backdrop-blur-xs;
+            }
+        }
+
+        @starting-style {
+            :where([data-slot="sidebar-container"]):popover-open::backdrop {
+                background-color: transparent;
+                backdrop-filter: none;
+            }
+        }
+
+        :where([data-slot="sidebar-container"][data-side="left"]) {
+            @apply right-auto left-0 border-r;
+            translate: -2.5rem 0;
+        }
+
+        :where([data-slot="sidebar-container"][data-side="right"]) {
+            @apply right-0 left-auto border-l;
+            translate: 2.5rem 0;
+        }
+
+        @starting-style {
+            :where([data-slot="sidebar-container"][data-side="left"]):popover-open { translate: -2.5rem 0; }
+            :where([data-slot="sidebar-container"][data-side="right"]):popover-open { translate: 2.5rem 0; }
+        }
+    }
+
+    :where([data-slot="sidebar-rail"]) {
+        @apply absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear md:flex;
+        @apply after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border;
+    }
+
+    :where([data-side="left"] [data-slot="sidebar-rail"]) {
+        @apply -right-4 cursor-w-resize;
+    }
+
+    :where([data-side="right"] [data-slot="sidebar-rail"]) {
+        @apply left-0 cursor-e-resize;
+    }
+
+    :where([data-side="left"][data-state="collapsed"] [data-slot="sidebar-rail"]) {
+        @apply cursor-e-resize;
+    }
+
+    :where([data-side="right"][data-state="collapsed"] [data-slot="sidebar-rail"]) {
+        @apply cursor-w-resize;
+    }
+
+    :where([data-collapsible="offcanvas"] [data-slot="sidebar-rail"]) {
+        @apply translate-x-0 after:left-full hover:bg-sidebar;
+    }
+
+    :where([data-side="left"][data-collapsible="offcanvas"] [data-slot="sidebar-rail"]) {
+        @apply -right-2;
+    }
+
+    :where([data-side="right"][data-collapsible="offcanvas"] [data-slot="sidebar-rail"]) {
+        @apply -left-2;
+    }
+
+    :where([data-slot="sidebar-inset"]) {
+        @apply relative flex w-full flex-1 flex-col bg-background;
+    }
+
+    @media (width >= 48rem) {
+        :where([data-slot="sidebar"][data-variant="inset"] ~ [data-slot="sidebar-inset"]) {
+            @apply m-2 ml-0 rounded-xl shadow-sm;
+        }
+
+        :where([data-slot="sidebar"][data-variant="inset"][data-state="collapsed"] ~ [data-slot="sidebar-inset"]) {
+            @apply ml-2;
+        }
+    }
+
+    :where([data-sidebar="input"]) {
+        @apply h-8 w-full shadow-none;
+        background-color: light-dark(var(--color-background), color-mix(in oklab, var(--color-input) 30%, transparent));
+    }
+
+    :where([data-slot="sidebar-header"], [data-slot="sidebar-footer"]) {
+        @apply flex flex-col gap-2 p-2;
+    }
+
+    :where([data-sidebar="separator"]) {
+        @apply mx-2 w-auto bg-sidebar-border;
+    }
+
+    :where([data-slot="sidebar-content"]) {
+        @apply flex min-h-0 flex-1 flex-col gap-0 overflow-auto;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    :where([data-collapsible="icon"] [data-slot="sidebar-content"]) {
+        @apply overflow-hidden;
+    }
+
+    :where([data-slot="sidebar-group"]) {
+        @apply relative flex w-full min-w-0 flex-col p-2;
+    }
+
+    :where([data-slot="sidebar-group-label"]) {
+        @apply flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0;
+    }
+
+    :where([data-collapsible="icon"] [data-slot="sidebar-group-label"]) {
+        @apply -mt-8 opacity-0;
+    }
+
+    :where([data-slot="sidebar-group-action"], [data-slot="sidebar-menu-action"]) {
+        @apply absolute flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform;
+        @apply after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0;
+    }
+
+    :where([data-slot="sidebar-group-action"]) {
+        @apply top-3.5 right-3;
+    }
+
+    :where([data-slot="sidebar-group-content"]) {
+        @apply w-full text-sm;
+    }
+
+    :where([data-slot="sidebar-menu"]) {
+        @apply flex w-full min-w-0 flex-col gap-0;
+    }
+
+    :where([data-slot="sidebar-menu-item"], [data-slot="sidebar-menu-sub-item"]) {
+        @apply relative;
+    }
+
+    :where([data-slot="sidebar-menu-button"]) {
+        @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm ring-sidebar-ring outline-hidden transition-[width,height,padding];
+        @apply hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground;
+        @apply disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50;
+        @apply data-active:bg-sidebar-accent data-active:font-medium data-active:text-sidebar-accent-foreground;
+        @apply [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate;
+    }
+
+    :where([data-slot="sidebar-menu-item"]:has([data-sidebar="menu-action"]) > [data-slot="sidebar-menu-button"]) {
+        @apply pr-8;
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-variant="outline"]) {
+        @apply bg-background shadow-[0_0_0_1px_var(--color-sidebar-border)] hover:shadow-[0_0_0_1px_var(--color-sidebar-accent)];
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-size="default"]) {
+        @apply h-8 text-sm;
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-size="sm"]) {
+        @apply h-7 text-xs;
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-size="lg"]) {
+        @apply h-12 text-sm;
+    }
+
+    :where([data-collapsible="icon"] [data-slot="sidebar-menu-button"]) {
+        @apply size-8 p-2;
+    }
+
+    :where([data-collapsible="icon"] [data-slot="sidebar-menu-button"][data-size="lg"]) {
+        @apply p-0;
+    }
+
+    /* The menu button's tooltip only shows when the sidebar is collapsed to icons on desktop. */
+    [data-slot="sidebar"]:not([data-collapsible="icon"]) [data-sidebar="menu-tooltip"] {
+        display: none;
+    }
+
+    @media (width < 48rem) {
+        [data-sidebar="menu-tooltip"] {
+            display: none;
+        }
+    }
+
+    :where([data-slot="sidebar-menu-action"]) {
+        @apply top-1.5 right-1;
+    }
+
+    :where([data-slot="sidebar-menu-button"]:hover ~ :is([data-slot="sidebar-menu-action"], [data-slot="sidebar-menu-badge"])) {
+        @apply text-sidebar-accent-foreground;
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-size="default"] ~ :is([data-slot="sidebar-menu-action"], [data-slot="sidebar-menu-badge"])) {
+        @apply top-1.5;
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-size="lg"] ~ :is([data-slot="sidebar-menu-action"], [data-slot="sidebar-menu-badge"])) {
+        @apply top-2.5;
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-size="sm"] ~ :is([data-slot="sidebar-menu-action"], [data-slot="sidebar-menu-badge"])) {
+        @apply top-1;
+    }
+
+    :where([data-slot="sidebar-menu-action"][data-show-on-hover]) {
+        @apply aria-expanded:opacity-100 md:opacity-0;
+    }
+
+    :where([data-slot="sidebar-menu-item"]:is(:hover, :focus-within) > [data-slot="sidebar-menu-action"][data-show-on-hover]) {
+        @apply opacity-100;
+    }
+
+    :where([data-slot="sidebar-menu-button"][data-active] ~ :is([data-slot="sidebar-menu-action"][data-show-on-hover], [data-slot="sidebar-menu-badge"])) {
+        @apply text-sidebar-accent-foreground;
+    }
+
+    :where([data-slot="sidebar-menu-badge"]) {
+        @apply pointer-events-none absolute right-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium text-sidebar-foreground tabular-nums select-none;
+    }
+
+    :where([data-collapsible="icon"]) :where([data-slot="sidebar-group-action"], [data-slot="sidebar-menu-action"], [data-slot="sidebar-menu-badge"], [data-slot="sidebar-menu-sub"]) {
+        @apply hidden;
+    }
+
+    :where([data-slot="sidebar-menu-skeleton"]) {
+        @apply flex h-8 items-center gap-2 rounded-md px-2;
+    }
+
+    :where([data-slot="sidebar-menu-sub"]) {
+        @apply mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5;
+    }
+
+    :where([data-slot="sidebar-menu-sub-button"]) {
+        @apply flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground ring-sidebar-ring outline-hidden;
+        @apply hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground;
+        @apply disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50;
+        @apply data-[size=md]:text-sm data-[size=sm]:text-xs data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground;
+        @apply [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground;
+    }
+
+    :where([data-collapsible="icon"] [data-slot="sidebar-menu-sub-button"]) {
+        @apply hidden;
+    }
+}

@@ -1,0 +1,662 @@
+/*
+ * Editor: Tiptap framed as shadcn's Textarea, a toolbar of ghost icon buttons (pressed
+ * as a Toggle is) and menus, and its content set in the spirit of shadcn's Typography,
+ * tightened for a field. Rich Text shows the same content the same way. The content's
+ * own colors, sizes and layout are inline styles, so these rules only set the rest.
+ */
+@layer components {
+    :where([data-slot="editor"]) {
+        @apply flex w-full min-w-0 flex-col rounded-lg border border-input transition-colors;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        &:focus-within {
+            @apply border-ring ring-3 ring-ring/50;
+        }
+
+        &[data-disabled] {
+            @apply cursor-not-allowed opacity-50;
+        }
+
+        /* Full screen: the page's whole window, the text scrolling under the toolbar. */
+        &[data-fullscreen] {
+            @apply fixed inset-0 z-50 rounded-none border-0 bg-background ring-0;
+
+            & > [data-slot="editor-content"], & > [data-slot="editor-source"] {
+                @apply min-h-0 overflow-y-auto;
+            }
+        }
+    }
+
+    /* Sticks to the top of the page while the text scrolls by under it, below a fixed
+       header of --editor-sticky-top. One line, what doesn't fit in More (a toolbar of
+       one's own without it wraps). */
+    :where([data-slot="editor-toolbar"]) {
+        @apply sticky top-(--editor-sticky-top,0px) z-10 flex flex-wrap items-center gap-0.5 rounded-t-lg border-b border-input bg-background p-1;
+
+        /* As wide as the editor, never widening it (or the page) to fit its controls. */
+        &:has(> [data-editor-more]) {
+            @apply flex-nowrap overflow-hidden [contain:inline-size];
+        }
+
+        & > [data-slot="separator"] {
+            @apply mx-1 h-5 shrink-0;
+        }
+
+        & [data-slot="button"] {
+            @apply shrink-0;
+        }
+    }
+
+    /* On phones, while writing: the toolbar over the keyboard, the width of the screen,
+       its place in the editor kept. */
+    :where([data-slot="editor"][data-keyboard]) {
+        padding-top: var(--editor-toolbar-space, 0px);
+
+        & > [data-slot="editor-toolbar"] {
+            @apply fixed inset-x-0 top-auto z-40 rounded-none border-t border-b-0 pb-[max(0.25rem,env(safe-area-inset-bottom))];
+            bottom: var(--editor-keyboard, 0px);
+        }
+    }
+
+    /* A control is its button (and its menu): laid out as if the wrapper weren't there. */
+    :where([data-slot="editor-control"]:not([hidden])) {
+        display: contents;
+    }
+
+    /* More: what the toolbar had no room for, a row for each of its groups. */
+    [data-slot="popover-content"][data-editor-more-content] {
+        @apply w-max max-w-[min(22rem,calc(100vw-1rem))] gap-1 p-1;
+    }
+
+    :where([data-slot="editor-more-group"]) {
+        @apply flex flex-wrap items-center gap-0.5;
+
+        & + & {
+            @apply border-t border-border pt-1;
+        }
+    }
+
+    :where([data-slot="editor-toolbar"], [data-slot="editor-bubble"]) {
+        & [aria-pressed="true"] {
+            @apply bg-muted text-foreground;
+        }
+
+        /* A menu's button: its current value, kept short, and a small chevron. The font's
+           and size's as wide whatever they show, so the toolbar doesn't shift. */
+        & [data-editor-menu] {
+            @apply gap-0.5 px-1.5;
+
+            & [data-editor-current] {
+                @apply max-w-24 truncate text-left font-normal;
+            }
+
+            &[data-editor-menu="font-family"] [data-editor-current] {
+                @apply w-14;
+            }
+
+            &[data-editor-menu="font-size"] [data-editor-current] {
+                @apply w-8;
+            }
+
+            & [data-editor-chevron] {
+                @apply size-3 opacity-60;
+            }
+        }
+
+        & [aria-pressed="true"] > [data-editor-pressed="false"], & [aria-pressed="false"] > [data-editor-pressed="true"] {
+            @apply hidden;
+        }
+    }
+
+    /* Menu items with a value: the check on the current one. */
+    :where([data-slot="dropdown-menu-item"][role="menuitemradio"]) {
+        @apply pr-8;
+
+        &[aria-checked="true"] > [data-slot="dropdown-menu-item-indicator"] {
+            @apply visible;
+        }
+    }
+
+    /* Wider than their small buttons: as wide as their items. */
+    :where([data-editor-menu-content]) {
+        @apply w-max;
+    }
+
+    /* Fields in a row: outside :where to beat popover.css, imported after this file. An
+       upload above them, the width of the row. */
+    [data-slot="popover-content"][data-editor-field-content] {
+        @apply w-80 max-w-[calc(100vw-1rem)] flex-row flex-wrap items-center gap-1 p-1.5;
+
+        & > [data-slot="input"] {
+            @apply min-w-0 flex-1;
+        }
+
+        & > [data-editor-upload] {
+            @apply mb-1 w-full;
+        }
+    }
+
+    /* At their natural width: squeezed by the window's edge they'd overlap, so they flip. */
+    [data-slot="popover-content"]:is([data-editor-color-content], [data-editor-math-content]) {
+        @apply w-max p-2;
+    }
+
+    [data-slot="popover-content"][data-editor-spacing-content] {
+        @apply w-max gap-2 p-2;
+    }
+
+    /* Spacing: a row of values for each of before, after and between letters. */
+    :where([data-slot="editor-spacing"]) {
+        @apply flex flex-wrap items-center gap-1;
+
+        & > [data-slot="editor-swatches-label"] {
+            @apply w-full;
+        }
+    }
+
+    :where([data-slot="editor-spacing-value"]) {
+        @apply h-7 min-w-9 rounded-md border border-border px-1.5 text-xs tabular-nums outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50;
+
+        &[aria-pressed="true"] {
+            @apply border-ring bg-muted ring-2 ring-ring/50;
+        }
+    }
+
+    [data-slot="popover-content"][data-editor-emoji-content] {
+        @apply w-max p-0;
+    }
+
+    :where([data-slot="editor-field-error"]) {
+        @apply hidden w-full px-1 text-xs text-destructive;
+    }
+
+    :where([aria-invalid="true"] ~ [data-slot="editor-field-error"], [data-slot="editor-field-error"]:is([data-editor-math-error], [data-editor-image-error]):not([hidden])) {
+        @apply block;
+    }
+
+    /* Swatches: the palette in a row each for text and highlight. */
+    :where([data-slot="editor-swatches"]) {
+        @apply grid grid-cols-9 gap-1;
+
+        & + & {
+            @apply mt-2;
+        }
+    }
+
+    :where([data-slot="editor-swatches-label"]) {
+        @apply col-span-full text-xs font-medium text-muted-foreground;
+    }
+
+    :where([data-slot="editor-swatch"]) {
+        @apply flex size-7 items-center justify-center rounded-md border border-border text-sm font-semibold outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50;
+
+        /* A colored letter for text, a colored square for highlights. */
+        & > span {
+            @apply flex size-5 items-center justify-center rounded-sm;
+
+            &:not([style]) {
+                @apply text-muted-foreground;
+            }
+        }
+
+        & svg {
+            @apply size-4;
+        }
+
+        &[aria-pressed="true"] {
+            @apply border-ring ring-2 ring-ring/50;
+        }
+    }
+
+    :where([data-slot="editor-math"]) {
+        @apply flex w-80 flex-col gap-2;
+    }
+
+    :where([data-slot="editor-math-preview"]) {
+        @apply flex min-h-8 items-center justify-center overflow-x-auto rounded-md bg-muted/50 px-2 py-1 empty:hidden;
+    }
+
+    :where([data-slot="editor-math-actions"]) {
+        @apply flex items-center justify-between gap-2;
+    }
+
+    /* The find and replace bar, under the toolbar. */
+    :where([data-slot="editor-find"]) {
+        @apply flex flex-wrap items-center gap-1 border-b border-input p-1;
+
+        & > [data-slot="input-group"], & > [data-slot="input"] {
+            @apply h-8 w-44 min-w-0 flex-1;
+        }
+
+        & [data-editor-find-count] {
+            @apply text-xs text-muted-foreground tabular-nums;
+        }
+    }
+
+    /* Menus over the text: bubbles by the selection, suggestions at the cursor. */
+    /* As wide as its controls from the start, which it is placed by; on a phone, no wider
+       than the screen, wrapping as the toolbar does. */
+    :where([data-slot="editor-bubble"]) {
+        @apply z-40 flex w-max max-w-[calc(100vw-1rem)] flex-wrap items-center gap-0.5 rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10;
+
+        & > [data-slot="separator"] {
+            @apply mx-1 h-5;
+        }
+
+        & > [data-slot="input"] {
+            @apply h-8 w-44;
+        }
+
+        &[data-editor-bubble-form] {
+            @apply p-2;
+        }
+    }
+
+    :where([data-slot="editor-bubble-group"]) {
+        @apply flex items-center gap-0.5;
+    }
+
+    /* The link card's address: short, opening where it goes. */
+    :where([data-slot="editor-link-href"]) {
+        @apply max-w-60 truncate px-1.5 text-sm text-primary underline underline-offset-4;
+    }
+
+    :where([data-slot="editor-suggestion"]) {
+        @apply z-50 max-h-72 min-w-48 overflow-y-auto rounded-lg bg-popover p-1 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10;
+
+        & [role="option"] {
+            @apply flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 select-none;
+
+            &[aria-selected="true"] {
+                @apply bg-accent text-accent-foreground;
+            }
+
+            & > svg {
+                @apply size-4 shrink-0 text-muted-foreground;
+            }
+        }
+
+        & [data-editor-emoji] {
+            @apply text-base;
+        }
+    }
+
+    :where([data-slot="editor-content"]) {
+        @apply relative min-h-32 flex-1 px-3 py-2 text-base text-foreground md:text-sm;
+
+        & > [data-slot="editor-input"] {
+            @apply min-h-[inherit] outline-none;
+        }
+
+        /* Tiptap's placeholder, on the empty first paragraph and an empty caption: a
+           caption's where its text will be, centered. */
+        & p.is-editor-empty:first-child::before, & figcaption.is-empty::before {
+            @apply pointer-events-none h-0 text-muted-foreground;
+            content: attr(data-placeholder);
+        }
+
+        & p.is-editor-empty:first-child::before {
+            @apply float-left;
+        }
+
+        & figcaption.is-empty::before {
+            @apply block text-center;
+        }
+
+        /* Picking a format to paint: the cursor says so. */
+        :where([data-painting]) & > [data-slot="editor-input"] {
+            cursor: copy;
+        }
+
+        /* Files on their way, where they will go: how far they have got, as a bar behind. */
+        & [data-slot="editor-uploading"] {
+            @apply mx-0.5 inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-0.5 align-middle text-xs text-muted-foreground tabular-nums select-none;
+
+            background-image: linear-gradient(to right, color-mix(in oklab, var(--primary) 18%, transparent) var(--editor-upload-progress, 0%), transparent var(--editor-upload-progress, 0%));
+
+            & [data-slot="spinner"] {
+                @apply size-3.5;
+            }
+
+            & button {
+                @apply rounded-sm p-0.5 outline-none hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 [&_svg]:size-3;
+            }
+
+            /* A picture that couldn't be pasted: outlined, its upload a link. */
+            &[data-editor-missing] {
+                @apply border border-dashed border-border bg-transparent;
+
+                & > svg {
+                    @apply size-3.5;
+                }
+
+                & [data-editor-action="upload-missing"] {
+                    @apply px-1 font-medium text-primary underline underline-offset-2;
+                }
+
+                & [data-editor-upload-message] {
+                    @apply text-destructive;
+                }
+            }
+
+            /* Files that wouldn't upload: why, in the destructive color. */
+            &[data-editor-failed] {
+                @apply bg-destructive/10 text-destructive;
+
+                & > svg {
+                    @apply size-3.5;
+                }
+            }
+        }
+
+        /* Images being saved: dimmed, pulsing, until the app's copy takes their place. */
+        & [data-editor-saving] [data-editor-media-box] {
+            @apply animate-pulse opacity-60;
+        }
+
+        /* A selected block (clicked, or picked by its drag handle); media by their box. */
+        & .ProseMirror-selectednode:not([data-editor-media]), & .ProseMirror-selectednode > [data-editor-media-box] {
+            @apply rounded-sm outline-2 outline-offset-2 outline-ring;
+        }
+
+        /* A divider is a line: a band around it (unclipped: browsers hide what overflows
+           an hr) takes the click that selects it. */
+        & hr {
+            @apply relative cursor-pointer overflow-visible;
+
+            &::after {
+                @apply absolute inset-x-0 -inset-y-2;
+                content: "";
+            }
+        }
+
+        /* Images, videos and embeds: their box sized and placed, a handle on each side
+           that can grow it, shown on hover and while selected. */
+        & [data-editor-media] {
+            @apply flex;
+        }
+
+        & [data-editor-media-box] {
+            @apply relative max-w-full min-w-0;
+        }
+
+        & [data-editor-resize] {
+            @apply absolute top-1/2 hidden h-10 max-h-[50%] w-1.5 -translate-y-1/2 cursor-ew-resize touch-none rounded-full bg-background ring-1 ring-foreground/40 shadow-sm;
+
+            &[data-editor-resize="left"] {
+                @apply left-1.5;
+            }
+
+            &[data-editor-resize="right"] {
+                @apply right-1.5;
+            }
+        }
+
+        & :is([data-editor-media]:hover, .ProseMirror-selectednode[data-editor-media], [data-editor-media][data-resizing]) [data-editor-resize] {
+            @apply block;
+        }
+
+        /* Left-aligned media grow to the right, right-aligned ones to the left; none
+           grow while the editor is disabled. */
+        [data-slot="editor"][data-disabled] & [data-editor-resize] {
+            @apply hidden;
+        }
+
+        & [data-editor-media][data-align="left"] [data-editor-resize="left"], & [data-editor-media][data-align="right"] [data-editor-resize="right"] {
+            @apply hidden;
+        }
+
+        /* Embeds take clicks once selected, so the first one selects them. */
+        & [data-editor-media="embed"] iframe {
+            @apply pointer-events-none;
+        }
+
+        & .ProseMirror-selectednode[data-editor-media="embed"]:not([data-resizing]) iframe {
+            @apply pointer-events-auto;
+        }
+
+        & [data-editor-math] {
+            @apply cursor-pointer;
+        }
+
+        & [data-editor-math="block"] {
+            @apply flex justify-center;
+        }
+
+        /* Tiptap's task items: the box in a label, the text beside it (as their inline style has it). */
+        & li[data-checked] {
+            @apply flex items-baseline gap-[0.5em];
+
+            & > label {
+                @apply select-none;
+            }
+
+            & > div {
+                @apply min-w-0 flex-1;
+            }
+        }
+
+        /* Tiptap's collapsible blocks: a toggle beside the summary and the rest. */
+        & [data-type="details"] {
+            @apply flex gap-1 rounded-md border border-border px-2 py-1.5;
+
+            & > button {
+                @apply mt-1 flex size-5 shrink-0 items-center justify-center rounded-sm hover:bg-muted;
+
+                &::before {
+                    @apply size-0 border-y-4 border-l-[6px] border-y-transparent border-l-current transition-transform;
+                    content: "";
+                }
+            }
+
+            &.is-open > button::before {
+                @apply rotate-90;
+            }
+
+            & > div {
+                @apply min-w-0 flex-1;
+            }
+
+            & summary {
+                @apply list-none font-medium;
+            }
+        }
+
+        /* Tables while editing: selected cells, and the handle that resizes a column. */
+        & .tableWrapper {
+            @apply overflow-x-auto;
+
+            /* Until its columns have widths, as wide as the text, as written. */
+            & > table[style^="min-width"] {
+                @apply w-full;
+            }
+        }
+
+        & table .selectedCell {
+            @apply relative;
+
+            &::after {
+                @apply pointer-events-none absolute inset-0 bg-primary/10;
+                content: "";
+            }
+        }
+
+        & .column-resize-handle {
+            @apply pointer-events-none absolute -right-0.5 -bottom-px top-0 w-1 bg-primary/50;
+        }
+
+        & .resize-cursor {
+            @apply cursor-col-resize;
+        }
+
+        /* The matches of a search, the current one stronger. */
+        & [data-editor-match] {
+            @apply rounded-xs;
+            background-color: light-dark(oklch(0.95 0.12 100), oklch(0.45 0.1 90));
+        }
+
+        & [data-editor-match="current"] {
+            background-color: light-dark(oklch(0.85 0.17 70), oklch(0.6 0.15 60));
+        }
+    }
+
+    /* With a drag handle: the grip in the left margin, by the block pointed at (on
+       screens with a pointer to point: touch screens get no margin for it). */
+    @media (hover: hover) {
+        :where([data-slot="editor"]:has(> template[data-template="drag-handle"])) > [data-slot="editor-content"] {
+            @apply pl-8;
+        }
+    }
+
+    :where([data-slot="editor-drag-handle"]) {
+        @apply absolute left-1.5 flex h-7 w-5 cursor-grab items-center justify-center rounded-sm text-muted-foreground hover:bg-muted active:cursor-grabbing;
+
+        & > svg {
+            @apply size-4;
+        }
+    }
+
+    :where([data-slot="editor-source"]) {
+        @apply min-h-32 w-full flex-1 resize-y bg-transparent px-3 py-2 font-mono text-sm outline-none;
+    }
+
+    /* Uploads and images not saved yet on the left, the count on the right; gone with none. */
+    :where([data-slot="editor-footer"]) {
+        @apply flex items-center justify-end gap-2 border-t border-input px-3 py-1 text-xs text-muted-foreground tabular-nums;
+
+        &:not(:has(> :not([hidden]))) {
+            @apply hidden;
+        }
+
+        & [data-editor-busy] {
+            @apply mr-auto;
+
+            &[role="alert"] {
+                @apply font-medium text-destructive;
+            }
+        }
+
+        & [data-editor-busy]:not([hidden]) ~ [data-editor-unsaved] {
+            @apply mr-0;
+        }
+
+        & [data-editor-unsaved] {
+            @apply mr-auto flex items-center gap-1;
+
+            & [data-slot="button"] {
+                @apply h-auto p-0 text-xs;
+            }
+        }
+
+        & [data-editor-characters]:has([data-full]) {
+            @apply text-destructive;
+        }
+    }
+
+    /* The content, in the editor (the text box once it runs, the HTML it starts from until
+       then: not the bubble menus beside the text box) and in Rich Text. */
+    :where([data-slot="editor-input"], [data-slot="editor-content"]:not(:has(> [data-slot="editor-input"])), [data-slot="rich-text"]) {
+        & :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, hr, div, section, aside, figure, table, details, img, video, audio, iframe, a[download], math[display="block"]) + :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, hr, div, section, aside, figure, table, details, img, video, audio, iframe, a[download], math[display="block"]) {
+            @apply mt-3;
+        }
+
+        /* Images side by side line up: their row's gap parts them. */
+        & [style*="grid-template-columns"] > * {
+            margin-top: 0 !important;
+        }
+
+        /* Their columns size them: no handles to drag. */
+        & [data-editor-row] [data-editor-resize] {
+            display: none !important;
+        }
+
+        & h1 {
+            @apply text-2xl font-extrabold tracking-tight;
+        }
+
+        & h2 {
+            @apply text-xl font-semibold tracking-tight;
+        }
+
+        & h3 {
+            @apply text-lg font-semibold tracking-tight;
+        }
+
+        & h4 {
+            @apply text-base font-semibold tracking-tight;
+        }
+
+        & h5 {
+            @apply text-sm font-semibold;
+        }
+
+        & h6 {
+            @apply text-sm font-semibold text-muted-foreground;
+        }
+
+        & p {
+            @apply leading-7;
+        }
+
+        & ul {
+            @apply ml-6 list-disc;
+        }
+
+        & ol {
+            @apply ml-6 list-decimal;
+        }
+
+        /* A task list's style is inline: no bullets, no indent. */
+        & ul[style*="list-style-type"] {
+            @apply ml-0;
+        }
+
+        & li + li {
+            @apply mt-1;
+        }
+
+        & blockquote {
+            @apply border-l-2 pl-4 italic;
+        }
+
+        & :not(pre) > code {
+            @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+        }
+
+        & pre {
+            @apply overflow-x-auto rounded-md bg-muted px-4 py-3 font-mono text-sm;
+        }
+
+        & a:not([download]) {
+            @apply font-medium text-primary underline underline-offset-4;
+        }
+
+        & hr {
+            @apply my-4 border-border;
+        }
+
+        & mark {
+            @apply rounded-xs px-0.5;
+        }
+
+        & table p {
+            @apply leading-6;
+        }
+
+        & th {
+            @apply font-semibold;
+        }
+
+        & details {
+            @apply rounded-md border border-border px-3 py-2;
+
+            & > summary {
+                @apply cursor-pointer font-medium;
+            }
+
+            &[open] > summary {
+                @apply mb-2;
+            }
+        }
+    }
+}

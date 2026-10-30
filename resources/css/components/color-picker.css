@@ -1,0 +1,102 @@
+/*
+ * Color Picker: not in shadcn. The trigger is the Date Picker's outline Button with a
+ * swatch; the thumbs look like Slider's.
+ */
+@layer components {
+    :where([data-slot="color-picker"]) {
+        @apply contents;
+    }
+
+    [data-slot="color-picker"] :where([data-color-picker-trigger]) {
+        @apply w-[212px] justify-start text-left font-normal tabular-nums;
+
+        &[data-empty="true"] {
+            @apply text-muted-foreground;
+        }
+
+        &[aria-invalid="true"] {
+            @apply ring-3;
+            border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+    }
+
+    :where([data-slot="color-picker-swatch"], [data-color-picker-swatch]) {
+        @apply shrink-0 rounded-sm ring-1 ring-foreground/10;
+        background-color: var(--color-picker-color);
+    }
+
+    :where([data-slot="color-picker-swatch"]) {
+        @apply size-4;
+    }
+
+    /* Empty: a diagonal stroke instead of a color. */
+    :where([data-color-picker-trigger][data-empty="true"] [data-slot="color-picker-swatch"]) {
+        background: linear-gradient(to top right, transparent calc(50% - 0.5px), var(--color-destructive) calc(50% - 0.5px), var(--color-destructive) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+    }
+
+    [data-slot="color-picker"] :where([data-color-picker-content]) {
+        @apply w-64;
+    }
+
+    /* Saturation left to right, brightness top to bottom, over the hue. */
+    :where([data-slot="color-picker-area"]) {
+        @apply relative h-36 shrink-0 cursor-crosshair touch-none rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50;
+        background:
+            linear-gradient(to top, #000, transparent),
+            linear-gradient(to right, #fff, transparent),
+            hsl(var(--color-picker-hue, 0) 100% 50%);
+    }
+
+    :where([data-slot="color-picker-thumb"]) {
+        @apply pointer-events-none absolute size-3 -translate-1/2 rounded-full border-2 border-white shadow-sm ring-1 ring-black/10;
+        background-color: var(--color-picker-color);
+    }
+
+    :where([data-slot="color-picker-area"]:focus-visible [data-slot="color-picker-thumb"]) {
+        box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 50%, transparent);
+    }
+
+    :where([data-slot="color-picker-controls"]) {
+        @apply flex items-center gap-2;
+    }
+
+    :where([data-slot="color-picker-hue"]) {
+        @apply h-3 min-w-0 flex-1 cursor-pointer appearance-none rounded-full outline-none;
+        background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+
+        &::-webkit-slider-thumb {
+            @apply size-3 appearance-none rounded-full border-2 border-white shadow-sm ring-1 ring-black/10 transition-[box-shadow];
+            background-color: hsl(var(--color-picker-hue, 0) 100% 50%);
+        }
+
+        &::-moz-range-thumb {
+            @apply size-3 rounded-full border-2 border-white shadow-sm transition-[box-shadow];
+            background-color: hsl(var(--color-picker-hue, 0) 100% 50%);
+        }
+
+        &:focus-visible::-webkit-slider-thumb {
+            box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 50%, transparent);
+        }
+
+        &:focus-visible::-moz-range-thumb {
+            box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 50%, transparent);
+        }
+    }
+
+    :where([data-color-picker-input]) {
+        @apply font-mono;
+    }
+
+    :where([data-slot="color-picker-swatches"]) {
+        @apply grid grid-cols-8 gap-1.5;
+    }
+
+    :where([data-color-picker-swatch]) {
+        @apply aspect-square cursor-pointer outline-none focus-visible:ring-3 focus-visible:ring-ring/50;
+
+        &[aria-pressed="true"] {
+            @apply ring-2 ring-ring ring-offset-1 ring-offset-popover;
+        }
+    }
+}

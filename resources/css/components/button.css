@@ -1,0 +1,96 @@
+@layer components {
+    :where([data-slot="button"]) {
+        @apply inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none;
+        @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50;
+        @apply active:not-aria-[haspopup]:translate-y-px;
+        @apply disabled:pointer-events-none disabled:opacity-50;
+        @apply [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4;
+
+        /* Livewire v4 marks the element that triggered a request with data-loading. */
+        &[data-loading] {
+            @apply pointer-events-none opacity-50;
+        }
+    }
+
+    :where([data-slot="button"][data-variant="default"]) {
+        @apply bg-primary text-primary-foreground hover:bg-primary/80;
+    }
+
+    :where([data-slot="button"][data-variant="outline"]) {
+        @apply hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground;
+        border-color: light-dark(var(--color-border), var(--color-input));
+        background-color: light-dark(var(--color-background), color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        &:hover {
+            background-color: light-dark(var(--color-muted), color-mix(in oklab, var(--color-input) 50%, transparent));
+        }
+    }
+
+    :where([data-slot="button"][data-variant="secondary"]) {
+        @apply bg-secondary text-secondary-foreground aria-expanded:bg-secondary aria-expanded:text-secondary-foreground;
+
+        &:hover {
+            background-color: color-mix(in oklch, var(--color-secondary), var(--color-foreground) 5%);
+        }
+    }
+
+    :where([data-slot="button"][data-variant="ghost"]) {
+        @apply hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground;
+
+        &:hover {
+            background-color: light-dark(var(--color-muted), color-mix(in oklab, var(--color-muted) 50%, transparent));
+        }
+    }
+
+    /* shadcn's destructive look, shared by the library's success, warning and info. */
+    :where([data-slot="button"]:is([data-variant="destructive"], [data-variant="success"], [data-variant="warning"], [data-variant="info"])) {
+        color: var(--tone);
+        background-color: light-dark(color-mix(in oklab, var(--tone) 10%, transparent), color-mix(in oklab, var(--tone) 20%, transparent));
+
+        &:hover {
+            background-color: light-dark(color-mix(in oklab, var(--tone) 20%, transparent), color-mix(in oklab, var(--tone) 30%, transparent));
+        }
+
+        &:focus-visible {
+            border-color: color-mix(in oklab, var(--tone) 40%, transparent);
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--tone) 20%, transparent), color-mix(in oklab, var(--tone) 40%, transparent));
+        }
+    }
+
+    :where([data-slot="button"][data-variant="link"]) {
+        @apply text-primary underline-offset-4 hover:underline;
+    }
+
+    /* Sizes. Icons marked data-icon="inline-start|inline-end" tighten the padding on their side. */
+    :where([data-slot="button"][data-size="default"]) {
+        @apply h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2;
+    }
+
+    :where([data-slot="button"][data-size="xs"]) {
+        @apply h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3;
+    }
+
+    :where([data-slot="button"][data-size="sm"]) {
+        @apply h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5;
+    }
+
+    :where([data-slot="button"][data-size="lg"]) {
+        @apply h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2;
+    }
+
+    :where([data-slot="button"][data-size="icon"]) {
+        @apply size-8;
+    }
+
+    :where([data-slot="button"][data-size="icon-xs"]) {
+        @apply size-6 rounded-[min(var(--radius-md),10px)] [&_svg:not([class*='size-'])]:size-3;
+    }
+
+    :where([data-slot="button"][data-size="icon-sm"]) {
+        @apply size-7 rounded-[min(var(--radius-md),12px)];
+    }
+
+    :where([data-slot="button"][data-size="icon-lg"]) {
+        @apply size-9;
+    }
+}

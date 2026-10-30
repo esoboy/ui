@@ -1,0 +1,51 @@
+/*
+ * Accordion items are <details>: the summary is the trigger and the panel animates
+ * through ::details-content.
+ */
+@layer components {
+    :where([data-slot="accordion"]) {
+        @apply flex w-full flex-col;
+    }
+
+    :where([data-slot="accordion-item"]) {
+        @apply not-last:border-b;
+        interpolate-size: allow-keywords;
+
+        &::details-content {
+            @apply overflow-hidden;
+            block-size: 0;
+            transition: block-size 200ms ease-out, content-visibility 200ms allow-discrete;
+        }
+
+        &[open]::details-content {
+            block-size: auto;
+        }
+    }
+
+    :where([data-slot="accordion-trigger"]) {
+        @apply relative flex flex-1 cursor-pointer list-none items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline;
+        @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring;
+        @apply aria-disabled:pointer-events-none aria-disabled:opacity-50;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+    }
+
+    :where([data-slot="accordion-trigger-icon"]) {
+        @apply pointer-events-none ml-auto size-4 shrink-0 text-muted-foreground;
+    }
+
+    :where([data-slot="accordion-item"]:not([open]) [data-slot="accordion-trigger-icon"][data-state="open"]),
+    :where([data-slot="accordion-item"][open] > summary [data-slot="accordion-trigger-icon"][data-state="closed"]) {
+        @apply hidden;
+    }
+
+    :where([data-slot="accordion-content"]) {
+        @apply overflow-hidden text-sm;
+
+        & > div {
+            @apply pt-0 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4;
+        }
+    }
+}

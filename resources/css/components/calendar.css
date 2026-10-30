@@ -1,0 +1,145 @@
+@layer components {
+    :where([data-slot="calendar"]) {
+        @apply block w-fit bg-background p-2;
+        --cell-radius: var(--radius-md);
+        --cell-size: calc(var(--spacing) * 7);
+    }
+
+    :where([data-slot="card-content"], [data-slot="popover-content"]) :where([data-slot="calendar"]) {
+        @apply bg-transparent;
+    }
+
+    :where([data-slot="calendar-months"]) {
+        @apply relative flex flex-col gap-4 md:flex-row;
+    }
+
+    :where([data-slot="calendar-month"]) {
+        @apply flex w-full flex-col gap-4;
+    }
+
+    :where([data-slot="calendar-nav"]) {
+        @apply absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1;
+    }
+
+    [data-slot="calendar-nav"] > :where([data-slot="button"]) {
+        @apply size-(--cell-size) p-0 select-none aria-disabled:pointer-events-none aria-disabled:opacity-50;
+    }
+
+    :where([data-slot="calendar-caption"]) {
+        @apply flex h-(--cell-size) w-full items-center justify-center px-(--cell-size);
+    }
+
+    :where([data-slot="calendar-dropdowns"]) {
+        @apply flex h-(--cell-size) w-full items-center justify-center gap-1.5 text-sm font-medium;
+    }
+
+    /* As rendered on ui.shadcn.com: Nova's cn-calendar-* extras don't reach installed projects. */
+    :where([data-slot="calendar-dropdown"]) {
+        @apply relative rounded-(--cell-radius) has-focus-visible:ring-3 has-focus-visible:ring-ring/50;
+
+        & > select {
+            @apply absolute inset-0 size-full cursor-pointer appearance-none bg-popover opacity-0;
+        }
+    }
+
+    :where([data-slot="calendar-caption-label"]) {
+        @apply text-sm font-medium select-none;
+    }
+
+    :where([data-slot="calendar-dropdown"] [data-slot="calendar-caption-label"]) {
+        @apply flex items-center gap-1 rounded-(--cell-radius) [&>svg]:size-3.5 [&>svg]:text-muted-foreground;
+    }
+
+    :where([data-slot="calendar-grid"]) {
+        @apply w-full border-collapse;
+    }
+
+    :where([data-slot="calendar-weekdays"]) {
+        @apply flex;
+    }
+
+    :where([data-slot="calendar-weekday"]) {
+        @apply flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none;
+    }
+
+    :where([data-slot="calendar-week"]) {
+        @apply mt-2 flex w-full;
+    }
+
+    /* Day cells */
+    :where(td[data-slot="calendar-day"]) {
+        @apply relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none;
+
+        &[data-today] {
+            @apply rounded-(--cell-radius) bg-muted text-foreground;
+        }
+
+        &[data-today][data-selected] {
+            @apply rounded-none;
+        }
+
+        &[data-outside] {
+            @apply text-muted-foreground;
+        }
+
+        &[data-disabled] {
+            @apply text-muted-foreground opacity-50;
+        }
+
+        &[data-hidden] {
+            @apply invisible;
+        }
+
+        &[data-range-start] {
+            @apply relative isolate z-0 rounded-l-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-muted;
+        }
+
+        &[data-range-middle] {
+            @apply rounded-none;
+        }
+
+        &[data-range-end] {
+            @apply relative isolate z-0 rounded-r-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-muted;
+        }
+
+        /* A one-day range has no neighbours to bridge to. */
+        &[data-range-start][data-range-end]::after {
+            @apply hidden;
+        }
+    }
+
+    :where(td[data-slot="calendar-day"]:first-child[data-selected]) > button {
+        @apply rounded-l-(--cell-radius);
+    }
+
+    :where(td[data-slot="calendar-day"]:last-child[data-selected]) > button {
+        @apply rounded-r-(--cell-radius);
+    }
+
+    /* Day buttons: ghost Buttons filling their cell. */
+    [data-slot="calendar"] :where(button[data-day]) {
+        @apply relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 rounded-(--cell-radius) border-0 p-0 leading-none font-normal;
+        @apply focus-visible:relative focus-visible:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50;
+        @apply [&>span]:text-xs [&>span]:opacity-70;
+
+        &[aria-disabled="true"] {
+            @apply pointer-events-none;
+        }
+
+        &[data-selected-single] {
+            @apply bg-primary text-primary-foreground;
+        }
+
+        &[data-range-start] {
+            @apply rounded-(--cell-radius) rounded-l-(--cell-radius) bg-primary text-primary-foreground;
+        }
+
+        &[data-range-end] {
+            @apply rounded-(--cell-radius) rounded-r-(--cell-radius) bg-primary text-primary-foreground;
+        }
+
+        &[data-range-middle] {
+            @apply rounded-none bg-muted text-foreground;
+        }
+    }
+}

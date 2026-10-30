@@ -1,0 +1,91 @@
+@layer components {
+    :where([data-slot="table-container"]) {
+        @apply relative w-full overflow-x-auto;
+    }
+
+    :where([data-slot="table"]) {
+        @apply w-full caption-bottom text-sm;
+    }
+
+    :where([data-slot="table-header"]) {
+        @apply [&_tr]:border-b;
+    }
+
+    :where([data-slot="table-body"]) {
+        @apply [&_tr:last-child]:border-0;
+    }
+
+    :where([data-slot="table-footer"]) {
+        @apply border-t bg-muted/50 font-medium [&>tr]:last:border-b-0;
+    }
+
+    /* A row with an open menu is highlighted; one whose Row Toggle is expanded isn't. */
+    :where([data-slot="table-row"]) {
+        @apply border-b transition-colors hover:bg-muted/50 has-[[aria-expanded=true]:not([data-data-table-row-toggle])]:bg-muted/50 data-[state=selected]:bg-muted;
+    }
+
+    :where([data-slot="table-head"]) {
+        @apply h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox],[type=checkbox])]:pr-0;
+    }
+
+    :where([data-slot="table-cell"]) {
+        @apply p-2 align-middle whitespace-nowrap [&:has([role=checkbox],[type=checkbox])]:pr-0;
+    }
+
+    :where([data-slot="table-caption"]) {
+        @apply mt-4 text-sm text-muted-foreground;
+    }
+
+    /*
+     * Fixed columns: sticky heads and cells, opaque in their row's colour so the columns
+     * scrolling under them don't show (--table-background when the table isn't on the
+     * page's background). Data Table offsets the ones after the first and shades the
+     * edge that has more to scroll to.
+     */
+    :where([data-slot="table"]) {
+        --table-row-background: var(--table-background, var(--color-background));
+    }
+
+    :where([data-slot="table-row"]:hover) {
+        --table-row-background: color-mix(in oklab, var(--color-muted) 50%, var(--table-background, var(--color-background)));
+    }
+
+    :where([data-slot="table-row"][data-state="selected"]) {
+        --table-row-background: var(--color-muted);
+    }
+
+    :where([data-slot="table-footer"]) {
+        --table-row-background: color-mix(in oklab, var(--color-muted) 50%, var(--table-background, var(--color-background)));
+    }
+
+    :where([data-sticky]) {
+        @apply sticky z-1;
+        background-color: var(--table-row-background);
+    }
+
+    :where([data-sticky="start"]) {
+        inset-inline-start: var(--sticky-offset, 0);
+    }
+
+    :where([data-sticky="end"]) {
+        inset-inline-end: var(--sticky-offset, 0);
+    }
+
+    :where([data-scroll-start] [data-sticky="start"]:not(:has(+ [data-sticky="start"])), [data-scroll-end] [data-sticky="end"]:not([data-sticky="end"] + *))::after {
+        @apply pointer-events-none absolute inset-y-0 w-3;
+        content: "";
+    }
+
+    :where([data-scroll-start] [data-sticky="start"]:not(:has(+ [data-sticky="start"])))::after {
+        @apply start-full bg-linear-to-r from-foreground/8 to-transparent rtl:bg-linear-to-l;
+    }
+
+    :where([data-scroll-end] [data-sticky="end"]:not([data-sticky="end"] + *))::after {
+        @apply end-full bg-linear-to-l from-foreground/8 to-transparent rtl:bg-linear-to-r;
+    }
+
+    /* A merged cell (rowspan) shares the highlight of whichever of its rows is hovered. */
+    :where([data-span-hover]) {
+        @apply bg-muted/50;
+    }
+}

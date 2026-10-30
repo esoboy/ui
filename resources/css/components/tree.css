@@ -1,0 +1,130 @@
+/*
+ * Tree and Tree Select: not in shadcn. Rows like sidebar menu buttons, nested groups
+ * indented with a guide line like sidebar sub menus (shadcn's file tree), Checkbox
+ * for checkable trees, Select's trigger for Tree Select.
+ */
+@layer components {
+    :where([data-slot="tree"]) {
+        @apply flex w-full min-w-0 flex-col gap-1 text-sm;
+    }
+
+    :where([data-slot="tree-list"]) {
+        @apply flex min-w-0 list-none flex-col gap-0.5;
+    }
+
+    /* The search box: Command's input. */
+    [data-slot="tree-search"] > [data-slot="input-group"] {
+        @apply h-8 rounded-lg border-input/30 bg-input/30 shadow-none;
+
+        & > [data-slot="input-group-addon"] {
+            @apply pl-2 [&>svg]:opacity-50;
+        }
+    }
+
+    :where([data-slot="tree-search-input"]) {
+        @apply w-full min-w-0 flex-1 border-0 bg-transparent px-2 text-sm outline-hidden placeholder:text-muted-foreground;
+    }
+
+    :where([data-slot="tree-empty"]) {
+        @apply py-6 text-center text-sm text-muted-foreground;
+    }
+
+    ::highlight(ui-tree-match) {
+        color: var(--color-foreground);
+        background-color: light-dark(color-mix(in oklab, var(--color-primary) 15%, transparent), color-mix(in oklab, var(--color-primary) 30%, transparent));
+    }
+
+    :where([data-slot="tree-group"]) {
+        @apply ml-3.5 flex min-w-0 list-none flex-col gap-0.5 border-l pt-0.5 pl-1.5;
+    }
+
+    :where([data-slot="tree-item"]) {
+        @apply min-w-0 outline-none;
+    }
+
+    :where([data-slot="tree-item-row"]) {
+        @apply flex h-8 min-w-0 cursor-default items-center gap-2 rounded-md px-2 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground;
+        @apply [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-slot="tree-item"]:focus-visible > [data-slot="tree-item-row"]) {
+        @apply ring-2 ring-ring/50;
+    }
+
+    :where([data-slot="tree-item"][aria-selected="true"] > [data-slot="tree-item-row"]) {
+        @apply bg-accent font-medium text-accent-foreground;
+    }
+
+    :where([data-slot="tree-item"][aria-disabled="true"] > [data-slot="tree-item-row"]) {
+        @apply pointer-events-none opacity-50;
+    }
+
+    :where([data-slot="tree-item-toggle"]) {
+        @apply -ml-1 flex size-4 shrink-0 items-center justify-center text-muted-foreground;
+
+        & > svg {
+            @apply transition-transform;
+        }
+    }
+
+    :where([data-slot="tree-item"][aria-expanded="true"] > [data-slot="tree-item-row"] > [data-slot="tree-item-toggle"] > svg) {
+        @apply rotate-90;
+    }
+
+    /* A lazy item turns its chevron into a spinner while it loads. */
+    :where([data-slot="tree-item-spinner"]) {
+        @apply hidden;
+    }
+
+    :where([data-slot="tree-item"][aria-busy="true"] > [data-slot="tree-item-row"] > [data-slot="tree-item-toggle"]) {
+        & > svg {
+            @apply hidden;
+        }
+
+        & > [data-slot="tree-item-spinner"] {
+            @apply block animate-spin;
+        }
+    }
+
+    /* Dragging: the item fades, a line shows where it goes before or after, a ring when inside. */
+    :where([data-slot="tree"][data-dragging]) {
+        @apply cursor-grabbing;
+    }
+
+    :where([data-slot="tree-item"][data-dragging] > [data-slot="tree-item-row"]) {
+        @apply opacity-50;
+    }
+
+    :where([data-slot="tree-item"][data-drop="before"] > [data-slot="tree-item-row"]) {
+        @apply shadow-[inset_0_2px_0_var(--color-primary)];
+    }
+
+    :where([data-slot="tree-item"][data-drop="after"] > [data-slot="tree-item-row"]) {
+        @apply shadow-[inset_0_-2px_0_var(--color-primary)];
+    }
+
+    :where([data-slot="tree-item"][data-drop="inside"] > [data-slot="tree-item-row"]) {
+        @apply bg-accent ring-2 ring-primary/50;
+    }
+
+    :where([data-slot="tree-item-icon"]) {
+        @apply flex shrink-0 text-muted-foreground;
+    }
+
+    :where([data-slot="tree-item-label"]) {
+        @apply min-w-0 truncate;
+    }
+
+    :where([data-slot="tree-select"]) {
+        @apply contents;
+    }
+
+    :where([data-slot="tree-select-content"]) {
+        @apply max-h-80 min-w-56 overflow-y-auto rounded-lg border-0 bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none;
+        width: anchor-size(width);
+
+        &:popover-open {
+            @apply block;
+        }
+    }
+}

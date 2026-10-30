@@ -1,0 +1,39 @@
+/*
+ * Cascader: not in shadcn. Select's trigger and items, with the popup split into one
+ * column per level; the open path is highlighted like an open sub menu trigger.
+ */
+@layer components {
+    :where([data-slot="cascader"]) {
+        @apply contents;
+    }
+
+    :where([data-slot="cascader-content"]) {
+        @apply max-h-[calc(100dvh-1rem)] overflow-hidden rounded-lg border-0 bg-popover p-0 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none;
+
+        &:popover-open {
+            @apply flex;
+        }
+    }
+
+    :where([data-slot="cascader-column"]) {
+        @apply max-h-72 min-w-36 scroll-my-1 overflow-y-auto p-1;
+
+        & + & {
+            @apply border-l;
+        }
+    }
+
+    :where([data-slot="cascader-column"] [data-slot="select-item"][data-expanded]) {
+        @apply bg-accent text-accent-foreground;
+    }
+
+    /* Parents show a chevron where leaves show the check. Outside :where, so it beats
+       Select's hidden indicator; utilities still win. */
+    :where([data-slot="cascader-column"]) [data-slot="select-item-indicator"][data-parent] {
+        @apply visible text-muted-foreground;
+    }
+
+    :where([data-slot="cascader-empty"]) {
+        @apply px-2 py-6 text-center text-sm text-muted-foreground;
+    }
+}

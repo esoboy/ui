@@ -1,0 +1,55 @@
+/*
+ * Rating: not in shadcn. Each item stacks an empty star and a filled one clipped to
+ * --rating-fill; hovering previews up to the hovered star.
+ */
+@layer components {
+    :where([data-slot="rating"]) {
+        @apply inline-flex items-center gap-0.5 align-middle;
+    }
+
+    :where([data-slot="rating-item"]) {
+        @apply relative inline-grid shrink-0 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50;
+
+        & > svg {
+            @apply col-start-1 row-start-1 size-5;
+        }
+
+        & > svg:first-child {
+            color: color-mix(in oklab, var(--color-muted-foreground) 25%, transparent);
+        }
+
+        & > svg:last-child {
+            @apply text-warning;
+            clip-path: inset(0 calc(100% - var(--rating-hover, var(--rating-fill, 0%))) 0 0);
+        }
+
+        &:dir(rtl) > svg:last-child {
+            clip-path: inset(0 0 0 calc(100% - var(--rating-hover, var(--rating-fill, 0%))));
+        }
+    }
+
+    :where([data-slot="rating"][data-size="sm"] [data-slot="rating-item"] > svg) {
+        @apply size-4;
+    }
+
+    :where([data-slot="rating"][data-size="lg"] [data-slot="rating-item"] > svg) {
+        @apply size-6;
+    }
+
+    :where(button[data-slot="rating-item"]) {
+        @apply cursor-pointer transition-transform hover:scale-110 disabled:pointer-events-none disabled:opacity-50;
+    }
+
+    :where(eso-rating[data-slot="rating"]:not([data-disabled]):has(> [data-slot="rating-item"]:hover)) > [data-slot="rating-item"] {
+        --rating-hover: 100%;
+    }
+
+    :where(eso-rating[data-slot="rating"]:not([data-disabled])) > [data-slot="rating-item"]:hover ~ [data-slot="rating-item"] {
+        --rating-hover: 0%;
+    }
+
+    :where(eso-rating[data-slot="rating"][aria-invalid="true"]) {
+        @apply rounded-sm ring-3;
+        --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+    }
+}

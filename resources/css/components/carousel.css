@@ -1,0 +1,85 @@
+/*
+ * Carousel: the content is a native scroll-snap track with its scrollbar hidden.
+ */
+@layer components {
+    :where([data-slot="carousel"]) {
+        @apply relative block;
+    }
+
+    :where([data-slot="carousel-content"]) {
+        @apply overflow-hidden overscroll-contain;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        & > div {
+            @apply flex;
+        }
+    }
+
+    :where([data-orientation="horizontal"] > [data-slot="carousel-content"]) {
+        @apply snap-x snap-mandatory overflow-x-auto;
+
+        & > div {
+            @apply -ml-4;
+        }
+    }
+
+    :where([data-orientation="vertical"] > [data-slot="carousel-content"]) {
+        @apply snap-y snap-mandatory overflow-y-auto;
+
+        & > div {
+            @apply -mt-4 flex-col;
+        }
+    }
+
+    :where([data-slot="carousel-item"]) {
+        @apply min-w-0 shrink-0 grow-0 basis-full snap-center;
+    }
+
+    :where([data-align="start"] [data-slot="carousel-item"]) {
+        @apply snap-start;
+    }
+
+    :where([data-align="end"] [data-slot="carousel-item"]) {
+        @apply snap-end;
+    }
+
+    :where([data-orientation="horizontal"] [data-slot="carousel-item"]) {
+        @apply pl-4;
+    }
+
+    :where([data-orientation="vertical"] [data-slot="carousel-item"]) {
+        @apply pt-4;
+    }
+
+    :where([data-carousel]) {
+        @apply absolute touch-manipulation rounded-full;
+    }
+
+    :where([data-orientation="horizontal"] > [data-carousel]) {
+        @apply inset-y-0 my-auto;
+    }
+
+    :where([data-orientation="horizontal"] > [data-carousel="previous"]) {
+        @apply -left-12;
+    }
+
+    :where([data-orientation="horizontal"] > [data-carousel="next"]) {
+        @apply -right-12;
+    }
+
+    :where([data-orientation="vertical"] > [data-carousel]) {
+        @apply left-1/2 -translate-x-1/2 rotate-90;
+    }
+
+    :where([data-orientation="vertical"] > [data-carousel="previous"]) {
+        @apply -top-12;
+    }
+
+    :where([data-orientation="vertical"] > [data-carousel="next"]) {
+        @apply -bottom-12;
+    }
+}
