@@ -1,0 +1,5 @@
+@layer components {
+    :where([data-slot="collapsible"]) {
+        @apply block;
+    }
+}

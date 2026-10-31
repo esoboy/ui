@@ -1,0 +1,103 @@
+/*
+ * Toasts, as shadcn's Toast: a stack at the bottom right. toast.js sets --toast-index,
+ * --toast-height, --toast-offset-y and the swipe movement; the stack and its motion are
+ * computed here from them.
+ */
+@layer components {
+    :where([data-slot="toast-viewport"]) {
+        @apply pointer-events-none fixed inset-x-4 top-auto bottom-4 z-50 mx-auto my-0 h-0 w-auto max-w-sm overflow-visible border-0 bg-transparent p-0 outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full;
+
+        &:popover-open {
+            @apply block;
+        }
+    }
+
+    :where([data-slot="toast"]) {
+        @apply pointer-events-auto absolute right-0 bottom-0 w-full origin-bottom rounded-2xl border bg-popover text-popover-foreground shadow-lg outline-none select-none;
+        @apply focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50;
+        z-index: calc(1000 - var(--toast-index));
+        will-change: transform;
+        --gap: 0.75rem;
+        --height: var(--toast-frontmost-height, var(--toast-height));
+        --offset-y: calc(var(--toast-offset-y) * -1 + var(--toast-index) * var(--gap) * -1 + var(--toast-swipe-movement-y));
+        --peek: 0.75rem;
+        --scale: calc(max(0, 1 - var(--toast-index) * 0.1));
+        --shrink: calc(1 - var(--scale));
+        height: var(--height);
+        transform: translateX(var(--toast-swipe-movement-x)) translateY(calc(var(--toast-swipe-movement-y) - var(--toast-index) * var(--peek) - var(--shrink) * var(--height))) scale(var(--scale));
+        transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms, height 150ms;
+
+        /* Bridges the gap to the toast below, so the stack stays hovered. */
+        &::after {
+            @apply absolute top-full left-0 h-[calc(var(--gap)+1px)] w-full content-[''];
+        }
+
+        &[data-expanded] {
+            height: var(--toast-height);
+            transform: translateX(var(--toast-swipe-movement-x)) translateY(var(--offset-y));
+        }
+
+        &[data-limited] {
+            opacity: 0;
+        }
+
+        /* Enters from below the screen, and leaves the same way unless swiped. */
+        @starting-style {
+            transform: translateY(150%);
+        }
+
+        &[data-ending-style]:not([data-limited], [data-swipe-direction]) {
+            transform: translateY(150%);
+        }
+
+        &[data-ending-style][data-swipe-direction="down"] {
+            transform: translateY(calc(var(--toast-swipe-movement-y) + 150%));
+        }
+
+        &[data-ending-style][data-swipe-direction="right"] {
+            transform: translateX(calc(var(--toast-swipe-movement-x) + 150%)) translateY(var(--offset-y));
+        }
+    }
+
+    :where([data-slot="toast-content"]) {
+        @apply flex h-full items-center gap-3 overflow-hidden p-4 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)];
+
+        &[data-behind] {
+            @apply opacity-0;
+        }
+
+        &[data-expanded] {
+            @apply opacity-100;
+        }
+
+        & > div {
+            @apply flex min-w-0 flex-1 flex-col gap-1;
+        }
+    }
+
+    :where([data-slot="toast-title"]) {
+        @apply text-sm font-medium;
+    }
+
+    :where([data-slot="toast-description"]) {
+        @apply text-sm text-muted-foreground;
+    }
+
+    /* shadcn colours the error icon; the library's success, warning and info follow suit. */
+    :where([data-slot="toast-icon"]) {
+        @apply shrink-0 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4;
+        color: var(--tone, currentColor);
+
+        & > svg[data-spin] {
+            @apply animate-spin;
+        }
+    }
+
+    :where([data-toast-action]) {
+        @apply shrink-0;
+    }
+
+    :where([data-toast-close]) {
+        @apply relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground;
+    }
+}

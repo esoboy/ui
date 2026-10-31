@@ -1,0 +1,12 @@
+/*
+ * Verification Code Button: not in shadcn, a Button that counts down, looking disabled meanwhile.
+ */
+@layer components {
+    :where([data-slot="verification-code-button"]) {
+        @apply contents;
+
+        & > [aria-disabled="true"] {
+            @apply pointer-events-none tabular-nums opacity-50;
+        }
+    }
+}

@@ -1,0 +1,51 @@
+@layer components {
+    :where([data-slot="input-otp"]) {
+        @apply relative flex items-center gap-2 has-disabled:opacity-50;
+    }
+
+    /* The real input covers every slot, invisible: typing, pasting and autofill stay native. */
+    :where([data-slot="input-otp-input"]) {
+        @apply absolute inset-0 size-full cursor-text appearance-none border-0 bg-transparent p-0 text-transparent caret-transparent opacity-0 outline-none disabled:cursor-not-allowed;
+    }
+
+    :where([data-slot="input-otp-group"]) {
+        @apply flex items-center rounded-lg;
+    }
+
+    :where([data-slot="input-otp"]:has(> input[aria-invalid="true"]) [data-slot="input-otp-group"]) {
+        @apply border-destructive ring-3;
+        --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+    }
+
+    :where([data-slot="input-otp-slot"]) {
+        @apply relative flex size-8 items-center justify-center border-y border-r border-input text-sm transition-all outline-none first:rounded-l-lg first:border-l last:rounded-r-lg;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        &[data-active="true"] {
+            @apply z-10 border-ring ring-3 ring-ring/50;
+        }
+
+        /* The blinking caret on the empty active slot. */
+        &[data-caret="true"]::after {
+            @apply absolute h-4 w-px animate-[caret-blink_1s_ease-out_infinite] bg-foreground;
+            content: "";
+        }
+    }
+
+    :where([data-slot="input-otp"]:has(> input[aria-invalid="true"]) [data-slot="input-otp-slot"]) {
+        @apply border-destructive;
+
+        &[data-active="true"] {
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+    }
+
+    :where([data-slot="input-otp-separator"]) {
+        @apply flex items-center [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    @keyframes caret-blink {
+        0%, 70%, 100% { opacity: 1; }
+        20%, 50% { opacity: 0; }
+    }
+}

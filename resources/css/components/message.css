@@ -1,0 +1,45 @@
+/*
+ * Message: a row with an avatar and content, mirrored when aligned to the end.
+ */
+@layer components {
+    :where([data-slot="message-group"]) {
+        @apply flex min-w-0 flex-col gap-2;
+    }
+
+    :where([data-slot="message"]) {
+        @apply relative flex w-full min-w-0 gap-2 text-sm;
+    }
+
+    :where([data-slot="message"][data-align="end"]) {
+        @apply flex-row-reverse;
+    }
+
+    :where([data-slot="message-avatar"]) {
+        @apply flex w-fit min-w-8 shrink-0 items-center justify-center self-end overflow-hidden rounded-full bg-muted;
+    }
+
+    /* The avatar sits beside the last bubble, above the footer. */
+    :where([data-slot="message"]:has([data-slot="message-footer"]) [data-slot="message-avatar"]) {
+        @apply -translate-y-8;
+    }
+
+    :where([data-slot="message-content"]) {
+        @apply flex w-full min-w-0 flex-col gap-2.5 wrap-break-word;
+    }
+
+    :where([data-slot="message"][data-align="end"] [data-slot="message-content"] > [data-slot]) {
+        @apply self-end;
+    }
+
+    :where([data-slot="message-header"], [data-slot="message-footer"]) {
+        @apply flex max-w-full min-w-0 items-center px-3 text-xs font-medium text-muted-foreground;
+    }
+
+    :where([data-slot="message"]:has([data-variant="ghost"])) :where([data-slot="message-header"], [data-slot="message-footer"]) {
+        @apply px-0;
+    }
+
+    :where([data-slot="message"][data-align="end"] [data-slot="message-footer"]) {
+        @apply justify-end;
+    }
+}

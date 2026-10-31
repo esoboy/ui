@@ -1,0 +1,18 @@
+/*
+ * Watermark: not in shadcn. The layer covers what the watermark wraps without taking
+ * clicks or selection; the text tile is its mask, so the text takes --watermark-color.
+ */
+@layer components {
+    :where([data-slot="watermark"]) {
+        @apply relative block;
+        --watermark-color: color-mix(in oklab, var(--color-foreground) 15%, transparent);
+    }
+
+    :where([data-slot="watermark-layer"]) {
+        @apply pointer-events-none absolute inset-0 z-50 select-none;
+        background-color: var(--watermark-color);
+        mask-image: var(--watermark-image);
+        mask-size: var(--watermark-size);
+        mask-repeat: repeat;
+    }
+}

@@ -1,0 +1,96 @@
+@layer components {
+    :where([data-slot="badge"]) {
+        @apply inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all;
+        @apply focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50;
+        @apply has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5;
+
+        & > svg {
+            @apply pointer-events-none size-3!;
+        }
+
+        &[aria-invalid="true"] {
+            @apply border-destructive;
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+    }
+
+    :where([data-slot="badge"][data-variant="default"]) {
+        @apply bg-primary text-primary-foreground;
+    }
+
+    :where(a[data-slot="badge"][data-variant="default"]) {
+        @apply hover:bg-primary/80;
+    }
+
+    :where([data-slot="badge"][data-variant="secondary"]) {
+        @apply bg-secondary text-secondary-foreground;
+    }
+
+    :where(a[data-slot="badge"][data-variant="secondary"]) {
+        @apply hover:bg-secondary/80;
+    }
+
+    /* shadcn's destructive look, shared by the library's success, warning and info. */
+    :where([data-slot="badge"]:is([data-variant="destructive"], [data-variant="success"], [data-variant="warning"], [data-variant="info"])) {
+        color: var(--tone);
+        background-color: light-dark(color-mix(in oklab, var(--tone) 10%, transparent), color-mix(in oklab, var(--tone) 20%, transparent));
+
+        &:focus-visible {
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--tone) 20%, transparent), color-mix(in oklab, var(--tone) 40%, transparent));
+        }
+    }
+
+    :where(a[data-slot="badge"]:is([data-variant="destructive"], [data-variant="success"], [data-variant="warning"], [data-variant="info"])):hover {
+        background-color: color-mix(in oklab, var(--tone) 20%, transparent);
+    }
+
+    :where([data-slot="badge"][data-variant="outline"]) {
+        @apply border-border text-foreground;
+    }
+
+    :where(a[data-slot="badge"][data-variant="outline"]) {
+        @apply hover:bg-muted hover:text-muted-foreground;
+    }
+
+    :where([data-slot="badge"][data-variant="ghost"]) {
+        @apply hover:text-muted-foreground;
+
+        &:hover {
+            background-color: light-dark(var(--color-muted), color-mix(in oklab, var(--color-muted) 50%, transparent));
+        }
+    }
+
+    :where([data-slot="badge"][data-variant="link"]) {
+        @apply text-primary underline-offset-4 hover:underline;
+    }
+
+    :where([data-slot="badge"][data-count]) {
+        @apply min-w-5 rounded-full px-1 font-mono tabular-nums;
+    }
+
+    :where([data-slot="badge"][data-dot]) {
+        @apply size-2 p-0;
+    }
+
+    :where([data-slot="badge-wrapper"]) {
+        @apply relative inline-flex w-fit;
+    }
+
+    /* A dot has no text to tint, so a status dot is filled with its tone. */
+    :where([data-slot="badge"][data-dot]:is([data-variant="destructive"], [data-variant="success"], [data-variant="warning"], [data-variant="info"])) {
+        background-color: var(--tone);
+    }
+
+    :where([data-slot="badge-wrapper"] > [data-slot="badge"]) {
+        @apply absolute end-0 top-0 z-10 translate-x-1/2 -translate-y-1/2 ring-2 ring-background rtl:-translate-x-1/2;
+    }
+
+    /* Over other content, the see-through looks get an opaque backing. */
+    :where([data-slot="badge-wrapper"] > [data-slot="badge"]:is([data-variant="outline"], [data-variant="ghost"], [data-variant="link"])) {
+        @apply bg-background;
+    }
+
+    :where([data-slot="badge-wrapper"] > [data-slot="badge"]:not([data-dot]):is([data-variant="destructive"], [data-variant="success"], [data-variant="warning"], [data-variant="info"])) {
+        background-color: light-dark(color-mix(in oklab, var(--tone) 10%, var(--color-background)), color-mix(in oklab, var(--tone) 20%, var(--color-background)));
+    }
+}

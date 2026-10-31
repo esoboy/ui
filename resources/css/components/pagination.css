@@ -1,0 +1,22 @@
+@layer components {
+    :where([data-slot="pagination"]) {
+        @apply mx-auto flex w-full justify-center;
+    }
+
+    :where([data-slot="pagination-content"]) {
+        @apply flex items-center gap-0.5;
+    }
+
+    /* Previous and Next sit tighter against their chevrons than a Button does. */
+    :where([data-slot="pagination"] [data-slot="button"]):has(> [data-icon="inline-start"]) {
+        @apply pl-1.5;
+    }
+
+    :where([data-slot="pagination"] [data-slot="button"]):has(> [data-icon="inline-end"]) {
+        @apply pr-1.5;
+    }
+
+    :where([data-slot="pagination-ellipsis"]) {
+        @apply flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4;
+    }
+}

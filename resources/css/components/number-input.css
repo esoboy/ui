@@ -1,0 +1,12 @@
+/*
+ * Number Input: not in shadcn, an Input Group with − and + buttons around the number.
+ */
+@layer components {
+    :where([data-slot="number-input"]) {
+        @apply block w-full;
+    }
+
+    :where([data-slot="number-input"] [data-slot="input-group-control"]) {
+        @apply text-center tabular-nums;
+    }
+}

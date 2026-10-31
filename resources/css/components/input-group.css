@@ -1,0 +1,120 @@
+@layer components {
+    :where([data-slot="input-group"]) {
+        @apply relative flex h-8 w-full min-w-0 items-center rounded-lg border border-input transition-colors outline-none;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        &:has(:disabled) {
+            @apply opacity-50;
+            background-color: light-dark(color-mix(in oklab, var(--color-input) 50%, transparent), color-mix(in oklab, var(--color-input) 80%, transparent));
+        }
+
+        &:has([data-slot="input-group-control"]:focus-visible) {
+            @apply border-ring ring-3 ring-ring/50;
+        }
+
+        &:has([data-slot][aria-invalid="true"]) {
+            @apply border-destructive ring-3;
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+
+        &:has(> [data-align="block-start"], > [data-align="block-end"]) {
+            @apply h-auto flex-col;
+        }
+
+        &:has(> textarea) {
+            @apply h-auto;
+        }
+
+        &:has(> [data-align="block-end"]) > input {
+            @apply pt-3;
+        }
+
+        &:has(> [data-align="block-start"]) > input {
+            @apply pb-3;
+        }
+
+        &:has(> [data-align="inline-end"]) > input {
+            @apply pr-1.5;
+        }
+
+        &:has(> [data-align="inline-start"]) > input {
+            @apply pl-1.5;
+        }
+    }
+
+    /* The input or textarea: an Input without its own box. */
+    :where([data-slot="input-group-control"]) {
+        @apply w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-2.5 text-base shadow-none ring-0 outline-none md:text-sm;
+        @apply placeholder:text-muted-foreground disabled:cursor-not-allowed;
+    }
+
+    :where(input[data-slot="input-group-control"]) {
+        @apply h-8 py-1;
+    }
+
+    :where(textarea[data-slot="input-group-control"]) {
+        @apply flex field-sizing-content min-h-16 resize-none py-2;
+    }
+
+    :where([data-slot="input-group-addon"]) {
+        @apply flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none;
+        @apply [&>kbd]:rounded-[calc(var(--radius-lg)-5px)] [&>svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-slot="input-group"][data-disabled="true"] [data-slot="input-group-addon"]) {
+        @apply opacity-50;
+    }
+
+    :where([data-slot="input-group-addon"][data-align="inline-start"]) {
+        @apply order-first pl-2 has-[>button]:-ml-[0.3rem] has-[>kbd]:-ml-[0.15rem];
+    }
+
+    :where([data-slot="input-group-addon"][data-align="inline-end"]) {
+        @apply order-last pr-2 has-[>button]:-mr-[0.3rem] has-[>kbd]:-mr-[0.15rem];
+    }
+
+    :where([data-slot="input-group-addon"][data-align="block-start"]) {
+        @apply order-first w-full justify-start px-2.5 pt-2;
+
+        &.border-b {
+            @apply pb-2;
+        }
+    }
+
+    :where([data-slot="input-group-addon"][data-align="block-end"]) {
+        @apply order-last w-full justify-start px-2.5 pb-2;
+
+        &.border-t {
+            @apply pt-2;
+        }
+    }
+
+    :where([data-slot="input-group-text"]) {
+        @apply flex items-center gap-2 text-sm text-muted-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-slot="input-group-count"]) {
+        @apply text-sm text-muted-foreground tabular-nums;
+    }
+
+    :where([data-slot="input-group-count"][data-over]) {
+        @apply text-destructive;
+    }
+
+    /* Buttons inside a group are compact ghost buttons. */
+    [data-slot="input-group"] :where([data-slot="button"]) {
+        @apply flex items-center gap-2 text-sm shadow-none;
+    }
+
+    [data-slot="input-group"] :where([data-slot="button"][data-size="xs"]) {
+        @apply h-6 gap-1 rounded-[calc(var(--radius-lg)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5;
+    }
+
+    [data-slot="input-group"] :where([data-slot="button"][data-size="icon-xs"]) {
+        @apply size-6 rounded-[calc(var(--radius-lg)-3px)] p-0 has-[>svg]:p-0;
+    }
+
+    [data-slot="input-group"] :where([data-slot="button"][data-size="icon-sm"]) {
+        @apply size-8 p-0 has-[>svg]:p-0;
+    }
+}
