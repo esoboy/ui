@@ -1,0 +1,188 @@
+/*
+ * Data Table: shadcn's data table pattern (a Table in a bordered frame, a toolbar, and
+ * its DataTableColumnHeader, DataTableViewOptions and DataTablePagination parts).
+ */
+@layer components {
+    :where([data-slot="data-table"]) {
+        @apply block w-full;
+    }
+
+    :where([data-slot="data-table-toolbar"]) {
+        @apply flex items-center gap-2 py-4;
+    }
+
+    :where([data-slot="data-table-content"]) {
+        @apply overflow-hidden rounded-md border;
+    }
+
+    /*
+     * Sticky header: given a height, the table scrolls inside the frame while its header
+     * (and footer, the summary row) stay. Their lines are shadows, which stick with them.
+     */
+    :where([data-slot="data-table-content"][data-sticky-header]) {
+        @apply flex flex-col;
+
+        & > [data-slot="table-container"] {
+            @apply min-h-0 flex-1 overflow-auto;
+        }
+
+        & [data-slot="table-header"] tr,
+        & [data-slot="table-footer"] {
+            @apply border-0;
+        }
+
+        & [data-slot="table-header"] th {
+            @apply sticky top-0 z-2 shadow-[inset_0_-1px_0_var(--color-border)];
+            background-color: var(--table-row-background);
+        }
+
+        & [data-slot="table-footer"] td {
+            @apply sticky bottom-0 z-2 shadow-[inset_0_1px_0_var(--color-border)];
+            background-color: var(--table-row-background);
+        }
+
+        & :is([data-slot="table-header"], [data-slot="table-footer"]) [data-sticky] {
+            @apply z-3;
+        }
+    }
+
+    /* Expanding: the toggle turns with its row and indents with its tree level (--level). */
+    :where([data-data-table-row-toggle]) {
+        margin-inline-start: calc((var(--level, 1) - 1) * var(--spacing) * 5);
+
+        & > svg {
+            @apply transition-transform rtl:rotate-180;
+        }
+
+        &[aria-expanded="true"] > svg {
+            @apply rotate-90;
+        }
+
+        /* The chevron shows it's open; it doesn't stay pressed like a menu trigger. */
+        &[aria-expanded="true"]:not(:hover) {
+            background-color: transparent;
+        }
+
+        &[data-leaf] {
+            @apply invisible;
+        }
+    }
+
+    :where([data-slot="data-table-row-detail"]) {
+        @apply border-b bg-muted/30;
+
+        & > td {
+            @apply whitespace-normal;
+        }
+    }
+
+    :where([data-slot="data-table-column-header"]) {
+        @apply flex items-center gap-2;
+
+        & [data-slot="button"] {
+            @apply -ml-3 h-8;
+        }
+    }
+
+    :where([data-data-table-view-options]) {
+        @apply ml-auto hidden h-8 lg:flex;
+    }
+
+    /* Reorderable View Options: a drag handle before each column's checkbox item. */
+    :where([data-slot="data-table-column-option"]) {
+        @apply flex items-center;
+
+        & > [data-slot="dropdown-menu-checkbox-item"] {
+            @apply min-w-0 flex-1;
+        }
+    }
+
+    :where([data-slot="data-table-column-handle"]) {
+        @apply flex shrink-0 cursor-grab items-center self-stretch px-0.5 text-muted-foreground [&>svg]:size-3.5;
+    }
+
+    :where(.sorting [data-slot="data-table-column-handle"]) {
+        @apply cursor-grabbing;
+    }
+
+    :where([data-slot="data-table-column-option"].sortable-chosen) {
+        @apply rounded-md bg-accent;
+    }
+
+    /*
+     * shadcn's DataTableFacetedFilter: a dashed button listing the chosen values, and a
+     * Command of checkable values with their counts. Outside :where where popover.css
+     * and separator.css, imported later, would win the tie.
+     */
+    :where([data-data-table-faceted-filter]) {
+        @apply h-8 border-dashed;
+    }
+
+    [data-data-table-faceted-filter] > [data-slot="separator"] {
+        @apply mx-2 h-4;
+    }
+
+    [data-data-table-faceted-filter] [data-slot="badge"] {
+        @apply rounded-sm px-1 font-normal;
+    }
+
+    :where([data-data-table-filter-count]) {
+        @apply lg:hidden;
+    }
+
+    :where([data-data-table-filter-values]) {
+        @apply hidden gap-1 lg:flex;
+    }
+
+    [data-slot="popover-content"][data-data-table-filter-content] {
+        @apply w-[200px] p-0;
+    }
+
+    :where([data-slot="data-table-filter-checkbox"]) {
+        @apply flex size-4 items-center justify-center rounded-[4px] border border-input [&_svg]:invisible [&_svg]:size-3.5;
+    }
+
+    :where([data-chosen] > [data-slot="data-table-filter-checkbox"]) {
+        @apply border-primary bg-primary text-primary-foreground [&_svg]:visible;
+    }
+
+    :where([data-slot="data-table-filter-count"]) {
+        @apply ml-auto flex size-4 items-center justify-center font-mono text-xs text-muted-foreground;
+    }
+
+    :where([data-data-table-clear-filter]) {
+        @apply justify-center text-center;
+    }
+
+    :where([data-data-table-empty]) {
+        @apply h-24 text-center;
+    }
+
+    :where([data-slot="data-table-pagination"]) {
+        @apply flex items-center justify-between px-2 py-4;
+    }
+
+    :where([data-slot="data-table-selection"]) {
+        @apply flex-1 text-sm text-muted-foreground;
+    }
+
+    :where([data-slot="data-table-pagination-controls"]) {
+        @apply flex items-center space-x-6 lg:space-x-8;
+    }
+
+    :where([data-slot="data-table-page-size"]) {
+        @apply flex items-center space-x-2;
+
+        & > p {
+            @apply text-sm font-medium;
+        }
+    }
+
+    :where([data-slot="data-table-page"]) {
+        @apply flex w-[100px] items-center justify-center text-sm font-medium;
+    }
+
+    :where([data-slot="data-table-page-buttons"]) {
+        @apply flex items-center space-x-2;
+    }
+}

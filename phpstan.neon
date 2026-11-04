@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+        # Apps use the traits in src; these fixtures stand in for them.
+        - tests/Fixtures
+    excludePaths:
+        - tests/Fixtures/dist

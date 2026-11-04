@@ -1,0 +1,3 @@
+@blaze(fold: true)
+
+{{ $slot }}

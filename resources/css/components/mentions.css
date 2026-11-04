@@ -1,0 +1,59 @@
+/*
+ * Mentions: not in shadcn. The suggestions are Combobox's list, placed at the caret
+ * (--mentions-top / --mentions-left, set by the script) instead of under an anchor.
+ */
+@layer components {
+    :where([data-slot="mentions"]) {
+        @apply contents;
+    }
+
+    :where([data-slot="mentions-content"]) {
+        @apply max-h-72 w-56 overflow-hidden rounded-lg bg-popover p-0 text-popover-foreground shadow-md ring-1 ring-foreground/10;
+        max-width: calc(100dvw - 1rem);
+    }
+
+    /* Outside :where, so it beats the inset: auto popover.css gives every popover. */
+    [data-slot="mentions-content"] {
+        top: var(--mentions-top, 0);
+        left: var(--mentions-left, 0);
+    }
+
+    :where([data-slot="mentions-list"]) {
+        @apply max-h-72 scroll-py-1 overflow-y-auto overscroll-contain p-1;
+        scrollbar-width: none;
+    }
+
+    :where([data-slot="mentions-content"][data-empty] [data-slot="mentions-list"]) {
+        @apply hidden;
+    }
+
+    :where([data-slot="mentions-item"]) {
+        @apply relative flex w-full cursor-default items-center gap-2 rounded-md px-1.5 py-1 text-sm outline-hidden select-none;
+        @apply [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4;
+
+        &[hidden] {
+            @apply hidden;
+        }
+
+        &[data-highlighted="true"] {
+            @apply bg-accent text-accent-foreground *:text-accent-foreground;
+        }
+
+        &[aria-disabled="true"] {
+            @apply pointer-events-none opacity-50;
+        }
+    }
+
+    :where([data-slot="mentions-empty"]) {
+        @apply hidden w-full justify-center py-2 text-center text-sm text-muted-foreground;
+    }
+
+    :where([data-slot="mentions-content"][data-empty] [data-slot="mentions-empty"]) {
+        @apply flex;
+    }
+
+    /* Measures the caret: fixed, so a wide copy never widens the page; never seen. */
+    :where([data-slot="mentions-mirror"]) {
+        @apply pointer-events-none invisible fixed top-0 left-0 overflow-hidden break-words whitespace-pre-wrap;
+    }
+}

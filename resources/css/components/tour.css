@@ -1,0 +1,99 @@
+/*
+ * Tour: not in shadcn. The step's target carries the anchor --tour-target; the spotlight
+ * and the panel follow it with CSS anchor positioning, through scrolling and resizing.
+ */
+@layer components {
+    :where([data-slot="tour"]) {
+        @apply contents;
+    }
+
+    /* A hole over the target; its shadow dims the rest of the page with --tour-mask. */
+    :where([data-slot="tour-spotlight"]) {
+        --tour-padding: 6px;
+        --tour-mask: color-mix(in oklab, black 45%, transparent);
+        position: fixed;
+        position-anchor: --tour-target;
+        top: calc(anchor(top, 50dvh) - var(--tour-padding));
+        left: calc(anchor(left, 50dvw) - var(--tour-padding));
+        width: calc(anchor-size(width, 0px) + var(--tour-padding) * 2);
+        height: calc(anchor-size(height, 0px) + var(--tour-padding) * 2);
+        margin: 0;
+        border: 0;
+        padding: 0;
+        overflow: visible;
+        border-radius: var(--radius-lg);
+        background: transparent;
+        box-shadow: 0 0 0 100vmax var(--tour-mask);
+        pointer-events: none;
+
+        /* No target: no hole, the mask covers everything. */
+        &[data-empty] {
+            --tour-padding: 0px;
+        }
+
+        /* Blocking: a frame reaching past the screen's edges catches the clicks around the hole. */
+        &[data-blocking]::before {
+            content: "";
+            position: absolute;
+            inset: -100vmax;
+            pointer-events: auto;
+            clip-path: polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, 100vmax 100vmax, 100vmax calc(100% - 100vmax), calc(100% - 100vmax) calc(100% - 100vmax), calc(100% - 100vmax) 100vmax, 100vmax 100vmax);
+        }
+    }
+
+    :where([data-slot="tour-content"]) {
+        @apply w-80 max-w-[calc(100dvw-2rem)] flex-col gap-3 rounded-xl border-0 bg-popover p-4 text-sm text-popover-foreground shadow-lg ring-1 ring-foreground/10 outline-hidden;
+        position-anchor: --tour-target;
+        --side-offset: 12px;
+
+        &:popover-open {
+            @apply flex;
+        }
+
+        /* Beside the target, else below or above it: a phone has no room on either side. */
+        &:is([data-side="left"], [data-side="right"]) {
+            position-try-fallbacks: flip-inline, --tour-below, --tour-above;
+        }
+
+        /* No target: the panel stands in the middle. */
+        &:not([data-side]) {
+            inset: 0;
+            margin: auto;
+            height: fit-content;
+        }
+    }
+
+    :where([data-slot="tour-content"] > [data-tour-action="close"]) {
+        @apply absolute top-2 right-2;
+    }
+
+    :where([data-slot="tour-title"]) {
+        @apply pr-8 font-medium;
+    }
+
+    :where([data-slot="tour-description"]) {
+        @apply text-muted-foreground;
+    }
+
+    :where([data-slot="tour-footer"]) {
+        @apply flex items-center justify-between gap-2 pt-1;
+    }
+
+    :where([data-slot="tour-counter"]) {
+        @apply text-xs text-muted-foreground tabular-nums;
+    }
+
+    :where([data-slot="tour-actions"]) {
+        @apply ml-auto flex gap-2;
+    }
+}
+
+@position-try --tour-below {
+    position-area: bottom;
+    margin: var(--side-offset) 1rem 0;
+}
+
+@position-try --tour-above {
+    position-area: top;
+    margin: 0 1rem var(--side-offset);
+}

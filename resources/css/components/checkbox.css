@@ -1,0 +1,38 @@
+@layer components {
+    :where([data-slot="checkbox"]) {
+        @apply relative flex size-4 shrink-0 appearance-none items-center justify-center rounded-[4px] border border-input transition-colors outline-none;
+        @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        /* A larger hit area, as in shadcn. */
+        &::after {
+            @apply absolute -inset-x-3 -inset-y-2;
+            content: "";
+        }
+
+        &::before {
+            @apply size-3.5;
+            content: "";
+            visibility: hidden;
+            background-color: currentColor;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+        }
+
+        &:is(:checked, :indeterminate) {
+            @apply border-primary bg-primary text-primary-foreground;
+
+            &::before {
+                visibility: visible;
+            }
+        }
+
+        &:indeterminate::before {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
+        }
+
+        /* Invalid, see ui.css; checked, its border stays the check's. */
+        &[aria-invalid="true"]:checked {
+            @apply border-primary;
+        }
+    }
+}

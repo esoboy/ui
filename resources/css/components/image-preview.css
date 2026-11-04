@@ -1,0 +1,118 @@
+/*
+ * Image Preview: thumbnails open a full-screen <dialog> over a dark backdrop. The image
+ * zooms, rotates and pans through CSS variables; the controls float like Carousel's.
+ */
+@layer components {
+    :where([data-slot="image-preview"]) {
+        @apply contents;
+    }
+
+    :where([data-slot="image-preview-trigger"]) {
+        @apply relative inline-flex shrink-0 cursor-zoom-in overflow-hidden rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50;
+
+        & > img {
+            @apply size-full object-cover transition-opacity hover:opacity-90;
+        }
+    }
+
+    :where([data-slot="image-preview-content"]) {
+        @apply inset-0 m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-transparent p-0 text-popover-foreground opacity-0 outline-none duration-150 select-none;
+        transition-property: opacity, display, overlay;
+        transition-behavior: allow-discrete;
+
+        &::backdrop {
+            background-color: transparent;
+            transition-property: background-color, backdrop-filter, display, overlay;
+            transition-duration: inherit;
+            transition-behavior: allow-discrete;
+        }
+
+        &[open] {
+            @apply grid place-items-center opacity-100;
+
+            @starting-style {
+                @apply opacity-0;
+            }
+        }
+
+        &[open]::backdrop {
+            @apply bg-black/80 backdrop-blur-xs;
+        }
+    }
+
+    @starting-style {
+        :where([data-slot="image-preview-content"])[open]::backdrop {
+            background-color: transparent;
+            backdrop-filter: none;
+        }
+    }
+
+    :where([data-slot="image-preview-image"]) {
+        @apply col-start-1 row-start-1 max-h-[calc(100dvh-8rem)] max-w-[calc(100vw-2rem)] object-contain transition-[scale,rotate,translate,opacity] duration-200 ease-out;
+        scale: var(--image-preview-scale, 1);
+        rotate: var(--image-preview-rotate, 0deg);
+        translate: var(--image-preview-x, 0) var(--image-preview-y, 0);
+
+        &[data-zoomed] {
+            @apply cursor-grab touch-none;
+        }
+
+        &[data-dragging] {
+            @apply cursor-grabbing transition-none;
+        }
+    }
+
+    :where([data-slot="image-preview-content"]) > [data-image-preview-spinner] {
+        @apply col-start-1 row-start-1 hidden size-6 animate-spin text-white;
+    }
+
+    :where([data-slot="image-preview-content"][data-loading]) {
+        & > [data-slot="image-preview-image"] {
+            @apply opacity-0;
+        }
+
+        & > [data-image-preview-spinner] {
+            @apply block;
+        }
+    }
+
+    :where([data-slot="image-preview-content"]) > [data-image-preview] {
+        @apply absolute rounded-full;
+    }
+
+    :where([data-slot="image-preview-content"]) > [data-image-preview="close"] {
+        @apply top-4 right-4;
+    }
+
+    :where([data-slot="image-preview-content"]) > :is([data-image-preview="previous"], [data-image-preview="next"]) {
+        @apply top-1/2 -translate-y-1/2;
+    }
+
+    :where([data-slot="image-preview-content"]) > [data-image-preview="previous"] {
+        @apply left-4;
+    }
+
+    :where([data-slot="image-preview-content"]) > [data-image-preview="next"] {
+        @apply right-4;
+    }
+
+    :where([data-slot="image-preview-toolbar"]) {
+        @apply absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-full bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10;
+
+        & > [data-slot="button"] {
+            @apply rounded-full;
+        }
+    }
+
+    :where([data-slot="image-preview-counter"]) {
+        @apply px-2 text-xs text-muted-foreground tabular-nums;
+    }
+
+    /* One image: nothing to page through. */
+    :where([data-slot="image-preview-content"][data-single]) {
+        & > :is([data-image-preview="previous"], [data-image-preview="next"]),
+        & [data-slot="image-preview-counter"] {
+            @apply hidden;
+        }
+    }
+}

@@ -1,0 +1,144 @@
+/*
+ * Code Block: code, terminal output and diffs, with optional header, footer, line
+ * numbers (a CSS counter) and actions that float in the corner when not in the header.
+ */
+@layer components {
+    :where([data-slot="code-block"]) {
+        @apply relative flex w-full min-w-0 flex-col overflow-hidden rounded-lg text-sm;
+        @apply has-[>[data-slot=code-block-content]:focus-visible]:ring-3 has-[>[data-slot=code-block-content]:focus-visible]:ring-ring/50;
+    }
+
+    :where([data-slot="code-block"][data-size="sm"]) {
+        @apply text-xs;
+    }
+
+    :where([data-slot="code-block"][data-variant="default"]) {
+        @apply border border-input text-foreground has-[>[data-slot=code-block-content]:focus-visible]:border-ring;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+    }
+
+    :where([data-slot="code-block"][data-variant="destructive"]) {
+        @apply border text-destructive;
+        border-color: light-dark(color-mix(in oklab, var(--color-destructive) 30%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+    }
+
+    :where([data-slot="code-block-header"]) {
+        @apply flex min-w-0 shrink-0 items-center gap-2 px-3 pt-3 text-muted-foreground *:has-[>[data-slot=code-block-title]]:min-w-0;
+    }
+
+    :where([data-size="sm"] > [data-slot="code-block-header"]) {
+        @apply px-2.5 pt-2.5;
+    }
+
+    :where([data-slot="code-block-title"]) {
+        @apply min-w-0 truncate font-sans text-sm font-medium text-foreground [&_svg]:pointer-events-none [&_svg]:inline-block [&_svg]:align-middle [&_svg:not([class*='size-'])]:size-3.5 *:[svg]:me-1.5;
+    }
+
+    :where([data-size="sm"] [data-slot="code-block-title"]) {
+        @apply text-xs;
+    }
+
+    :where([data-variant="destructive"]) :where([data-slot="code-block-header"], [data-slot="code-block-title"]) {
+        @apply text-destructive;
+    }
+
+    :where([data-slot="code-block-actions"]) {
+        @apply -my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1;
+    }
+
+    /* Actions straight in the block float in its corner, shown on hover or focus. */
+    :where([data-slot="code-block"] > [data-slot="code-block-actions"]) {
+        @apply absolute end-2 top-2 z-10 m-0 opacity-0 transition-opacity pointer-coarse:opacity-100;
+        @apply *:[button]:bg-background *:[button]:ring-1 *:[button]:ring-foreground/10;
+    }
+
+    :where([data-slot="code-block"]:is(:hover, :focus-within) > [data-slot="code-block-actions"]) {
+        @apply opacity-100;
+    }
+
+    :where([data-size="sm"] > [data-slot="code-block-actions"]) {
+        @apply end-1.5 top-1.5;
+    }
+
+    :where([data-code-block-copy] > [data-copy-icon="copied"], [data-code-block-copy][data-copied] > [data-copy-icon="copy"]) {
+        @apply hidden;
+    }
+
+    :where([data-code-block-copy][data-copied] > [data-copy-icon="copied"]) {
+        @apply inline;
+    }
+
+    :where([data-slot="code-block-content"]) {
+        @apply min-h-0 min-w-0 scroll-fade-x scrollbar-thin overflow-auto px-3 py-3 text-start font-mono leading-relaxed outline-none;
+    }
+
+    :where([data-slot="code-block"]:has(> [data-slot="code-block-footer"]) > [data-slot="code-block-content"]) {
+        @apply pb-2;
+    }
+
+    :where([data-slot="code-block"]:has(> [data-slot="code-block-header"]) > [data-slot="code-block-content"]) {
+        @apply pt-2;
+    }
+
+    :where([data-size="sm"] > [data-slot="code-block-content"]) {
+        @apply px-2.5 py-2.5;
+    }
+
+    :where([data-size="sm"]:has(> [data-slot="code-block-header"]) > [data-slot="code-block-content"]) {
+        @apply pt-1.5;
+    }
+
+    :where([data-slot="code-block-content"][data-wrap]) {
+        @apply scroll-fade-y wrap-break-word whitespace-pre-wrap;
+    }
+
+    :where([data-slot="code-block-code"]) {
+        @apply grid min-h-lh min-w-max content-start;
+    }
+
+    :where([data-numbered] > [data-slot="code-block-code"]) {
+        @apply grid-cols-[auto_1fr];
+    }
+
+    :where([data-wrap] > [data-slot="code-block-code"]) {
+        @apply min-w-0;
+    }
+
+    :where([data-slot="code-block-line"]) {
+        @apply relative -mx-3 block min-h-lh px-3 before:min-w-6 before:text-end before:text-muted-foreground after:absolute after:start-1 after:top-0 after:text-muted-foreground after:select-none;
+    }
+
+    :where([data-size="sm"] [data-slot="code-block-line"]) {
+        @apply -mx-2.5 px-2.5;
+    }
+
+    :where([data-numbered] [data-slot="code-block-line"]) {
+        @apply col-span-2 grid grid-cols-subgrid gap-x-3 before:select-none;
+        counter-increment: line;
+
+        &::before {
+            content: counter(line) / "";
+        }
+    }
+
+    :where([data-slot="code-block-line"]:is([data-variant="added"], [data-variant="highlighted"])) {
+        @apply bg-muted;
+    }
+
+    :where([data-slot="code-block-line"][data-variant="added"]) {
+        @apply after:content-['+'];
+    }
+
+    :where([data-slot="code-block-line"][data-variant="removed"]) {
+        @apply bg-destructive/10 after:text-destructive after:content-['−'];
+    }
+
+    :where([data-slot="code-block-line-content"]) {
+        @apply min-w-0;
+    }
+
+    /* Highlighted tokens (heavy/code-block.js) carry Shiki's light and dark colours. */
+    :where([data-slot="code-block-line-content"] [data-token]) {
+        color: light-dark(var(--shiki-light), var(--shiki-dark));
+    }
+}

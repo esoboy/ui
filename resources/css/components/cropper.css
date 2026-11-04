@@ -1,0 +1,25 @@
+/*
+ * Cropper: Origin UI's. The crop area stays in the middle and its shadow dims the rest;
+ * the script sizes it and moves the image wrapper under it.
+ */
+@layer components {
+    :where([data-slot="cropper"]) {
+        @apply relative flex w-full cursor-move touch-none items-center justify-center overflow-hidden select-none focus:outline-none;
+    }
+
+    :where([data-slot="cropper-image-wrapper"]) {
+        @apply absolute will-change-transform;
+    }
+
+    :where([data-slot="cropper-image"]) {
+        @apply pointer-events-none h-full w-full object-cover;
+    }
+
+    :where([data-slot="cropper-crop-area"]) {
+        @apply pointer-events-none absolute border-3 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.3)];
+    }
+
+    :where([data-slot="cropper"]:focus-visible [data-slot="cropper-crop-area"]) {
+        @apply ring-3 ring-white/50;
+    }
+}

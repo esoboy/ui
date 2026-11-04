@@ -1,0 +1,133 @@
+/*
+ * Drawer: a modal <dialog> pinned to an edge, sliding in from it. While swiped, the
+ * drawer follows --drawer-swipe-movement without transitions (data-swiping).
+ */
+@layer components {
+    :where([data-slot="drawer-popup"]) {
+        @apply fixed m-0 max-h-none max-w-none overflow-visible border-0 bg-popover p-0 text-sm text-popover-foreground outline-none select-none;
+        --closed: 0 calc(100% + 2px);
+        translate: var(--closed);
+        transition-property: translate, display, overlay;
+        transition-duration: 450ms;
+        transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        transition-behavior: allow-discrete;
+
+        &[open] {
+            @apply flex;
+            translate: var(--drawer-swipe-movement-x, 0px) var(--drawer-swipe-movement-y, 0px);
+
+            @starting-style {
+                translate: var(--closed);
+            }
+        }
+
+        &[data-swiping] {
+            transition-duration: 0ms;
+        }
+
+        &::backdrop {
+            background-color: transparent;
+            transition-property: background-color, backdrop-filter, display, overlay;
+            transition-duration: 450ms;
+            transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+            transition-behavior: allow-discrete;
+        }
+
+        &[open]::backdrop {
+            @apply bg-black/10 backdrop-blur-xs;
+        }
+
+        /* Bleed: covers the gap behind the drawer when it is pulled past its edge. */
+        &::after {
+            @apply pointer-events-none absolute bg-popover;
+            content: "";
+        }
+    }
+
+    @starting-style {
+        :where([data-slot="drawer-popup"])[open]::backdrop {
+            background-color: transparent;
+            backdrop-filter: none;
+        }
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-axis="y"]) {
+        @apply inset-x-0 h-auto max-h-[calc(100dvh-6rem)] w-full flex-col after:inset-x-0 after:h-12;
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-axis="x"]) {
+        @apply inset-y-0 h-full w-3/4 flex-row after:inset-y-0 after:w-12 sm:w-96;
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="down"]) {
+        @apply top-auto bottom-0 rounded-t-xl border-t after:top-full;
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="up"]) {
+        @apply top-0 bottom-auto rounded-b-xl border-b after:bottom-full;
+        --closed: 0 calc(-100% - 2px);
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="left"]) {
+        @apply right-auto left-0 rounded-r-xl border-r after:right-full;
+        --closed: calc(-100% - 2px) 0;
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="right"]) {
+        @apply right-0 left-auto rounded-l-xl border-l after:left-full;
+        --closed: calc(100% + 2px) 0;
+    }
+
+    :where([data-slot="drawer-swipe-handle"]) {
+        @apply relative z-10 flex shrink-0 cursor-grab active:cursor-grabbing;
+        @apply after:block after:shrink-0 after:rounded-full after:bg-muted;
+    }
+
+    :where([data-swipe-axis="y"] > [data-slot="drawer-swipe-handle"]) {
+        @apply h-3 w-full justify-center after:h-1 after:w-24;
+    }
+
+    :where([data-swipe-axis="x"] > [data-slot="drawer-swipe-handle"]) {
+        @apply h-full w-3 items-center after:h-24 after:w-1;
+    }
+
+    :where([data-swipe-direction="down"] > [data-slot="drawer-swipe-handle"]) {
+        @apply items-end;
+    }
+
+    :where([data-swipe-direction="up"] > [data-slot="drawer-swipe-handle"]) {
+        @apply order-last items-start;
+    }
+
+    :where([data-swipe-direction="left"] > [data-slot="drawer-swipe-handle"]) {
+        @apply order-last justify-start;
+    }
+
+    :where([data-swipe-direction="right"] > [data-slot="drawer-swipe-handle"]) {
+        @apply justify-end;
+    }
+
+    :where([data-slot="drawer-content"]) {
+        @apply flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] select-text;
+    }
+
+    :where([data-slot="drawer-header"]) {
+        @apply flex shrink-0 flex-col gap-0.5 p-4 pb-0 md:text-left;
+    }
+
+    :where([data-swipe-axis="y"] [data-slot="drawer-header"]) {
+        @apply text-center md:text-left;
+    }
+
+    :where([data-slot="drawer-footer"]) {
+        @apply mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0;
+    }
+
+    :where([data-slot="drawer-title"]) {
+        @apply font-heading text-base font-medium text-foreground;
+    }
+
+    :where([data-slot="drawer-description"]) {
+        @apply text-sm text-balance text-muted-foreground;
+    }
+}

@@ -1,0 +1,13 @@
+@layer components {
+    :where([data-slot="separator"]) {
+        @apply shrink-0 bg-border;
+    }
+
+    :where([data-slot="separator"][data-orientation="horizontal"]) {
+        @apply h-px w-full;
+    }
+
+    :where([data-slot="separator"][data-orientation="vertical"]) {
+        @apply w-px self-stretch;
+    }
+}

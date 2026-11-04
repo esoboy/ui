@@ -1,0 +1,13 @@
+/*
+ * Time Picker: shadcn's time Input, with the browser's picker icon hidden.
+ */
+@layer components {
+    :where([data-slot="input"][data-time-picker]) {
+        @apply appearance-none;
+        background-color: light-dark(var(--color-background), color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        &::-webkit-calendar-picker-indicator {
+            @apply hidden appearance-none;
+        }
+    }
+}
