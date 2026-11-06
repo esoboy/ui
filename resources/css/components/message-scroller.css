@@ -1,0 +1,59 @@
+/*
+ * Message Scroller: a frame filling its parent, a viewport fading out at the bottom,
+ * rows skipped by rendering while far off screen, and floating scroll buttons.
+ */
+@layer components {
+    :where([data-slot="message-scroller"]) {
+        @apply relative flex size-full min-h-0 flex-col overflow-hidden;
+    }
+
+    :where([data-slot="message-scroller-viewport"]) {
+        @apply size-full min-h-0 min-w-0 scroll-fade-b scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain contain-content;
+    }
+
+    :where([data-slot="message-scroller-viewport"][data-autoscrolling]) {
+        @apply scrollbar-thumb-transparent scrollbar-track-transparent;
+    }
+
+    :where([data-slot="message-scroller-viewport"][data-pending-scroll]) {
+        @apply invisible;
+    }
+
+    :where([data-slot="message-scroller-content"]) {
+        @apply flex h-max min-h-full flex-col gap-6;
+    }
+
+    :where([data-slot="message-scroller-item"]) {
+        @apply min-w-0 shrink-0;
+        contain-intrinsic-size: auto 10rem;
+        content-visibility: auto;
+    }
+
+    :where([data-message-scroller-button]) {
+        @apply absolute start-1/2 -translate-x-1/2 border-border bg-background text-foreground transition-[translate,scale,opacity] duration-200 hover:bg-muted hover:text-foreground rtl:translate-x-1/2;
+    }
+
+    :where([data-message-scroller-button][data-active="false"]) {
+        @apply pointer-events-none scale-95 opacity-0 duration-400 ease-[cubic-bezier(0.7,0,0.84,0)];
+    }
+
+    :where([data-message-scroller-button][data-active="true"]) {
+        @apply translate-y-0 scale-100 opacity-100 ease-[cubic-bezier(0.23,1,0.32,1)];
+    }
+
+    :where([data-message-scroller-button="end"]) {
+        @apply bottom-4;
+    }
+
+    :where([data-message-scroller-button="end"][data-active="false"]) {
+        @apply translate-y-full;
+    }
+
+    :where([data-message-scroller-button="start"]) {
+        @apply top-4 [&_svg]:rotate-180;
+    }
+
+    :where([data-message-scroller-button="start"][data-active="false"]) {
+        @apply -translate-y-full;
+    }
+}

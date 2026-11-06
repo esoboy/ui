@@ -1,0 +1,128 @@
+/*
+ * Drawer: a modal <dialog> inset from the edge it slides in from. While swiped, the
+ * drawer follows --drawer-swipe-movement without transitions (data-swiping).
+ */
+@layer components {
+    :where([data-slot="drawer-popup"]) {
+        @apply fixed m-0 max-h-none max-w-none overflow-clip rounded-4xl border bg-popover p-0 text-sm text-popover-foreground shadow-xl outline-none select-none;
+        --drawer-inset: --spacing(2);
+        --closed: 0 calc(100% + var(--drawer-inset) + 2px);
+        translate: var(--closed);
+        transition-property: translate, display, overlay;
+        transition-duration: 450ms;
+        transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        transition-behavior: allow-discrete;
+
+        &[open] {
+            @apply flex;
+            translate: var(--drawer-swipe-movement-x, 0px) var(--drawer-swipe-movement-y, 0px);
+
+            @starting-style {
+                translate: var(--closed);
+            }
+        }
+
+        &[data-swiping] {
+            transition-duration: 0ms;
+        }
+
+        &::backdrop {
+            background-color: transparent;
+            transition-property: background-color, backdrop-filter, display, overlay;
+            transition-duration: 450ms;
+            transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+            transition-behavior: allow-discrete;
+        }
+
+        &[open]::backdrop {
+            @apply bg-black/30 backdrop-blur-sm;
+        }
+    }
+
+    @starting-style {
+        :where([data-slot="drawer-popup"])[open]::backdrop {
+            background-color: transparent;
+            backdrop-filter: none;
+        }
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-axis="y"]) {
+        @apply inset-x-(--drawer-inset) h-auto max-h-[calc(100dvh-6rem)] w-auto flex-col;
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-axis="x"]) {
+        @apply inset-y-(--drawer-inset) h-auto w-3/4 flex-row sm:w-96;
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="down"]) {
+        @apply top-auto bottom-(--drawer-inset);
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="up"]) {
+        @apply top-(--drawer-inset) bottom-auto;
+        --closed: 0 calc(-100% - var(--drawer-inset) - 2px);
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="left"]) {
+        @apply right-auto left-(--drawer-inset);
+        --closed: calc(-100% - var(--drawer-inset) - 2px) 0;
+    }
+
+    :where([data-slot="drawer-popup"][data-swipe-direction="right"]) {
+        @apply right-(--drawer-inset) left-auto;
+        --closed: calc(100% + var(--drawer-inset) + 2px) 0;
+    }
+
+    :where([data-slot="drawer-swipe-handle"]) {
+        @apply relative z-10 flex shrink-0 touch-none cursor-grab active:cursor-grabbing;
+        @apply after:block after:shrink-0 after:rounded-full after:bg-muted;
+    }
+
+    :where([data-swipe-axis="y"] > [data-slot="drawer-swipe-handle"]) {
+        @apply h-3 w-full justify-center after:h-1 after:w-24;
+    }
+
+    :where([data-swipe-axis="x"] > [data-slot="drawer-swipe-handle"]) {
+        @apply h-full w-3 items-center after:h-24 after:w-1;
+    }
+
+    :where([data-swipe-direction="down"] > [data-slot="drawer-swipe-handle"]) {
+        @apply items-end;
+    }
+
+    :where([data-swipe-direction="up"] > [data-slot="drawer-swipe-handle"]) {
+        @apply order-last items-start;
+    }
+
+    :where([data-swipe-direction="left"] > [data-slot="drawer-swipe-handle"]) {
+        @apply order-last justify-start;
+    }
+
+    :where([data-swipe-direction="right"] > [data-slot="drawer-swipe-handle"]) {
+        @apply justify-end;
+    }
+
+    :where([data-slot="drawer-content"]) {
+        @apply flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] select-text;
+    }
+
+    :where([data-slot="drawer-header"]) {
+        @apply flex shrink-0 flex-col gap-0.5 p-4 pb-0 md:text-left;
+    }
+
+    :where([data-swipe-axis="y"] [data-slot="drawer-header"]) {
+        @apply text-center md:text-left;
+    }
+
+    :where([data-slot="drawer-footer"]) {
+        @apply mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0;
+    }
+
+    :where([data-slot="drawer-title"]) {
+        @apply font-heading text-base font-medium text-foreground;
+    }
+
+    :where([data-slot="drawer-description"]) {
+        @apply text-sm text-balance text-muted-foreground;
+    }
+}

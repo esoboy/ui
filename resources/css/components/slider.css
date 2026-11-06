@@ -1,0 +1,106 @@
+/*
+ * Slider: native range inputs stacked over a drawn track, one per thumb. Thumbs stay
+ * inside the track (shadcn's thumbAlignment="edge"), so positions are offset by half
+ * a thumb (6px) at each end.
+ */
+@layer components {
+    :where([data-slot="slider"]) {
+        @apply block;
+    }
+
+    :where([data-slot="slider"][data-orientation="horizontal"]) {
+        @apply w-full;
+    }
+
+    :where([data-slot="slider"][data-orientation="vertical"]) {
+        @apply h-full;
+    }
+
+    :where([data-slot="slider-control"]) {
+        @apply relative flex min-h-3 w-full touch-none items-center select-none;
+    }
+
+    :where([data-slot="slider"][data-disabled] [data-slot="slider-control"]) {
+        @apply opacity-50;
+    }
+
+    :where([data-slot="slider"][data-orientation="vertical"] [data-slot="slider-control"]) {
+        @apply h-full min-h-40 w-auto min-w-3 flex-col;
+    }
+
+    :where([data-slot="slider-track"]) {
+        @apply relative grow overflow-hidden rounded-full bg-muted select-none;
+    }
+
+    :where([data-slot="slider"][data-orientation="horizontal"] [data-slot="slider-track"]) {
+        @apply h-1 w-full;
+    }
+
+    :where([data-slot="slider"][data-orientation="vertical"] [data-slot="slider-track"]) {
+        @apply h-full w-1;
+    }
+
+    :where([data-slot="slider-range"]) {
+        @apply absolute bg-primary select-none;
+        --from: calc(6px + (100% - 12px) * var(--start) / 100);
+        --to: calc(6px + (100% - 12px) * var(--end) / 100);
+    }
+
+    :where([data-slot="slider"][data-orientation="horizontal"] [data-slot="slider-range"]) {
+        @apply inset-y-0;
+        left: var(--from);
+        right: calc(100% - var(--to));
+    }
+
+    :where([data-slot="slider"][data-orientation="vertical"] [data-slot="slider-range"]) {
+        @apply inset-x-0;
+        bottom: var(--from);
+        top: calc(100% - var(--to));
+    }
+
+    /* A single thumb fills from the very start of the track. */
+    :where([data-slot="slider"]:not(:has([data-slot="slider-thumb"] ~ [data-slot="slider-thumb"]))[data-orientation="horizontal"] [data-slot="slider-range"]) {
+        left: 0;
+    }
+
+    :where([data-slot="slider"]:not(:has([data-slot="slider-thumb"] ~ [data-slot="slider-thumb"]))[data-orientation="vertical"] [data-slot="slider-range"]) {
+        bottom: 0;
+    }
+
+    :where([data-slot="slider-thumb"]) {
+        @apply pointer-events-none absolute inset-0 m-0 size-full appearance-none bg-transparent outline-none;
+
+        &::-webkit-slider-runnable-track {
+            @apply h-full appearance-none bg-transparent;
+        }
+
+        &::-moz-range-track {
+            @apply bg-transparent;
+        }
+
+        &::-webkit-slider-thumb {
+            @apply pointer-events-auto relative block size-3 shrink-0 appearance-none rounded-full border border-ring bg-white transition-[color,box-shadow];
+        }
+
+        &::-moz-range-thumb {
+            @apply pointer-events-auto block size-3 shrink-0 rounded-full border border-ring bg-white transition-[color,box-shadow];
+        }
+
+        &:is(:hover, :focus-visible, :active)::-webkit-slider-thumb {
+            box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 50%, transparent);
+        }
+
+        &:is(:hover, :focus-visible, :active)::-moz-range-thumb {
+            box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 50%, transparent);
+        }
+
+        &:disabled {
+            @apply pointer-events-none;
+        }
+    }
+
+    :where([data-slot="slider"][data-orientation="vertical"] [data-slot="slider-thumb"]) {
+        writing-mode: vertical-lr;
+        direction: rtl;
+    }
+}

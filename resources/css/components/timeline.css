@@ -1,0 +1,55 @@
+/*
+ * Timeline: not in shadcn, drawn with its tokens: dots (or icons, coloured by variant) on a line.
+ */
+@layer components {
+    :where([data-slot="timeline"]) {
+        @apply flex w-full list-none flex-col;
+    }
+
+    :where([data-slot="timeline-item"]) {
+        @apply relative flex gap-3 pb-6 last:pb-0;
+        --tone: var(--color-border);
+
+        &:not(:last-child)::before {
+            @apply absolute top-6 bottom-0 left-3 w-px -translate-x-1/2 bg-border content-[''];
+        }
+    }
+
+    :where([data-slot="timeline-item"][data-variant="default"]) {
+        --tone: var(--color-primary);
+    }
+
+    :where([data-slot="timeline-indicator"]) {
+        @apply relative flex size-6 shrink-0 items-center justify-center rounded-full [&_svg:not([class*='size-'])]:size-3.5;
+        color: var(--tone);
+
+        &:empty::after {
+            @apply size-2.5 rounded-full content-[''];
+            background-color: var(--tone);
+        }
+
+        &:not(:empty) {
+            background-color: light-dark(color-mix(in oklab, var(--tone) 10%, transparent), color-mix(in oklab, var(--tone) 20%, transparent));
+        }
+    }
+
+    :where([data-slot="timeline-content"]) {
+        @apply flex min-w-0 flex-1 flex-col gap-1 pt-0.5 text-sm;
+    }
+
+    :where([data-slot="timeline-header"]) {
+        @apply flex flex-wrap items-baseline justify-between gap-x-2;
+    }
+
+    :where([data-slot="timeline-title"]) {
+        @apply font-medium;
+    }
+
+    :where([data-slot="timeline-time"]) {
+        @apply text-xs text-muted-foreground tabular-nums;
+    }
+
+    :where([data-slot="timeline-description"]) {
+        @apply text-muted-foreground;
+    }
+}

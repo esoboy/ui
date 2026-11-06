@@ -1,0 +1,11 @@
+# Left out of the Composer package; dist/ ships instead of a build step.
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+/phpstan.neon export-ignore
+/phpunit.xml export-ignore
+/pint.json export-ignore
+/scripts export-ignore
+/tests export-ignore
+/vitest.config.js export-ignore

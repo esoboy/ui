@@ -1,0 +1,28 @@
+@layer components {
+    :where([data-slot="heading"]) {
+        @apply font-heading text-3xl font-semibold tracking-tight;
+
+        &[data-size="xs"] { @apply text-xl; }
+        &[data-size="sm"] { @apply text-2xl; }
+        &[data-size="lg"] { @apply text-4xl; }
+        &[data-size="xl"] { @apply text-5xl; }
+        &[data-size="2xl"] { @apply text-6xl; }
+    }
+
+    :where([data-slot="text"]) {
+        @apply text-base;
+
+        &[data-size="sm"] { @apply text-sm; }
+        &[data-size="lg"] { @apply text-lg; }
+    }
+
+    :where([data-slot="heading"], [data-slot="text"]) {
+        &[data-color="foreground"] { @apply text-foreground; }
+        &[data-color="muted"] { @apply text-muted-foreground; }
+        &[data-color="primary"] { @apply text-primary; }
+        &[data-color="destructive"] { @apply text-destructive; }
+        &[data-color="success"] { @apply text-success; }
+        &[data-color="warning"] { @apply text-warning; }
+        &[data-color="info"] { @apply text-info; }
+    }
+}

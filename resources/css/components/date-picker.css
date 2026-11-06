@@ -1,0 +1,81 @@
+@layer components {
+    :where([data-slot="date-picker"]) {
+        @apply contents;
+    }
+
+    /* The trigger as in shadcn's date picker example. */
+    :is([data-slot="date-picker"], [data-slot="time-picker"]) :where([data-date-picker-trigger], [data-time-picker-trigger]) {
+        &[data-empty="true"] {
+            @apply text-muted-foreground;
+        }
+
+        &[aria-invalid="true"] {
+            @apply ring-3;
+            border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+    }
+
+    [data-slot="date-picker"] :where([data-date-picker-trigger]) {
+        @apply w-[212px] justify-between text-left font-normal;
+    }
+
+    :where([data-slot="date-picker-value"]) {
+        @apply min-w-0 truncate;
+    }
+
+    /* The range trigger leads with a calendar icon, as in shadcn's range example. */
+    [data-slot="date-picker"][data-mode="range"] :where([data-date-picker-trigger]) {
+        @apply w-auto justify-start;
+    }
+
+    [data-slot="date-picker"] :where([data-date-picker-content]) {
+        @apply w-auto p-0;
+    }
+
+    :where([data-slot="date-picker-time"]) {
+        @apply grid gap-3 border-t p-2;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+
+        & > fieldset {
+            @apply min-w-0;
+        }
+
+        & legend {
+            @apply mb-1.5 text-sm font-medium;
+        }
+    }
+
+    /* A date and a time don't fit the date-only trigger. */
+    [data-slot="date-picker"][data-time] :where([data-date-picker-trigger]) {
+        @apply w-auto min-w-[212px];
+    }
+
+    [data-slot="date-picker"][data-time] :where([data-date-picker-content]) {
+        @apply max-w-[calc(100vw-1rem)] gap-0 overflow-auto overscroll-contain;
+        min-height: min(13rem, 45dvh);
+        max-height: min(85dvh, calc(100% - 0.5rem));
+    }
+
+    [data-slot="date-picker"]:not([data-mode="range"]) [data-slot="date-picker-time"] :where(legend) {
+        @apply sr-only;
+    }
+
+    @media (width >= 40rem) {
+        [data-slot="date-picker-body"][data-time-side] {
+            @apply grid grid-cols-[auto_12rem];
+
+            & > [data-slot="date-picker-time"] {
+                @apply content-start border-t-0 border-s bg-muted/25 p-2;
+            }
+        }
+    }
+
+    :where([data-slot="date-picker-presets"]) {
+        @apply flex flex-wrap gap-2 rounded-b-[inherit] border-t bg-muted/50 p-3;
+
+        & > [data-slot="button"] {
+            @apply flex-1;
+        }
+    }
+}

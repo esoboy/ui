@@ -1,0 +1,36 @@
+@layer components {
+    :where([data-slot="float-button-group"]) {
+        @apply fixed end-6 bottom-6 z-40 flex flex-col items-center gap-3;
+    }
+
+    /* Round and raised, and opaque over the page in dark mode too. */
+    :where([data-slot="float-button-group"] [data-slot="button"]) {
+        @apply rounded-full shadow-lg;
+    }
+
+    :where([data-slot="float-button-group"] [data-slot="button"][data-variant="outline"]) {
+        background-color: light-dark(var(--color-background), color-mix(in oklab, var(--color-input) 30%, var(--color-background)));
+
+        &:hover {
+            background-color: light-dark(var(--color-muted), color-mix(in oklab, var(--color-input) 50%, var(--color-background)));
+        }
+    }
+
+    :where([data-slot="back-to-top"]) {
+        @apply flex;
+        transition-property: opacity, scale, display;
+        transition-duration: 150ms;
+        transition-behavior: allow-discrete;
+
+        @starting-style {
+            opacity: 0;
+            scale: 0.9;
+        }
+    }
+
+    :where([data-slot="back-to-top"][hidden]) {
+        @apply hidden;
+        opacity: 0;
+        scale: 0.9;
+    }
+}
