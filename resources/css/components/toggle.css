@@ -1,0 +1,86 @@
+/*
+ * Toggle and Toggle Group items are labels around a hidden native checkbox or radio;
+ * "pressed" is the input being checked.
+ */
+@layer components {
+    :where([data-slot="toggle"], [data-slot="toggle-group-item"]) {
+        @apply inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-all outline-none select-none hover:bg-muted hover:text-foreground;
+        @apply [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4;
+
+        & > input {
+            @apply sr-only;
+        }
+
+        &:has(> input:checked) {
+            @apply bg-muted;
+        }
+
+        &:has(> input:focus-visible) {
+            @apply border-ring ring-[3px] ring-ring/50;
+        }
+
+        &:has(> input:disabled) {
+            @apply pointer-events-none opacity-50;
+        }
+
+        &:has(> input[aria-invalid="true"]) {
+            @apply border-destructive;
+            --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+        }
+    }
+
+    :where([data-slot="toggle"], [data-slot="toggle-group-item"])[data-variant="default"] {
+        @apply bg-transparent;
+    }
+
+    :where([data-slot="toggle"], [data-slot="toggle-group-item"])[data-variant="outline"] {
+        @apply border border-input bg-transparent hover:bg-muted;
+    }
+
+    :where([data-slot="toggle"], [data-slot="toggle-group-item"])[data-size="default"] {
+        @apply h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2;
+    }
+
+    :where([data-slot="toggle"], [data-slot="toggle-group-item"])[data-size="sm"] {
+        @apply h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5;
+    }
+
+    :where([data-slot="toggle"], [data-slot="toggle-group-item"])[data-size="lg"] {
+        @apply h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2;
+    }
+
+    /* Toggle Group */
+    :where([data-slot="toggle-group"]) {
+        @apply flex w-fit flex-row items-center rounded-lg;
+        gap: calc(var(--spacing) * var(--gap));
+    }
+
+    :where([data-slot="toggle-group"][data-size="sm"]) {
+        @apply rounded-[min(var(--radius-md),10px)];
+    }
+
+    :where([data-slot="toggle-group"][data-orientation="vertical"]) {
+        @apply flex-col items-stretch;
+    }
+
+    :where([data-slot="toggle-group-item"]) {
+        @apply shrink-0 has-[>input:focus-visible]:z-10;
+    }
+
+    /* spacing 0: the items join into one segmented control. */
+    [data-slot="toggle-group"][data-spacing="0"] > [data-slot="toggle-group-item"] {
+        @apply rounded-none px-2 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5;
+    }
+
+    [data-slot="toggle-group"][data-spacing="0"][data-orientation="horizontal"] > [data-slot="toggle-group-item"] {
+        &:first-child { @apply rounded-l-lg; }
+        &:last-child { @apply rounded-r-lg; }
+        &[data-variant="outline"]:not(:first-child) { @apply border-l-0; }
+    }
+
+    [data-slot="toggle-group"][data-spacing="0"][data-orientation="vertical"] > [data-slot="toggle-group-item"] {
+        &:first-child { @apply rounded-t-lg; }
+        &:last-child { @apply rounded-b-lg; }
+        &[data-variant="outline"]:not(:first-child) { @apply border-t-0; }
+    }
+}

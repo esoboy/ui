@@ -1,0 +1,19 @@
+/*
+ * QR Code: not in shadcn. Dark modules on a light ground in either theme, as scanners
+ * read them; the padding is the quiet zone and the ring frames it as Card's does.
+ * --qr-code-color and --qr-code-background change the two colors.
+ */
+@layer components {
+    :where([data-slot="qr-code"]) {
+        @apply relative inline-flex shrink-0 items-center justify-center rounded-xl p-3 ring-1 ring-foreground/10;
+        --qr-code-color: oklch(0.145 0 0);
+        --qr-code-background: oklch(1 0 0);
+        color: var(--qr-code-color);
+        background-color: var(--qr-code-background);
+    }
+
+    :where([data-slot="qr-code-icon"]) {
+        @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md object-contain p-1;
+        background-color: var(--qr-code-background);
+    }
+}

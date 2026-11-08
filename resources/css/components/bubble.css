@@ -1,0 +1,117 @@
+/*
+ * Bubble: the variant colours its content; content can be a link or button.
+ */
+@layer components {
+    :where([data-slot="bubble-group"]) {
+        @apply flex min-w-0 flex-col gap-2;
+    }
+
+    :where([data-slot="bubble"]) {
+        @apply relative flex w-fit max-w-[80%] min-w-0 flex-col gap-1;
+    }
+
+    :where([data-slot="message"][data-align="end"] [data-slot="bubble"], [data-slot="bubble"][data-align="end"]) {
+        @apply self-end;
+    }
+
+    :where([data-slot="bubble-content"]) {
+        @apply w-fit max-w-full min-w-0 overflow-hidden rounded-xl border border-transparent px-3 py-2 text-sm leading-relaxed wrap-break-word;
+    }
+
+    :where([data-slot="bubble"][data-align="end"] > [data-slot="bubble-content"]) {
+        @apply self-end;
+    }
+
+    :where(button[data-slot="bubble-content"]) {
+        @apply text-left;
+    }
+
+    :where(:is(button, a)[data-slot="bubble-content"]) {
+        @apply transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50;
+    }
+
+    :where([data-slot="bubble"][data-variant="default"] > [data-slot="bubble-content"]) {
+        @apply bg-primary text-primary-foreground;
+    }
+
+    :where([data-slot="bubble"][data-variant="default"] > :is(button, a)[data-slot="bubble-content"]:hover) {
+        @apply bg-primary/80;
+    }
+
+    :where([data-slot="bubble"][data-variant="secondary"] > [data-slot="bubble-content"]) {
+        @apply bg-secondary text-secondary-foreground;
+    }
+
+    :where([data-slot="bubble"][data-variant="secondary"] > :is(button, a)[data-slot="bubble-content"]:hover) {
+        background-color: color-mix(in oklch, var(--color-secondary), var(--color-foreground) 5%);
+    }
+
+    :where([data-slot="bubble"][data-variant="muted"] > [data-slot="bubble-content"]) {
+        @apply bg-muted;
+    }
+
+    :where([data-slot="bubble"][data-variant="muted"] > :is(button, a)[data-slot="bubble-content"]:hover) {
+        background-color: color-mix(in oklch, var(--color-muted), var(--color-foreground) 5%);
+    }
+
+    :where([data-slot="bubble"][data-variant="tinted"] > [data-slot="bubble-content"]) {
+        @apply text-foreground;
+        background-color: light-dark(oklch(from var(--color-primary) 0.93 calc(c * 0.4) h), oklch(from var(--color-primary) 0.3 calc(c * 0.4) h));
+    }
+
+    :where([data-slot="bubble"][data-variant="tinted"] > :is(button, a)[data-slot="bubble-content"]:hover) {
+        background-color: light-dark(oklch(from var(--color-primary) 0.88 calc(c * 0.5) h), oklch(from var(--color-primary) 0.35 calc(c * 0.5) h));
+    }
+
+    :where([data-slot="bubble"][data-variant="outline"] > [data-slot="bubble-content"]) {
+        @apply border-border bg-background;
+    }
+
+    :where([data-slot="bubble"][data-variant="outline"] > :is(button, a)[data-slot="bubble-content"]:hover) {
+        @apply text-foreground;
+        background-color: light-dark(var(--color-muted), color-mix(in oklab, var(--color-input) 30%, transparent));
+    }
+
+    :where([data-slot="bubble"][data-variant="ghost"]) {
+        @apply max-w-full border-none;
+    }
+
+    :where([data-slot="bubble"][data-variant="ghost"] > [data-slot="bubble-content"]) {
+        @apply rounded-none bg-transparent p-0;
+    }
+
+    :where([data-slot="bubble"][data-variant="ghost"] > :is(button, a)[data-slot="bubble-content"]:hover) {
+        @apply text-foreground;
+        background-color: light-dark(var(--color-muted), color-mix(in oklab, var(--color-muted) 50%, transparent));
+    }
+
+    /* shadcn's destructive look, shared by the library's success, warning and info. */
+    :where([data-slot="bubble"]:is([data-variant="destructive"], [data-variant="success"], [data-variant="warning"], [data-variant="info"]) > [data-slot="bubble-content"]) {
+        color: var(--tone);
+        background-color: light-dark(color-mix(in oklab, var(--tone) 10%, transparent), color-mix(in oklab, var(--tone) 20%, transparent));
+    }
+
+    :where([data-slot="bubble"]:is([data-variant="destructive"], [data-variant="success"], [data-variant="warning"], [data-variant="info"]) > :is(button, a)[data-slot="bubble-content"]:hover) {
+        background-color: light-dark(color-mix(in oklab, var(--tone) 20%, transparent), color-mix(in oklab, var(--tone) 30%, transparent));
+    }
+
+    :where([data-slot="bubble-reactions"]) {
+        @apply absolute z-10 flex w-fit shrink-0 items-center justify-center gap-1 rounded-full bg-muted px-1.5 py-0.5 text-sm ring-3 ring-card has-[button]:p-0;
+    }
+
+    :where([data-slot="bubble-reactions"][data-side="top"]) {
+        @apply top-0 -translate-y-3/4;
+    }
+
+    :where([data-slot="bubble-reactions"][data-side="bottom"]) {
+        @apply bottom-0 translate-y-3/4;
+    }
+
+    :where([data-slot="bubble-reactions"][data-align="start"]) {
+        @apply left-3;
+    }
+
+    :where([data-slot="bubble-reactions"][data-align="end"]) {
+        @apply right-3;
+    }
+}

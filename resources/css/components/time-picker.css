@@ -1,0 +1,109 @@
+@layer components {
+    :where([data-slot="time-picker"]) {
+        @apply contents;
+    }
+
+    [data-slot="time-picker"] :where([data-time-picker-trigger]) {
+        @apply w-full min-w-32 justify-between text-left font-normal tabular-nums;
+    }
+
+    :where([data-slot="time-picker-value"]) {
+        @apply min-w-0 flex-1 truncate;
+    }
+
+    [data-slot="time-picker"] :where([data-time-picker-content]) {
+        @apply w-60 max-w-[calc(100vw-1rem)] gap-0 overflow-auto overscroll-contain p-0;
+        max-height: min(85dvh, calc(100% - 0.5rem));
+    }
+
+    :where([data-slot="time-options"]) {
+        @apply flex flex-col gap-2;
+    }
+
+    [data-time-picker-content] > :where([data-slot="time-options"]) {
+        @apply p-2.5;
+    }
+
+    [data-slot="time-options"] :where([data-slot="tabs-list"]) {
+        @apply h-12 w-full;
+    }
+
+    [data-slot="time-options"] :where([data-slot="tabs-trigger"]) {
+        @apply flex-col gap-0.5 leading-none tabular-nums;
+
+        & > small {
+            @apply text-xs font-normal text-muted-foreground;
+        }
+
+        & > span {
+            @apply text-base font-semibold;
+        }
+    }
+
+    :where([data-slot="time-options-caption"]) {
+        @apply grid h-7 grid-cols-[auto_1fr_auto] items-center gap-1 text-center text-sm font-medium whitespace-nowrap tabular-nums select-none;
+
+        & [data-time-hour-label] > span {
+            @apply text-muted-foreground;
+        }
+
+        & > [data-time-hour-toggle] {
+            @apply h-7 min-w-0 justify-center gap-1 bg-muted/60 px-1 text-[13px];
+
+            & svg {
+                @apply size-3 shrink-0 text-muted-foreground;
+            }
+        }
+    }
+
+    :where([data-slot="time-options"][data-choosing-hour]) {
+        & :is([data-time-previous], [data-time-next]) {
+            @apply invisible;
+        }
+
+        & [data-time-hour-toggle] svg {
+            @apply rotate-180;
+        }
+    }
+
+    :where([data-slot="time-options-grid"]) {
+        @apply relative grid max-h-36 grid-cols-6 gap-1 overflow-y-auto overscroll-contain rounded-md p-0.5;
+        scrollbar-width: thin;
+
+        &[data-columns="3"] {
+            @apply grid-cols-3;
+        }
+
+        &[data-columns="2"] {
+            @apply grid-cols-2;
+        }
+
+        &[data-time-hour-grid] {
+            @apply max-h-none grid-cols-4;
+
+            & > button {
+                @apply text-[13px];
+            }
+        }
+
+        &[data-combined] {
+            @apply max-h-40 gap-1.5;
+
+            & > button {
+                @apply border border-border bg-background hover:bg-accent;
+            }
+
+            & > button[aria-pressed="true"] {
+                @apply border-primary bg-primary text-primary-foreground hover:bg-primary;
+            }
+        }
+    }
+
+    :where(button[data-time-option]) {
+        @apply h-8 cursor-pointer rounded-md text-sm tabular-nums hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring;
+
+        &[aria-pressed="true"] {
+            @apply bg-primary text-primary-foreground;
+        }
+    }
+}
