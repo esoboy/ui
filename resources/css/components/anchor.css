@@ -1,0 +1,26 @@
+@layer components {
+    /* shadcn's docs "On This Page". Leave room for a fixed header with scroll-padding-top on html. */
+    :where([data-slot="anchor"]) {
+        @apply flex flex-col gap-2 text-sm;
+    }
+
+    :where([data-slot="anchor-title"]) {
+        @apply h-6 text-xs font-medium text-muted-foreground;
+    }
+
+    :where([data-slot="anchor-item"]) {
+        @apply text-[0.8rem] text-muted-foreground no-underline transition-colors hover:text-foreground;
+    }
+
+    :where([data-slot="anchor-item"][aria-current]) {
+        @apply font-medium text-foreground;
+    }
+
+    :where([data-slot="anchor-item"][data-level="2"]) {
+        @apply ps-4;
+    }
+
+    :where([data-slot="anchor-item"][data-level="3"]) {
+        @apply ps-6;
+    }
+}

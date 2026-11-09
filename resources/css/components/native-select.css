@@ -1,0 +1,29 @@
+@layer components {
+    /* As in shadcn, class lands on the wrapper and the <select> fills it; the box itself
+       shares its look with Input (see input.css). */
+    :where([data-slot="native-select-wrapper"]) {
+        @apply relative w-fit has-[select:disabled]:opacity-50;
+    }
+
+    :where([data-slot="native-select"]) {
+        @apply h-8 appearance-none py-1 pr-8 pl-2.5 text-sm select-none;
+        @apply selection:bg-primary selection:text-primary-foreground disabled:pointer-events-none;
+
+        &:hover:not(:disabled) {
+            background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 50%, transparent));
+        }
+    }
+
+    :where([data-slot="native-select"][data-size="sm"]) {
+        @apply h-7 rounded-[min(var(--radius-md),10px)] py-0.5;
+    }
+
+    :where([data-slot="native-select-icon"]) {
+        @apply pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground select-none;
+    }
+
+    :where([data-slot="native-select-option"], [data-slot="native-select-optgroup"]) {
+        background-color: Canvas;
+        color: CanvasText;
+    }
+}
