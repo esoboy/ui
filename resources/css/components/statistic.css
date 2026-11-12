@@ -1,0 +1,18 @@
+@layer components {
+    /* Laid out like shadcn's dashboard cards: a Badge child (the trend) sits at the top end, as Card Action does. */
+    :where([data-slot="statistic"]) {
+        @apply grid auto-rows-min items-start gap-1 has-[>[data-slot=badge]]:grid-cols-[1fr_auto];
+    }
+
+    :where([data-slot="statistic"] > [data-slot="badge"]) {
+        @apply col-start-2 row-span-2 row-start-1 self-start justify-self-end;
+    }
+
+    :where([data-slot="statistic-label"]) {
+        @apply text-sm text-muted-foreground;
+    }
+
+    :where([data-slot="statistic-value"]) {
+        @apply font-heading text-2xl leading-snug font-semibold tabular-nums;
+    }
+}

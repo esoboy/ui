@@ -1,0 +1,59 @@
+@layer components {
+    :where([data-slot="progress"]) {
+        @apply flex flex-wrap gap-3;
+    }
+
+    :where([data-slot="progress-track"]) {
+        @apply relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted;
+    }
+
+    :where([data-slot="progress-indicator"]) {
+        @apply h-full bg-primary transition-all;
+    }
+
+    :where([data-slot="progress-label"]) {
+        @apply text-sm font-medium;
+    }
+
+    :where([data-slot="progress-value"]) {
+        @apply ml-auto text-sm text-muted-foreground tabular-nums;
+    }
+
+    /* The rings are sized in CSS, so the stroke stays as thick as the bar (h-1) at any size. */
+    :where([data-slot="progress"][data-variant="circle"]) {
+        @apply relative inline-grid size-16 shrink-0 place-items-center *:col-start-1 *:row-start-1;
+        --progress-stroke: calc(var(--spacing) * 1);
+    }
+
+    :where([data-slot="progress"][data-variant="circle"] > [data-slot="progress-value"]) {
+        @apply ml-0 font-medium text-foreground;
+    }
+
+    :where([data-slot="progress-circle"]) {
+        @apply size-full -rotate-90 fill-none;
+        stroke-width: var(--progress-stroke);
+
+        & > circle {
+            cx: 50%;
+            cy: 50%;
+            r: calc(50% - var(--progress-stroke) / 2);
+        }
+    }
+
+    :where([data-slot="progress-circle-track"]) {
+        @apply stroke-muted;
+    }
+
+    :where([data-slot="progress-circle-indicator"]) {
+        @apply stroke-primary transition-[stroke-dashoffset];
+        stroke-dasharray: 100;
+    }
+
+    :where([data-slot="progress"][data-indeterminate] [data-slot="progress-circle"]) {
+        @apply animate-spin;
+    }
+
+    :where([data-slot="progress"][data-indeterminate] [data-slot="progress-circle-indicator"]) {
+        stroke-dashoffset: 75;
+    }
+}

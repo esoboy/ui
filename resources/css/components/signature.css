@@ -1,0 +1,36 @@
+/*
+ * Signature: a pad framed as shadcn's Textarea. The canvas draws in --signature-color
+ * (black, so a saved signature reads on paper) and dark mode shows it inverted, hue kept.
+ */
+@layer components {
+    :where([data-slot="signature"]) {
+        @apply relative block h-40 w-full min-w-0 overflow-hidden rounded-lg border border-input transition-colors select-none;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        &[data-disabled] {
+            @apply cursor-not-allowed opacity-50;
+            background-color: light-dark(color-mix(in oklab, var(--color-input) 50%, transparent), color-mix(in oklab, var(--color-input) 80%, transparent));
+        }
+    }
+
+    :where([data-slot="signature-canvas"]) {
+        @apply absolute inset-0 size-full cursor-crosshair touch-none;
+        color: var(--signature-color, black);
+
+        @variant dark {
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        :where([data-slot="signature"][data-disabled]) & {
+            @apply cursor-not-allowed;
+        }
+    }
+
+    :where([data-slot="signature-placeholder"]) {
+        @apply pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground;
+    }
+
+    :where([data-slot="signature"] > [data-signature-clear]) {
+        @apply absolute top-1.5 right-1.5;
+    }
+}

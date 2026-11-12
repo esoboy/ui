@@ -1,0 +1,190 @@
+/*
+ * Dialog, Alert Dialog and Sheet are native <dialog> elements in the top layer.
+ * Entry and exit animate with @starting-style; display/overlay transition discretely.
+ * Display is only set while open, so a closed <dialog> keeps the browser's display: none.
+ * <eso-dialog> and <eso-popover>, around one bound with wire:model, take no box.
+ */
+@layer components {
+    :where(eso-dialog, eso-popover) {
+        display: contents;
+    }
+
+    :where([data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"]) {
+        @apply max-h-none max-w-none border-0 bg-popover text-popover-foreground outline-none;
+        transition-property: opacity, scale, translate, display, overlay;
+        transition-behavior: allow-discrete;
+
+        &::backdrop {
+            background-color: transparent;
+            transition-property: background-color, backdrop-filter, display, overlay;
+            transition-duration: inherit;
+            transition-behavior: allow-discrete;
+        }
+
+        &[open]::backdrop {
+            @apply bg-black/10 backdrop-blur-xs;
+        }
+    }
+
+    @starting-style {
+        :where([data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"])[open]::backdrop {
+            background-color: transparent;
+            backdrop-filter: none;
+        }
+    }
+
+    :where(html:has(dialog:modal)) {
+        @apply overflow-hidden;
+    }
+
+    /* The close button in the corner is a ghost icon Button. */
+    :where([data-slot="dialog-content"]) > [data-slot="button"][command="close"] {
+        @apply absolute top-2 right-2;
+    }
+
+    :where([data-slot="sheet-content"]) > [data-slot="button"][command="close"] {
+        @apply absolute top-3 right-3;
+    }
+
+    /* Dialog and Alert Dialog: centered, fade and zoom. */
+    :where([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+        @apply inset-0 m-auto h-fit w-full max-w-[calc(100%-2rem)] gap-4 rounded-xl p-4 opacity-0 ring-1 ring-foreground/10 duration-100;
+        scale: 0.95;
+
+        &[open] {
+            @apply grid opacity-100;
+            scale: 1;
+
+            @starting-style {
+                @apply opacity-0;
+                scale: 0.95;
+            }
+        }
+    }
+
+    :where([data-slot="dialog-content"]) {
+        @apply text-sm sm:max-w-sm;
+    }
+
+    :where([data-slot="alert-dialog-content"]) {
+        @apply max-w-xs;
+    }
+
+    :where([data-slot="alert-dialog-content"][data-size="default"]) {
+        @apply sm:max-w-sm;
+    }
+
+    :where([data-slot="dialog-header"]) {
+        @apply flex flex-col gap-2;
+    }
+
+    :where([data-slot="dialog-footer"], [data-slot="alert-dialog-footer"]) {
+        @apply -mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end;
+    }
+
+    :where([data-slot="dialog-title"]) {
+        @apply font-heading text-base leading-none font-medium;
+    }
+
+    :where([data-slot="dialog-description"], [data-slot="alert-dialog-description"]) {
+        @apply text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground;
+    }
+
+    /* Alert Dialog */
+    :where([data-slot="alert-dialog-header"]) {
+        @apply grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center;
+
+        &:has([data-slot="alert-dialog-media"]) {
+            @apply grid-rows-[auto_auto_1fr] gap-x-4;
+        }
+    }
+
+    :where([data-slot="alert-dialog-content"][data-size="default"] [data-slot="alert-dialog-header"]) {
+        @apply sm:place-items-start sm:text-left;
+
+        &:has([data-slot="alert-dialog-media"]) {
+            @apply sm:grid-rows-[auto_1fr];
+        }
+    }
+
+    :where([data-slot="alert-dialog-content"][data-size="sm"] [data-slot="alert-dialog-footer"]) {
+        @apply grid grid-cols-2;
+    }
+
+    :where([data-slot="alert-dialog-title"]) {
+        @apply font-heading text-base font-medium;
+    }
+
+    :where([data-slot="alert-dialog-content"][data-size="default"]:has([data-slot="alert-dialog-media"]) [data-slot="alert-dialog-title"]) {
+        @apply sm:col-start-2;
+    }
+
+    :where([data-slot="alert-dialog-description"]) {
+        @apply text-balance md:text-pretty;
+    }
+
+    :where([data-slot="alert-dialog-media"]) {
+        @apply mb-2 inline-flex size-10 items-center justify-center rounded-md bg-muted *:[svg:not([class*='size-'])]:size-6;
+    }
+
+    :where([data-slot="alert-dialog-content"][data-size="default"] [data-slot="alert-dialog-media"]) {
+        @apply sm:row-span-2;
+    }
+
+    /* Sheet: pinned to a side, fades and slides 2.5rem in. */
+    :where([data-slot="sheet-content"]) {
+        @apply m-0 flex-col gap-4 bg-clip-padding p-0 text-sm opacity-0 shadow-lg duration-200 ease-in-out;
+
+        &[open] {
+            @apply flex opacity-100;
+            translate: 0 0;
+
+            @starting-style {
+                @apply opacity-0;
+            }
+        }
+    }
+
+    :where([data-slot="sheet-content"][data-side="right"]) {
+        @apply inset-y-0 right-0 left-auto h-full w-3/4 border-l sm:max-w-sm;
+        translate: 2.5rem 0;
+    }
+
+    :where([data-slot="sheet-content"][data-side="left"]) {
+        @apply inset-y-0 right-auto left-0 h-full w-3/4 border-r sm:max-w-sm;
+        translate: -2.5rem 0;
+    }
+
+    :where([data-slot="sheet-content"][data-side="top"]) {
+        @apply inset-x-0 top-0 bottom-auto h-auto w-full border-b;
+        translate: 0 -2.5rem;
+    }
+
+    :where([data-slot="sheet-content"][data-side="bottom"]) {
+        @apply inset-x-0 top-auto bottom-0 h-auto w-full border-t;
+        translate: 0 2.5rem;
+    }
+
+    @starting-style {
+        :where([data-slot="sheet-content"][data-side="right"])[open] { translate: 2.5rem 0; }
+        :where([data-slot="sheet-content"][data-side="left"])[open] { translate: -2.5rem 0; }
+        :where([data-slot="sheet-content"][data-side="top"])[open] { translate: 0 -2.5rem; }
+        :where([data-slot="sheet-content"][data-side="bottom"])[open] { translate: 0 2.5rem; }
+    }
+
+    :where([data-slot="sheet-header"]) {
+        @apply flex flex-col gap-0.5 p-4;
+    }
+
+    :where([data-slot="sheet-footer"]) {
+        @apply mt-auto flex flex-col gap-2 p-4;
+    }
+
+    :where([data-slot="sheet-title"]) {
+        @apply font-heading text-base font-medium text-foreground;
+    }
+
+    :where([data-slot="sheet-description"]) {
+        @apply text-sm text-muted-foreground;
+    }
+}

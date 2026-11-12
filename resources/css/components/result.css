@@ -1,0 +1,44 @@
+@layer components {
+    /* Empty's layout, with a larger title and a status-tinted media. */
+    :where([data-slot="result"]) {
+        @apply flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance;
+    }
+
+    :where([data-slot="result"][data-status="success"]) { --tone: var(--color-success); }
+    :where([data-slot="result"][data-status="error"]) { --tone: var(--color-destructive); }
+    :where([data-slot="result"][data-status="warning"]) { --tone: var(--color-warning); }
+    :where([data-slot="result"][data-status="info"]) { --tone: var(--color-info); }
+
+    :where([data-slot="result-header"]) {
+        @apply flex max-w-sm flex-col items-center gap-2;
+    }
+
+    :where([data-slot="result-media"]) {
+        @apply mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0;
+    }
+
+    :where([data-slot="result-media"][data-variant="icon"]) {
+        @apply size-12 rounded-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-6;
+    }
+
+    :where([data-slot="result"]:is([data-status="success"], [data-status="error"], [data-status="warning"], [data-status="info"]) [data-slot="result-media"][data-variant="icon"]) {
+        color: var(--tone);
+        background-color: light-dark(color-mix(in oklab, var(--tone) 10%, transparent), color-mix(in oklab, var(--tone) 20%, transparent));
+    }
+
+    :where([data-slot="result-media"][data-variant="code"]) {
+        @apply mb-0 font-heading text-7xl font-semibold tracking-tighter tabular-nums;
+    }
+
+    :where([data-slot="result-title"]) {
+        @apply font-heading text-lg font-medium tracking-tight;
+    }
+
+    :where([data-slot="result-description"]) {
+        @apply text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary;
+    }
+
+    :where([data-slot="result-content"]) {
+        @apply flex w-full max-w-sm min-w-0 flex-col items-center gap-2.5 text-sm text-balance;
+    }
+}

@@ -1,0 +1,77 @@
+/*
+ * Transfer: not in shadcn. Two Card-like lists of Checkboxes with Command's softer
+ * search box, items and empty text, and outline arrow Buttons between them.
+ */
+@layer components {
+    :where([data-slot="transfer"]) {
+        @apply flex items-center gap-3;
+    }
+
+    :where([data-slot="transfer-list"]) {
+        @apply flex h-72 w-56 flex-col overflow-hidden rounded-xl bg-card text-sm text-card-foreground ring-1 ring-foreground/10;
+    }
+
+    :where([data-slot="transfer"][aria-invalid="true"] [data-slot="transfer-list"]) {
+        @apply ring-destructive;
+    }
+
+    :where([data-slot="transfer-header"]) {
+        @apply flex h-10 shrink-0 items-center gap-2 border-b px-3;
+    }
+
+    :where([data-slot="transfer-title"]) {
+        @apply truncate font-medium;
+    }
+
+    :where([data-slot="transfer-count"]) {
+        @apply ms-auto shrink-0 text-xs text-muted-foreground tabular-nums;
+    }
+
+    :where([data-slot="transfer-search"]) {
+        @apply p-1 pb-0;
+    }
+
+    [data-slot="transfer-search"] > [data-slot="input-group"] {
+        @apply h-8 rounded-lg border-input/30 bg-input/30 shadow-none;
+
+        & > [data-slot="input-group-addon"] {
+            @apply pl-2;
+        }
+
+        & svg {
+            @apply size-4 shrink-0 opacity-50;
+        }
+    }
+
+    :where([data-slot="transfer-items"]) {
+        @apply min-h-0 flex-1 scroll-py-1 overflow-y-auto p-1;
+    }
+
+    :where([data-slot="transfer-item"]) {
+        @apply flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 select-none hover:bg-accent hover:text-accent-foreground;
+
+        &[hidden] {
+            @apply hidden;
+        }
+
+        &:has(:disabled) {
+            @apply pointer-events-none opacity-50;
+        }
+    }
+
+    :where([data-slot="transfer-empty"]) {
+        @apply hidden py-6 text-center;
+    }
+
+    :where([data-slot="transfer-list"][data-empty] [data-slot="transfer-items"]) {
+        @apply hidden;
+    }
+
+    :where([data-slot="transfer-list"][data-empty] [data-slot="transfer-empty"]) {
+        @apply block;
+    }
+
+    :where([data-slot="transfer-actions"]) {
+        @apply flex flex-col gap-2;
+    }
+}
