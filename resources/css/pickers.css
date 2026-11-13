@@ -1,0 +1,15 @@
+/* pickers: public style entry. Dependencies and template sources are included. */
+@import './overlays.css';
+@import './components/calendar.css';
+@import './components/combobox.css';
+@import './components/date-picker.css';
+@import './components/input-otp.css';
+@import './components/select.css';
+@import './components/slider.css';
+@import './components/time-picker.css';
+@import './components/tabs.css';
+@import './base.css';
+
+@source '../views/components/{calendar,combobox,date-picker,input-otp,select,slider,time-picker}{.blade.php,/**/*.blade.php}';
+@source '../views/livewire/{calendar,calendar-grid,combobox,date-picker,date-picker-periods,input-otp,select,time-picker,time-grid,time-options,form-value}.blade.php';
+@source '../views/components/tabs/**/*.blade.php';

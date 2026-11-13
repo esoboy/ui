@@ -1,0 +1,33 @@
+@layer components {
+    :where([data-slot="empty"]) {
+        @apply flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance;
+    }
+
+    :where([data-slot="empty-header"]) {
+        @apply flex max-w-sm flex-col items-center gap-2;
+    }
+
+    :where([data-slot="empty-icon"]) {
+        @apply mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0;
+    }
+
+    :where([data-slot="empty-icon"][data-variant="default"]) {
+        @apply bg-transparent;
+    }
+
+    :where([data-slot="empty-icon"][data-variant="icon"]) {
+        @apply size-8 rounded-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-slot="empty-title"]) {
+        @apply font-heading text-sm font-medium tracking-tight;
+    }
+
+    :where([data-slot="empty-description"]) {
+        @apply text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary;
+    }
+
+    :where([data-slot="empty-content"]) {
+        @apply flex w-full max-w-sm min-w-0 flex-col items-center gap-2.5 text-sm text-balance;
+    }
+}

@@ -1,0 +1,41 @@
+@layer components {
+    :where([data-slot="radio-group"]) {
+        @apply grid w-full gap-2;
+    }
+
+    :where([data-slot="radio-group-item"]) {
+        @apply relative flex aspect-square size-4 shrink-0 appearance-none items-center justify-center rounded-full border border-input outline-none;
+        @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+
+        /* A larger hit area, as in shadcn. */
+        &::after {
+            @apply absolute -inset-x-3 -inset-y-2;
+            content: "";
+        }
+
+        &::before {
+            @apply size-2 rounded-full bg-primary-foreground;
+            content: "";
+            visibility: hidden;
+        }
+
+        &:checked {
+            @apply border-primary bg-primary text-primary-foreground;
+
+            &::before {
+                visibility: visible;
+            }
+        }
+    }
+
+    :where([data-slot="radio-group-item"][aria-invalid="true"], [data-slot="radio-group"][aria-invalid="true"] [data-slot="radio-group-item"]) {
+        @apply ring-3;
+        border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+        --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+
+        &:checked {
+            @apply border-primary;
+        }
+    }
+}

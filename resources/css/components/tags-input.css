@@ -1,0 +1,12 @@
+/*
+ * Tags Input: not in shadcn, the multiple Combobox's chips and input (combobox.css).
+ */
+@layer components {
+    :where([data-slot="tags-input"]) {
+        @apply w-full cursor-text;
+
+        &[data-disabled] {
+            @apply pointer-events-none opacity-50;
+        }
+    }
+}

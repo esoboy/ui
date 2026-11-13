@@ -1,0 +1,34 @@
+/*
+ * Description List: not in shadcn, drawn with its tokens: terms over their details in a grid, or beside them in rows.
+ */
+@layer components {
+    :where([data-slot="description-list"]) {
+        @apply grid gap-x-6 gap-y-4 text-sm max-sm:grid-cols-1;
+        grid-template-columns: repeat(var(--columns, 1), minmax(0, 1fr));
+    }
+
+    :where([data-slot="description-list-item"]) {
+        @apply flex min-w-0 flex-col gap-1;
+        grid-column: span var(--span, 1);
+    }
+
+    :where([data-slot="description-list"][data-orientation="horizontal"]) {
+        @apply gap-y-0 divide-y;
+
+        & > [data-slot="description-list-item"] {
+            @apply grid grid-cols-3 gap-4 py-3 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)];
+        }
+
+        & [data-slot="description-list-details"] {
+            @apply col-span-2 sm:col-span-1;
+        }
+    }
+
+    :where([data-slot="description-list-term"]) {
+        @apply text-muted-foreground;
+    }
+
+    :where([data-slot="description-list-details"]) {
+        @apply m-0 min-w-0 wrap-break-word text-foreground;
+    }
+}

@@ -1,0 +1,124 @@
+/*
+ * Popover, menu, Tooltip, Hover Card, Select and Combobox content: native popovers
+ * in the top layer, placed against their trigger with CSS anchor positioning.
+ * data-side picks the side (flipping when it doesn't fit), data-align the edge,
+ * --side-offset the gap, --align-offset a shift along that edge (Base UI's alignOffset:
+ * toward the inside for start and end, right or down for center). Their trigger is
+ * their anchor without a name: the invoker, or the source they were shown for. Select
+ * over its trigger is placed by its script instead.
+ */
+@layer components {
+    :where([data-slot="popover-content"], [data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="tooltip-content"], [data-slot="hover-card-content"], [data-slot="context-menu-content"], [data-slot="menubar-content"], [data-slot="navigation-menu-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="cascader-content"], [data-slot="tree-select-content"], [data-slot="mentions-content"], [data-slot="tour-content"]) {
+        position: fixed;
+        inset: auto;
+        margin: 0;
+        opacity: 0;
+        scale: 0.95;
+        transition-property: opacity, scale, translate, display, overlay;
+        transition-duration: 100ms;
+        transition-behavior: allow-discrete;
+
+        &:popover-open {
+            opacity: 1;
+            scale: 1;
+
+            @starting-style {
+                opacity: 0;
+                scale: 0.95;
+            }
+        }
+
+        &[data-side="bottom"] {
+            margin-top: var(--side-offset);
+            position-area: bottom;
+            position-try-fallbacks: flip-block;
+            transform-origin: top;
+        }
+
+        &[data-side="top"] {
+            margin-bottom: var(--side-offset);
+            position-area: top;
+            position-try-fallbacks: flip-block;
+            transform-origin: bottom;
+        }
+
+        &:is([data-side="bottom"], [data-side="top"]) {
+            margin-left: var(--align-offset, 0px);
+            margin-right: calc(var(--align-offset, 0px) * -1);
+
+            &[data-align="start"] { margin-right: 0; }
+            &[data-align="end"] { margin-left: 0; margin-right: var(--align-offset, 0px); }
+        }
+
+        &:is([data-side="left"], [data-side="right"]) {
+            margin-top: var(--align-offset, 0px);
+            margin-bottom: calc(var(--align-offset, 0px) * -1);
+
+            &[data-align="start"] { margin-bottom: 0; }
+            &[data-align="end"] { margin-top: 0; margin-bottom: var(--align-offset, 0px); }
+        }
+
+        &[data-side="bottom"] {
+            &[data-align="start"] { position-area: bottom span-right; transform-origin: top left; }
+            &[data-align="end"] { position-area: bottom span-left; transform-origin: top right; }
+
+            /* Too wide for its side of the trigger: the other edge, then above. */
+            &:is([data-align="start"], [data-align="end"]) { position-try-fallbacks: flip-inline, flip-block, flip-block flip-inline; }
+
+            &:popover-open { @starting-style { translate: 0 -0.5rem; } }
+        }
+
+        &[data-side="top"] {
+            &[data-align="start"] { position-area: top span-right; transform-origin: bottom left; }
+            &[data-align="end"] { position-area: top span-left; transform-origin: bottom right; }
+
+            &:is([data-align="start"], [data-align="end"]) { position-try-fallbacks: flip-inline, flip-block, flip-block flip-inline; }
+
+            &:popover-open { @starting-style { translate: 0 0.5rem; } }
+        }
+
+        &[data-side="right"] {
+            margin-left: var(--side-offset);
+            position-area: right;
+            position-try-fallbacks: flip-inline;
+            transform-origin: left;
+
+            &[data-align="start"] { position-area: right span-bottom; transform-origin: top left; }
+            &[data-align="end"] { position-area: right span-top; transform-origin: bottom left; }
+
+            &:popover-open { @starting-style { translate: -0.5rem 0; } }
+        }
+
+        &[data-side="left"] {
+            margin-right: var(--side-offset);
+            position-area: left;
+            position-try-fallbacks: flip-inline;
+            transform-origin: right;
+
+            &[data-align="start"] { position-area: left span-bottom; transform-origin: top right; }
+            &[data-align="end"] { position-area: left span-top; transform-origin: bottom right; }
+
+            &:popover-open { @starting-style { translate: 0.5rem 0; } }
+        }
+    }
+
+    :where([data-slot="popover-content"]):popover-open {
+        @apply flex;
+    }
+
+    :where([data-slot="popover-content"]) {
+        @apply w-72 flex-col gap-2.5 rounded-lg border-0 bg-popover p-2.5 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-hidden;
+    }
+
+    :where([data-slot="popover-header"]) {
+        @apply flex flex-col gap-0.5 text-sm;
+    }
+
+    :where([data-slot="popover-title"]) {
+        @apply font-medium;
+    }
+
+    :where([data-slot="popover-description"]) {
+        @apply text-muted-foreground;
+    }
+}

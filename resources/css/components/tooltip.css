@@ -1,0 +1,26 @@
+@layer components {
+    :where([data-slot="tooltip-content"]) {
+        @apply w-fit max-w-xs items-center gap-1.5 overflow-visible rounded-md border-0 bg-foreground px-3 py-1.5 text-xs text-background;
+        transition-duration: 150ms;
+
+        &:popover-open {
+            @apply inline-flex;
+        }
+
+        /* The arrow: a rotated square tucked half under the edge facing the trigger. */
+        &::after {
+            @apply absolute size-2.5 rotate-45 rounded-[2px] bg-foreground;
+            content: "";
+        }
+
+        /* Tooltips stay on their side: the arrow can't follow a flip. */
+        &[data-side] {
+            position-try-fallbacks: none;
+        }
+
+        &[data-side="top"]::after { bottom: -0.625rem; left: 50%; translate: -50% calc(-50% - 2px); }
+        &[data-side="bottom"]::after { top: -0.625rem; left: 50%; translate: -50% calc(50% + 2px); }
+        &[data-side="right"]::after { left: -0.25rem; top: 50%; translate: 0 -50%; }
+        &[data-side="left"]::after { right: -0.25rem; top: 50%; translate: 0 -50%; }
+    }
+}

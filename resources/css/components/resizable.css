@@ -1,0 +1,22 @@
+@layer components {
+    :where([data-slot="resizable-panel-group"]) {
+        @apply flex h-full w-full aria-[orientation=vertical]:flex-col;
+    }
+
+    :where([data-slot="resizable-handle"]) {
+        @apply relative flex w-px shrink-0 cursor-col-resize items-center justify-center bg-border ring-offset-background touch-none;
+        @apply after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden;
+
+        & > div {
+            @apply z-10 flex h-6 w-1 shrink-0 rounded-lg bg-border;
+        }
+    }
+
+    :where([data-slot="resizable-handle"][aria-orientation="horizontal"]) {
+        @apply h-px w-full cursor-row-resize after:left-0 after:h-1 after:w-full after:translate-x-0 after:-translate-y-1/2;
+
+        & > div {
+            @apply rotate-90;
+        }
+    }
+}
