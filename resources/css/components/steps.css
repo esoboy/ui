@@ -1,0 +1,81 @@
+/*
+ * Steps: not in shadcn, drawn with its tokens: numbered circles joined by a line, filled once complete.
+ */
+@layer components {
+    :where([data-slot="steps"]) {
+        @apply flex w-full list-none;
+    }
+
+    :where([data-slot="steps"][data-orientation="horizontal"]) {
+        @apply items-start;
+    }
+
+    :where([data-slot="steps"][data-orientation="vertical"]) {
+        @apply flex-col;
+    }
+
+    :where([data-slot="steps-item"]) {
+        @apply relative flex min-w-0;
+    }
+
+    :where([data-orientation="horizontal"] > [data-slot="steps-item"]) {
+        @apply flex-1 flex-col items-center gap-2 text-center;
+
+        &:not(:last-child)::after {
+            @apply absolute top-4 right-[calc(-50%+1.25rem)] left-[calc(50%+1.25rem)] h-px bg-border content-[''];
+        }
+    }
+
+    :where([data-orientation="vertical"] > [data-slot="steps-item"]) {
+        @apply gap-3 pb-6 last:pb-0;
+
+        &:not(:last-child)::after {
+            @apply absolute top-10 bottom-2 left-4 w-px -translate-x-1/2 bg-border content-[''];
+        }
+    }
+
+    :where([data-slot="steps-item"][data-status="complete"])::after {
+        @apply bg-primary;
+    }
+
+    :where([data-slot="steps-indicator"]) {
+        @apply flex size-8 shrink-0 items-center justify-center rounded-full border bg-background text-sm font-medium text-muted-foreground tabular-nums transition-colors [&_svg:not([class*='size-'])]:size-4;
+    }
+
+    :where([data-status="current"] > [data-slot="steps-indicator"]) {
+        @apply border-primary text-foreground ring-3 ring-ring/20;
+    }
+
+    :where([data-status="complete"] > [data-slot="steps-indicator"]) {
+        @apply border-primary bg-primary text-primary-foreground;
+    }
+
+    :where([data-status="error"] > [data-slot="steps-indicator"]) {
+        @apply border-destructive text-destructive;
+        background-color: light-dark(color-mix(in oklab, var(--color-destructive) 10%, transparent), color-mix(in oklab, var(--color-destructive) 20%, transparent));
+    }
+
+    :where([data-slot="steps-content"]) {
+        @apply flex min-w-0 flex-col gap-0.5;
+    }
+
+    :where([data-orientation="vertical"] [data-slot="steps-content"]) {
+        @apply pt-1;
+    }
+
+    :where([data-slot="steps-title"]) {
+        @apply text-sm font-medium;
+    }
+
+    :where([data-status="upcoming"] [data-slot="steps-title"]) {
+        @apply text-muted-foreground;
+    }
+
+    :where([data-status="error"] [data-slot="steps-title"]) {
+        @apply text-destructive;
+    }
+
+    :where([data-slot="steps-description"]) {
+        @apply text-xs text-muted-foreground;
+    }
+}

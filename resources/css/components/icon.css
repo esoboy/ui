@@ -1,0 +1,5 @@
+@layer components {
+    :where([data-slot="icon"]) {
+        @apply size-4 shrink-0;
+    }
+}

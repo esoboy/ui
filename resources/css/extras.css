@@ -1,0 +1,47 @@
+/*
+ * esoboy/ui extras
+ *
+ * The components shadcn doesn't have (Ant Design's and others'): Editor, Tree, Tour,
+ * Cascader, … Import after ui.css, whose tokens and dark variant they use:
+ *   @import '../../vendor/esoboy/ui/resources/css/ui.css';
+ *   @import '../../vendor/esoboy/ui/resources/css/extras.css';
+ *
+ * Loaded after the components ui.css has, so their rules win ties with those.
+ */
+
+@import './components/anchor.css';
+@import './components/cascader.css';
+@import './components/color-picker.css';
+@import './components/countdown.css';
+@import './components/cropper.css';
+@import './components/description-list.css';
+@import './components/editor.css';
+@import './components/emoji-picker.css';
+@import './components/file-upload.css';
+@import './components/float-button.css';
+@import './components/image-preview.css';
+@import './components/mentions.css';
+@import './components/number-input.css';
+@import './components/password-input.css';
+@import './components/qr-code.css';
+@import './components/rating.css';
+@import './components/result.css';
+@import './components/signature.css';
+@import './components/statistic.css';
+@import './components/steps.css';
+@import './components/tags-input.css';
+@import './components/timeline.css';
+@import './components/tour.css';
+@import './components/transfer.css';
+@import './components/tree.css';
+@import './components/verification-code-button.css';
+@import './components/watermark.css';
+
+/* Invalid, as ui.css has its controls: after these components' own rules. */
+@layer components {
+    :where([data-slot="editor"], [data-slot="signature"])[aria-invalid="true"] {
+        @apply ring-3;
+        border-color: light-dark(var(--color-destructive), color-mix(in oklab, var(--color-destructive) 50%, transparent));
+        --tw-ring-color: light-dark(color-mix(in oklab, var(--color-destructive) 20%, transparent), color-mix(in oklab, var(--color-destructive) 40%, transparent));
+    }
+}

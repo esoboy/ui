@@ -1,0 +1,204 @@
+@layer components {
+    :where([data-slot="field-set"]) {
+        @apply flex flex-col gap-4;
+
+        &:has(> [data-slot="radio-group"], > [data-slot="checkbox-group"]) {
+            @apply gap-3;
+        }
+    }
+
+    :where([data-slot="field-legend"]) {
+        @apply mb-1.5 font-medium;
+    }
+
+    :where([data-slot="field-legend"][data-variant="legend"]) {
+        @apply text-base;
+    }
+
+    :where([data-slot="field-legend"][data-variant="label"]) {
+        @apply text-sm;
+    }
+
+    :where([data-slot="field-group"]) {
+        @apply @container/field-group flex w-full flex-col gap-5;
+
+        & > [data-slot="field-group"] {
+            @apply gap-4;
+        }
+    }
+
+    :where([data-slot="field"]) {
+        @apply flex w-full gap-2;
+
+        /* Auto-rendered errors always close the field, wherever the control sits. */
+        & > [data-slot="field-error"] {
+            order: 1;
+        }
+    }
+
+    :where([data-slot="field"][data-invalid="true"], [data-slot="field"]:has(> [aria-invalid="true"], > [data-slot="field-error"])) {
+        @apply text-destructive;
+    }
+
+    :where([data-slot="field"][data-orientation="vertical"]) {
+        @apply flex-col;
+
+        & > * {
+            @apply w-full;
+        }
+
+        & > .sr-only {
+            @apply w-auto;
+        }
+    }
+
+    :where([data-slot="field"][data-orientation="horizontal"]) {
+        @apply flex-row flex-wrap items-center;
+
+        & > :is([data-slot="field-label"], [data-slot="field-title"]) {
+            @apply flex-auto;
+        }
+
+        & > [data-slot="field-error"] {
+            @apply basis-full;
+        }
+
+        &:has(> [data-slot="field-content"]) {
+            @apply items-start;
+
+            & > :is([data-slot="checkbox"], [data-slot="radio-group-item"]) {
+                @apply mt-px;
+            }
+        }
+    }
+
+    :where([data-slot="field"][data-orientation="responsive"]) {
+        @apply flex-col;
+
+        & > * {
+            @apply w-full;
+        }
+
+        & > .sr-only {
+            @apply w-auto;
+        }
+
+        @container field-group (width >= 28rem) {
+            @apply flex-row flex-wrap items-center;
+
+            & > * {
+                @apply w-auto;
+            }
+
+            & > :is([data-slot="field-label"], [data-slot="field-title"]) {
+                @apply flex-auto;
+            }
+
+            & > [data-slot="field-error"] {
+                @apply basis-full;
+            }
+
+            &:has(> [data-slot="field-content"]) {
+                @apply items-start;
+
+                & > :is([data-slot="checkbox"], [data-slot="radio-group-item"]) {
+                    @apply mt-px;
+                }
+            }
+        }
+    }
+
+    :where([data-slot="field-content"]) {
+        @apply flex flex-1 flex-col gap-0.5 leading-snug;
+    }
+
+    :where([data-slot="field-label"]) {
+        @apply w-fit gap-2 leading-snug;
+
+        &:has(:checked) {
+            border-color: light-dark(color-mix(in oklab, var(--color-primary) 30%, transparent), color-mix(in oklab, var(--color-primary) 20%, transparent));
+            background-color: light-dark(color-mix(in oklab, var(--color-primary) 5%, transparent), color-mix(in oklab, var(--color-primary) 10%, transparent));
+        }
+
+        /* A label wrapping a whole field is a choice card. */
+        &:has(> [data-slot="field"]) {
+            @apply w-full flex-col rounded-lg border;
+
+            & > [data-slot="field"] {
+                @apply p-2.5;
+            }
+
+            &:not(:has(:disabled)):hover {
+                @apply bg-muted/50;
+            }
+
+            &:has(:focus-visible) {
+                @apply border-ring ring-3 ring-ring/50;
+
+                & :is([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="switch"]) {
+                    @apply ring-0;
+                }
+
+                & :is([data-slot="checkbox"], [data-slot="radio-group-item"]):not(:checked) {
+                    @apply border-input;
+                }
+
+                & :is([data-slot="checkbox"], [data-slot="radio-group-item"]):checked {
+                    @apply border-primary;
+                }
+            }
+        }
+    }
+
+    :where([data-slot="field-title"]) {
+        @apply flex w-fit items-center gap-2 text-sm font-medium;
+    }
+
+    :where([data-slot="field"][data-disabled="true"]) :where([data-slot="field-label"], [data-slot="field-title"]) {
+        @apply opacity-50;
+    }
+
+    :where([data-slot="field-description"]) {
+        @apply text-left text-sm leading-normal font-normal text-muted-foreground;
+
+        [data-variant="legend"] + & {
+            @apply -mt-1.5;
+        }
+
+        &:last-child {
+            @apply mt-0;
+        }
+
+        &:nth-last-child(2) {
+            @apply -mt-1;
+        }
+
+        & > a {
+            @apply underline underline-offset-4 hover:text-primary;
+        }
+    }
+
+    :where([data-slot="field"][data-orientation="horizontal"] [data-slot="field-description"]) {
+        @apply text-balance;
+    }
+
+    :where([data-slot="field-separator"]) {
+        @apply relative -my-2 h-5 text-sm;
+
+        & > [data-slot="separator"] {
+            @apply absolute inset-0 top-1/2;
+        }
+    }
+
+    :where([data-slot="field-separator-content"]) {
+        @apply relative mx-auto block w-fit bg-background px-2 text-muted-foreground;
+    }
+
+    :where([data-slot="field-error"]) {
+        @apply text-sm font-normal text-destructive;
+
+        & > ul {
+            @apply ml-4 flex list-disc flex-col gap-1;
+        }
+    }
+}

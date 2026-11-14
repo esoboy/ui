@@ -1,0 +1,26 @@
+@layer components {
+    :where([data-slot="input"], [data-slot="textarea"], [data-slot="native-select"]) {
+        @apply w-full min-w-0 rounded-lg border border-input bg-transparent transition-colors outline-none;
+        @apply placeholder:text-muted-foreground;
+        @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50;
+        @apply disabled:cursor-not-allowed disabled:opacity-50;
+        background-color: light-dark(transparent, color-mix(in oklab, var(--color-input) 30%, transparent));
+    }
+
+    :where([data-slot="input"], [data-slot="textarea"]) {
+        @apply text-base md:text-sm;
+
+        &:disabled {
+            background-color: light-dark(color-mix(in oklab, var(--color-input) 50%, transparent), color-mix(in oklab, var(--color-input) 80%, transparent));
+        }
+    }
+
+    :where([data-slot="input"]) {
+        @apply h-8 px-2.5 py-1 disabled:pointer-events-none;
+        @apply file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground;
+    }
+
+    :where([data-slot="textarea"]) {
+        @apply flex field-sizing-content min-h-16 px-2.5 py-2;
+    }
+}

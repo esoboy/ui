@@ -1,0 +1,10 @@
+/* data: public style entry. Dependencies and template sources are included. */
+@import './pickers.css';
+@import './components/data-table.css';
+@import './components/pagination.css';
+@import './components/table.css';
+@import './components/badge.css';
+@import './base.css';
+
+@source '../views/components/{data-table,pagination,table}{.blade.php,/**/*.blade.php}';
+@source '../views/components/badge/**/*.blade.php';

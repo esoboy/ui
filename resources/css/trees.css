@@ -1,0 +1,8 @@
+/* Tree, Tree Select, Cascader and Transfer, with their control dependencies. */
+@import './pickers.css';
+@import './components/tree.css';
+@import './components/cascader.css';
+@import './components/transfer.css';
+
+@source '../views/components/{tree,tree-select,cascader,transfer}{.blade.php,/**/*.blade.php}';
+@source '../views/livewire/{tree,tree-select,tree-content,tree-nodes,cascader,transfer}.blade.php';

@@ -1,0 +1,30 @@
+/* display: public style entry. Dependencies and template sources are included. */
+@import './controls.css';
+@import './components/alert.css';
+@import './components/aspect-ratio.css';
+@import './components/attachment.css';
+@import './components/avatar.css';
+@import './components/badge.css';
+@import './components/bubble.css';
+@import './components/card.css';
+@import './components/code-block.css';
+@import './components/empty.css';
+@import './components/item.css';
+@import './components/kbd.css';
+@import './components/marker.css';
+@import './components/message.css';
+@import './components/message-scroller.css';
+@import './components/progress.css';
+@import './components/questionnaire.css';
+@import './components/skeleton.css';
+@import './components/table.css';
+@import './components/toast.css';
+@import './components/trace.css';
+@import './components/typography.css';
+@import './components/collapsible.css';
+@import './base.css';
+
+@source '../views/components/{alert,aspect-ratio,attachment,avatar,badge,bubble,card,code-block,empty,item,kbd,marker,message,message-scroller,progress,questionnaire,skeleton,table,toast,trace,typography,heading,text,toaster}{.blade.php,/**/*.blade.php}';
+@source '../views/livewire/{toaster,questionnaire}.blade.php';
+@source '../views/partials/code-tokens.blade.php';
+@source '../views/components/collapsible/**/*.blade.php';
