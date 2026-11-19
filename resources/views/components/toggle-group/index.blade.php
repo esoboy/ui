@@ -1,24 +1,7 @@
-@blaze
-
-@props([
-    'multiple' => false,
-    'variant' => 'default',
-    'size' => 'default',
-    'spacing' => 2,
-    'orientation' => 'horizontal',
-    'value' => null,
-    'uiModel' => null,
-    'uiValue' => null,
-    'uiName' => null,
-])
-
-<div {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->merge([
-    'role' => 'group', ...(!$multiple ? ['x-data' => 'uiToggleGroup('.json_encode(\Esoboy\Ui\Support\Model::binding($attributes)).')', 'x-on:pointerdown' => 'remember($event)', 'x-on:keydown.space' => 'remember($event)', 'x-on:click' => 'clear($event)'] : []),
-    'data-slot' => 'toggle-group',
-    'data-variant' => $variant,
-    'data-size' => $size,
-    'data-spacing' => $spacing,
-    'data-orientation' => $orientation,
-    'data-deselectable' => ! $multiple,
-    'style' => '--gap: '.$spacing.';',
-]) }}>{{ $slot }}</div>
+@props(['type' => 'single', 'variant' => 'default', 'size' => 'default', 'disabled' => false, 'orientation' => 'horizontal', 'spacing' => 2])
+@php
+    if (!in_array($variant, ['default', 'outline'], true) || !in_array($size, ['sm', 'default', 'lg'], true)) throw new \InvalidArgumentException(__('ui::errors.toggle_style'));
+    if (!in_array($type, ['single', 'multiple'], true)) throw new \InvalidArgumentException(__('ui::errors.toggle_group_type'));
+    if (!in_array($orientation, ['horizontal', 'vertical'], true) || !is_numeric($spacing) || $spacing < 0 || $spacing > 12) throw new \InvalidArgumentException(__('ui::errors.toggle_group_layout'));
+@endphp
+<div data-orientation="{{ $orientation }}" data-spacing="{{ $spacing }}" data-size="{{ $size }}" style="--toggle-spacing: {{ $spacing * .25 }}rem" x-data="uiChoiceGroup" x-on:keydown="navigate($event)" role="{{ $type === 'single' ? 'radiogroup' : 'group' }}" {{ $attributes->class('group/toggle-group')->merge(['data-slot' => 'toggle-group']) }}>{{ $slot }}</div>

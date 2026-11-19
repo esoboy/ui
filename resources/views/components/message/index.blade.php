@@ -1,7 +1,3 @@
-@blaze(fold: true)
-
-@props([
-    'align' => 'start',
-])
-
-<div {{ $attributes->merge(['data-slot' => 'message', 'data-align' => $align]) }}>{{ $slot }}</div>
+@blaze
+@props(['align' => 'start'])
+<article {{ $attributes->class('group/message')->merge(['data-slot' => 'message', 'data-align' => $align]) }}>{{ $slot }}</article>

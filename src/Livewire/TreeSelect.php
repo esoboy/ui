@@ -2,18 +2,16 @@
 
 namespace Esoboy\Ui\Livewire;
 
-use Esoboy\Ui\Support\Options;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Reactive;
 
 class TreeSelect extends Tree
 {
+    #[Reactive]
+    public string $placeholder = '';
+
     public function render(): View
     {
-        $data = $this->viewData();
-
-        return view('ui::livewire.tree-select', [
-            ...$data,
-            'labels' => Options::find($data['nodes'], (array) $this->value),
-        ]);
+        return view('ui::livewire.tree-select');
     }
 }

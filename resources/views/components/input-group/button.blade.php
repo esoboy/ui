@@ -1,8 +1,2 @@
-@blaze
-
-@props([
-    'variant' => 'ghost',
-    'size' => 'xs',
-])
-
-<x-ui::button :variant="$variant" :attributes="$attributes->merge(['data-input-group-size' => $size])">{{ $slot }}</x-ui::button>
+@props(['variant' => 'ghost', 'size' => 'xs', 'type' => 'button'])
+<x-ui::button :variant="$variant" :type="$type" :data-size="$size" :attributes="$attributes->class('ui-input-group-button')">{{ $slot }}</x-ui::button>

@@ -1,7 +1,1 @@
-@blaze
-
-@aware([
-    'name',
-])
-
-<h2 {{ $attributes->merge(['id' => $name.'-title', 'data-slot' => 'sheet-title']) }}>{{ $slot }}</h2>
+<h2 {{ $attributes->merge(['data-slot' => 'sheet-title']) }}>{{ $slot }}</h2>

@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<button {{ $attributes->merge(['type' => 'button', 'data-slot' => 'sidebar-group-action', 'data-sidebar' => 'group-action']) }}>{{ $slot }}</button>
+<button type="button" {{ $attributes->merge(['data-slot' => 'sidebar-group-action']) }}>{{ $slot }}</button>

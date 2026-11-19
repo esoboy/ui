@@ -1,4 +1,1 @@
-@blaze
-
-{{-- The same item as Dropdown Menu's. --}}
-<x-ui::dropdown-menu.sub-trigger :attributes="$attributes">{{ $slot }}</x-ui::dropdown-menu.sub-trigger>
+<span data-ui-trigger data-ui-errors="{{ json_encode(__('ui::errors.trigger'), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR) }}" x-ui-trigger="'open'" {{ $attributes }}>{{ $slot }}</span>

@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<span {{ $attributes->merge(['data-slot' => 'trace-icon', 'aria-hidden' => 'true']) }}>{{ $slot }}</span>
+<span aria-hidden="true" {{ $attributes->merge(['data-slot' => 'trace-icon']) }}>{{ $slot }}</span>

@@ -1,44 +1,31 @@
-@php
-    $labelling = ['id', 'aria-label', 'aria-labelledby'];
-    $name = $attributes->get('name');
-    $disabled = $settings['disabled'] ?? false;
-    $validation = $settings['validation'] ?? [];
-    $triggerAttributes = $attributes->only($labelling)->merge($validation);
-    $popup = $this->getId().'-listbox';
-@endphp
-<eso-select {{ $attributes->whereDoesntStartWith('wire:model')->except(['name', ...$labelling])->merge([
-    'data-slot' => 'select',
-    'data-value' => is_scalar($value) ? (string) $value : false,
-    'data-name' => $name,
-    'x-data' => 'uiSelect',
-    'x-on:ui-model-changed.self' => 'notifyModel()',
-    'x-on:focusout' => '!$el.contains($event.relatedTarget) && blurModel()',
-    'x-on:click' => 'click($event)',
-    'x-on:keydown' => 'key($event)',
-    'x-on:beforetoggle.capture' => 'beforeToggle($event)',
-    'x-on:toggle.capture' => 'toggle($event)',
-    'x-on:scroll.document.capture.passive' => 'align($event)',
-    'x-on:resize.window' => 'align()',
-    ...$validation,
-]) }}>
-    @if ($choiceMarkup)
-        {!! \Esoboy\Ui\Support\ViewSlots::render($choiceMarkup->render($value, $triggerAttributes, $disabled, $popup), $this->getId(), $ownerId) !!}
-    @else
-        <x-ui::select.trigger :size="$settings['size'] ?? 'default'" :disabled="$disabled" :commandfor="$popup" :aria-controls="$popup" :data-placeholder="$label === null" :attributes="$triggerAttributes">
-            <x-ui::select.value :placeholder="$settings['placeholder'] ?? null" :label="$label" />
-        </x-ui::select.trigger>
-        <x-ui::select.content :id="$popup">
-            <x-ui::select.group>
-                @foreach ($choices as $option)
-                    <x-ui::select.item :value="$option['value']" :disabled="! empty($option['disabled'])" :aria-selected="$value !== null && (string) $value === $option['value'] ? 'true' : 'false'">{{ $option['label'] }}</x-ui::select.item>
-                @endforeach
-            </x-ui::select.group>
-        </x-ui::select.content>
-    @endif
-    <select hidden aria-hidden="true" tabindex="-1" @if ($name) name="{{ $name }}" @endif @disabled($disabled)>
-        <option value=""></option>
-        @foreach ($choices as $option)
-            <option value="{{ $option['value'] }}" @selected((string) $value === $option['value']) @disabled(! empty($option['disabled']))>{{ $option['label'] }}</option>
+<div data-slot="select" data-ui-overlay x-data="uiPopover"
+    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'aria-label', 'aria-labelledby']) }}>
+    <x-ui::select.trigger x-on:pointerdown.capture="$el.toggleAttribute('data-touch', $event.pointerType === 'touch')" x-on:keydown.capture="$el.removeAttribute('data-touch')">
+        <x-ui::button variant="outline" :size="$size" :disabled="$disabled" :id="$attributes->get('id')" :class="$attributes->get('class')" {{ $attributes->whereStartsWith('aria-') }}
+            aria-haspopup="listbox" data-slot="select-control" :data-size="$size" :data-placeholder="$this->label === '' && $displayValue === null ? true : null">
+            @php($displayOption = count($this->selected) <= 1 ? collect($this->choices)->first(fn ($option) => $this->isSelected($option['value'])) : null)
+            <span data-slot="select-value">
+                @if($displayValue !== null){{ $displayValue }}
+                @elseif(isset($displayOption['description']))
+                    @include('ui::livewire.partials.option-label', ['option' => $displayOption])
+                @else @isset($displayOption['icon'])<x-ui::icon :name="$displayOption['icon']" />@endisset{{ $this->label !== '' ? $this->label : ($placeholder !== '' ? $placeholder : ($displayOption['label'] ?? __('ui::ui.select'))) }}@endif
+            </span>
+            <x-ui::icon name="chevron-down" class="ui-select-chevron" />
+        </x-ui::button>
+    </x-ui::select.trigger>
+    <div id="{{ $this->getId() }}-listbox" data-slot="select-content" data-match-trigger data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-side-offset="{{ $sideOffset }}" data-align-offset="{{ $alignOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" role="listbox" tabindex="-1"
+        aria-multiselectable="{{ $multiple ? 'true' : 'false' }}" class="ui-popup ui-list-popup {{ $popupClass }}" x-on:keydown="navigate($event)"
+        x-on:toggle="toggled($event)"
+        x-on:pointermove="if ($event.pointerType === 'mouse') { pointerFocus = true; $event.target.closest('[role=option]:not(:disabled)')?.focus({ preventScroll: true }) }"
+        x-on:pointerleave="if (pointerFocus) $el.focus({ preventScroll: true })">
+        <x-ui::scroll-area class="ui-list-scroll" tabindex="-1">
+            @include('ui::livewire.partials.select-list')
+        </x-ui::scroll-area>
+    </div>
+    @if ($attributes->get('name'))
+        @foreach ($this->selected as $selected)
+            <input type="hidden" name="{{ $attributes->get('name') }}{{ $multiple ? '[]' : '' }}"
+                value="{{ $selected }}" @disabled($disabled)>
         @endforeach
-    </select>
-</eso-select>
+    @endif
+</div>

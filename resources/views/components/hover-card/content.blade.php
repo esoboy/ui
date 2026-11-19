@@ -1,18 +1,4 @@
-@blaze(fold: true)
-
-@aware(['uiHoverId' => null])
-
-@props([
-    'side' => 'bottom',
-    'align' => 'center',
-    'sideOffset' => 4,
-    'alignOffset' => 4,
-])
-
-<div {{ $attributes->merge(['id' => $uiHoverId, 'x-data' => 'uiOverlayContent('.json_encode(null).')', 'x-on:toggle' => 'toggled($event)', 'x-on:pointerover' => 'enter()', 'x-on:pointerout' => 'leave($event)', 'x-on:pointermove' => 'hover($event)', 'x-on:click' => 'click($event)', 'x-on:keydown' => 'key($event)', 'x-on:keydown.escape.window' => 'escape()',
-    'popover' => 'manual',
-    'data-slot' => 'hover-card-content',
-    'data-side' => $side,
-    'data-align' => $align,
-    'style' => "--side-offset: {$sideOffset}px; --align-offset: {$alignOffset}px;",
-]) }}>{{ $slot }}</div>
+@props(['side' => 'bottom', 'align' => 'center', 'alignOffset' => 4, 'sideOffset' => 4])
+<div {{ $attributes->class('ui-popup')->merge(['data-slot' => 'hover-card-content', 'role' => 'dialog']) }}
+    data-side-offset="{{ $sideOffset }}" data-ui-panel data-side="{{ $side }}" data-align="{{ $align }}" data-align-offset="{{ $alignOffset }}" popover="auto" x-bind:id="$id('ui-popover')" x-on:keydown="navigate($event)"
+    x-on:toggle="toggled($event)">{{ $slot }}</div>

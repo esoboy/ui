@@ -1,33 +1,7 @@
-@blaze
-
-@use('Esoboy\Ui\Support\OverlayModel')
-@use('Esoboy\Ui\Support\Model')
-
-@aware([
-    'name',
-    'uiModel' => null,
-    'swipeDirection' => 'down',
-    'showSwipeHandle' => false,
-])
-
+@props(['side' => 'bottom'])
 @php
-// wire:model on the root binds whether it is open; see OverlayModel.
-$model = OverlayModel::attributes($uiModel);
+    if (!in_array($side, ['top', 'right', 'bottom', 'left'], true)) throw new \InvalidArgumentException(__('ui::errors.panel_side'));
 @endphp
-
-{{-- A modal <dialog> that slides in from the edge it is swiped back to. wire:ignore.self keeps morphs from closing it. --}}
-<dialog id="{{ $name }}" data-slot="drawer-popup" data-swipe-direction="{{ $swipeDirection }}" data-swipe-axis="{{ in_array($swipeDirection, ['left', 'right'], true) ? 'x' : 'y' }}" aria-labelledby="{{ $name }}-title" aria-describedby="{{ $name }}-description"
-    x-data="uiDialog({{ Js::from(Model::binding($model ?? new \Illuminate\View\ComponentAttributeBag)) }})"
-    x-on:toggle="changed()"
-    x-on:close="changed()"
-    x-on:ui-dialog.window="requested($event.detail)"
-    x-on:pointerdown="start($event)"
-    x-on:pointermove="move($event)"
-    x-on:pointerup="end($event)"
-    x-on:pointercancel="end($event)"
-    wire:ignore.self>
-    @if ($showSwipeHandle)
-    <div data-slot="drawer-swipe-handle" aria-hidden="true"></div>
-    @endif
-    <div {{ $attributes->merge(['data-slot' => 'drawer-content']) }}>{{ $slot }}</div>
+<dialog {{ $attributes->class('group/drawer-popup')->merge(['data-slot' => 'drawer-content', 'data-side' => $side, 'data-swipe-axis' => in_array($side, ['top', 'bottom']) ? 'y' : 'x', 'data-swipe-direction' => ['top' => 'up', 'bottom' => 'down', 'left' => 'left', 'right' => 'right'][$side], 'role' => 'dialog', 'tabindex' => '-1']) }}
+    x-bind:id="$id('ui-dialog')" data-ui-panel x-on:click="backdrop($event)" x-on:close="closed()" x-on:cancel.prevent="close()" x-on:pointerdown="startDrag($event)" x-on:pointermove="dragging($event)" x-on:pointerup="endDrag($event)" x-on:pointercancel="endDrag($event)" x-on:touchstart.passive="touchStart($event)" x-on:touchmove="touchMove($event)" x-on:touchend="endDrag($event)" x-on:touchcancel="endDrag($event)"><div data-slot="drawer-handle" aria-hidden="true"></div><div data-slot="drawer-body">{{ $slot }}</div>
 </dialog>

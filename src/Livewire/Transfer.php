@@ -4,94 +4,80 @@ namespace Esoboy\Ui\Livewire;
 
 use Esoboy\Ui\Support\Options;
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Modelable;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class Transfer extends Component
+/**
+ * @phpstan-type Option array{value: string|int, label: string, disabled: bool}
+ * @phpstan-type Panel array{items: list<Option>, emptyMessage: ?string}
+ *
+ * @property-read list<Option> $results
+ * @property-read array<string, Panel> $panels
+ */
+class Transfer extends ChoiceControl
 {
-    /** @var list<string> */
-    #[Modelable]
-    public array $value = [];
+    use SearchesChoices;
 
-    /** @var array<int|string, mixed> */
+    /** @var list<array{value: string|int, label: string, disabled?: bool}> */
     #[Reactive]
     public array $options = [];
 
-    /** @var array<string, mixed> */
-    #[Reactive]
-    public array $settings = [];
-
-    /** @var list<string> */
-    public array $checked = [];
-
-    /** @var array{source: string, target: string} */
-    public array $query = ['source' => '', 'target' => ''];
-
-    /**
-     * @param  array<int|string, mixed>  $options
-     * @param  array<string, mixed>  $settings
-     */
-    public function mount(array $options = [], array $settings = [], mixed $value = []): void
+    protected function multipleSelection(): bool
     {
-        $this->options = $options;
-        $this->settings = $settings;
-        $this->value = array_values(array_map('strval', (array) $value));
+        return true;
     }
 
-    /** @return array<string, array<string, mixed>> */
-    public function lists(): array
+    /** @return list<array{value: string|int, label: string, disabled: bool}> */
+    #[Computed]
+    public function choices(): array
     {
-        $options = Options::normalize($this->options);
-        $lists = [];
-        foreach (['source', 'target'] as $index => $name) {
-            $wanted = array_values(array_filter($options, fn ($option) => in_array($option['value'], $this->value, true) === ($name === 'target')));
-            $shown = array_values(array_filter($wanted, fn ($option) => $this->matches($name, $option)));
-            $enabled = array_values(array_filter($shown, fn ($option) => empty($option['disabled'])));
-            $checked = array_values(array_filter($wanted, fn ($option) => in_array($option['value'], $this->checked, true)));
-            $selected = array_filter($enabled, fn ($option) => in_array($option['value'], $this->checked, true));
-            $lists[$name] = [
-                'title' => $this->settings['titles'][$index] ?? __('ui::transfer.'.$name), 'options' => $wanted,
-                'checked' => count($checked), 'empty' => $shown === [], 'all' => $enabled !== [] && count($enabled) === count($selected),
-                'mixed' => $selected !== [] && count($selected) < count($enabled), 'enabled' => array_column($enabled, 'value'),
-            ];
+        return Options::validate($this->options);
+    }
+
+    /** @return array<string, Panel> */
+    #[Computed]
+    public function panels(): array
+    {
+        $panels = [];
+        foreach (['available' => false, 'selected' => true] as $side => $selected) {
+            $onSide = fn (array $option): bool => $this->isSelected($option['value']) === $selected;
+            $items = array_values(array_filter($this->results, $onSide));
+            $emptyMessage = match (true) {
+                $items !== [] => null,
+                array_any($this->choices, $onSide) => 'matches',
+                $selected => 'selection',
+                $this->choices === [] => 'options',
+                default => 'all_selected',
+            };
+            $panels[$side] = ['items' => $items, 'emptyMessage' => $emptyMessage];
         }
 
-        return $lists;
+        return $panels;
     }
 
-    /** @param array<string, mixed> $option */
-    public function matches(string $list, array $option): bool
+    public function moveAll(bool $select): void
     {
-        return ($this->query[$list] ?? '') === '' || mb_stripos($option['label'], $this->query[$list]) !== false;
-    }
-
-    public function toggleAll(string $list): void
-    {
-        if (($this->settings['disabled'] ?? false) || ! isset($this->lists()[$list])) {
-            return;
+        $selected = [];
+        foreach ($this->selected as $value) {
+            $selected[get_debug_type($value).':'.$value] = $value;
         }
-        $data = $this->lists()[$list];
-        $this->checked = $data['all'] ? array_values(array_diff($this->checked, $data['enabled'])) : array_values(array_unique([...$this->checked, ...$data['enabled']]));
-    }
-
-    public function move(string $target): void
-    {
-        if (($this->settings['disabled'] ?? false) || ! in_array($target, ['source', 'target'], true)) {
-            return;
+        foreach ($this->results as $option) {
+            if ($option['disabled']) {
+                continue;
+            }
+            $key = get_debug_type($option['value']).':'.$option['value'];
+            if ($select) {
+                $selected[$key] = $option['value'];
+            } else {
+                unset($selected[$key]);
+            }
         }
-        $source = $this->lists()[$target === 'target' ? 'source' : 'target'];
-        $moving = array_column(array_filter($source['options'], fn ($option) => empty($option['disabled']) && in_array($option['value'], $this->checked, true)), 'value');
-        $selected = $target === 'target' ? [...$this->value, ...$moving] : array_diff($this->value, $moving);
-        $this->value = array_values(array_filter(array_column(Options::normalize($this->options), 'value'), fn ($value) => in_array($value, $selected, true)));
-        $this->checked = array_values(array_diff($this->checked, $moving));
+        $this->changeValue(array_values($selected));
+        unset($this->selected, $this->selectedKeys, $this->selectedChoices, $this->label);
     }
 
     public function render(): View
     {
-        return view('ui::livewire.transfer', [
-            'lists' => $this->lists(), 'disabled' => $this->settings['disabled'] ?? false,
-            'searchable' => $this->settings['searchable'] ?? false,
-        ]);
+        return view('ui::livewire.transfer');
     }
 }

@@ -1,32 +1,37 @@
-@blaze
+@props(['paginator' => null, 'maxPages' => null, 'jumpable' => false])
+<nav {{ $attributes->merge(['data-paginated' => $paginator ? '' : null, 'data-slot' => 'pagination', 'aria-label' => __('ui::ui.pagination')]) }}>
+    @if ($slot->isNotEmpty())
+        {{ $slot }}
+    @elseif ($paginator)
+        @include('ui::partials.pagination-links')
+    @endif
 
-@use('Esoboy\Ui\Support\PaginationLinks')
-
-@props([
-    'paginator' => null,
-])
-
-{{-- With a Laravel paginator the links render themselves, and nothing renders for a single page. --}}
-@if ($paginator === null || $paginator->hasPages())
-<nav {{ $attributes->merge(['role' => 'navigation', 'aria-label' => __('ui::pagination.label'), 'data-slot' => 'pagination']) }}>
-    @if ($paginator === null)
-    {{ $slot }}
-    @else
-    <x-ui::pagination.content>
-        @foreach (PaginationLinks::for($paginator) as $link)
-        <x-ui::pagination.item>
-            @if ($link['type'] === 'previous')
-            <x-ui::pagination.previous :disabled="$link['disabled']" :attributes="new \Illuminate\View\ComponentAttributeBag($link['attributes'])" />
-            @elseif ($link['type'] === 'next')
-            <x-ui::pagination.next :disabled="$link['disabled']" :attributes="new \Illuminate\View\ComponentAttributeBag($link['attributes'])" />
-            @elseif ($link['type'] === 'ellipsis')
-            <x-ui::pagination.ellipsis />
-            @else
-            <x-ui::pagination.link :active="$link['active']" :attributes="new \Illuminate\View\ComponentAttributeBag($link['attributes'])">{{ $link['page'] }}</x-ui::pagination.link>
-            @endif
-        </x-ui::pagination.item>
-        @endforeach
-    </x-ui::pagination.content>
+    @if ($jumpable && $paginator instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
+        <div data-slot="pagination-jump" data-page-name="{{ $paginator->getPageName() }}"
+            data-page-url="{{ $paginator->url(1) }}" x-data="{
+                jump() {
+                    const input = this.$refs.number
+                    if (!input.reportValidity()) return
+                    @if (\Livewire\Livewire::current())
+                        this.$wire.gotoPage(input.valueAsNumber, this.$root.dataset.pageName)
+                    @else
+                        const url = new URL(this.$root.dataset.pageUrl, location.href)
+                        url.searchParams.set(this.$root.dataset.pageName, input.value)
+                        location.assign(url)
+                    @endif
+                }
+            }">
+            <span aria-hidden="true">{{ __('ui::ui.pagination_jump_to') }}</span>
+            <x-ui::input-group>
+                <x-ui::input-group.input type="number" x-ref="number" x-on:keydown.enter.stop.prevent="jump()" form="" name="pageNumber"
+                    min="1" :max="$paginator->lastPage()" step="1" required :placeholder="$paginator->currentPage()"
+                    :aria-label="__('ui::ui.pagination_page_number')" />
+                <x-ui::input-group.addon align="inline-end">
+                    <x-ui::input-group.button size="icon-xs" x-on:click="jump()" :aria-label="__('ui::ui.pagination_jump')" :title="__('ui::ui.pagination_jump')">
+                        <x-ui::icon name="corner-down-left" />
+                    </x-ui::input-group.button>
+                </x-ui::input-group.addon>
+            </x-ui::input-group>
+        </div>
     @endif
 </nav>
-@endif

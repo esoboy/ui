@@ -1,15 +1,4 @@
 @blaze
-
-@use('Esoboy\Ui\Support\ControlState')
-
-@aware([
-    'uiField' => false,
-    'showError' => true,
-])
-
-@php
-$state = ControlState::for($attributes, $errors ?? null, $uiField, $showError);
-@endphp
-
-<textarea {{ $attributes->merge(['data-slot' => 'textarea', ...$state->attributes()]) }}>{{ \Esoboy\Ui\Support\Model::value($attributes, (string) $slot) }}</textarea>
-<x-ui::field.error :state="$state" />
+@props(['value' => '', 'invalid' => false])
+<textarea
+    {{ $attributes->class('ui-textarea')->merge(['data-slot' => 'textarea', 'aria-invalid' => $invalid ? 'true' : null, 'id' => \Esoboy\Ui\Support\ControlAttributes::id($attributes)]) }}>{{ $value }}</textarea>

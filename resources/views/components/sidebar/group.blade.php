@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['data-slot' => 'sidebar-group', 'data-sidebar' => 'group']) }}>{{ $slot }}</div>
+<div {{ $attributes->merge(['data-slot' => 'sidebar-group']) }}>{{ $slot }}</div>

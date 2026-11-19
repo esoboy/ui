@@ -1,3 +1,1 @@
-@blaze
-
-<x-ui::separator :attributes="$attributes->merge(['data-sidebar' => 'separator'])" />
+<hr  {{ $attributes->merge(['data-slot' => 'sidebar-separator']) }}>

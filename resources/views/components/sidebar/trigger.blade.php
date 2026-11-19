@@ -1,3 +1,1 @@
-@blaze
-
-{!! \Esoboy\Ui\Support\ControlSlot::bind((string) $slot, $attributes, ['data-sidebar' => 'trigger']) !!}
+<span data-ui-trigger data-ui-errors="{{ json_encode(__('ui::errors.trigger'), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR) }}" x-ui-trigger="'toggle'" {{ $attributes }}>{{ $slot }}</span>

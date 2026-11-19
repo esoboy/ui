@@ -1,11 +1,3 @@
-@blaze
-
-@props(['target' => null, 'title' => null, 'side' => 'bottom', 'align' => 'center'])
-
-<div {{ $attributes->merge([
-    'data-tour-step' => true,
-    'data-target' => $target ?? false,
-    'data-title' => $title ?? false,
-    'data-side' => $side,
-    'data-align' => $align,
-]) }}>{{ $slot }}</div>
+@props(['target', 'index'])
+<section {{ $attributes->merge(['data-slot' => 'tour-step', 'data-target' => $target, 'data-index' => $index]) }}
+    x-show="index === @js($index)">{{ $slot }}</section>

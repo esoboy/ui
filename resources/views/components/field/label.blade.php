@@ -1,3 +1,2 @@
-@blaze(fold: true)
-
-<label {{ $attributes->merge(['data-slot' => 'field-label']) }}>{{ $slot }}</label>
+@blaze
+<x-ui::label data-slot="field-label" :attributes="$attributes->class('group/field-label peer/field-label')">{{ $slot }}</x-ui::label>

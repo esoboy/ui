@@ -4,26 +4,33 @@ namespace Esoboy\Ui\Support;
 
 use InvalidArgumentException;
 
-/**
- * The Lucide icons the package ships (resources/icons/lucide.php). Only those exist;
- * a newer Lucide comes with a newer package.
- */
 final class Icons
 {
-    /** @var array{version: string, icons: array<string, string>}|null */
-    private static ?array $lucide = null;
-
-    /**
-     * The inner markup of an icon.
-     */
-    public static function markup(string $name): string
+    public static function size(string|int|float $size): int|float
     {
-        $lucide = self::$lucide ??= require __DIR__.'/../../resources/icons/lucide.php';
+        $pixels = match ($size) {
+            'sm' => 14,
+            'md' => 16,
+            'lg' => 20,
+            default => $size,
+        };
 
-        if (isset($lucide['icons'][$name])) {
-            return $lucide['icons'][$name];
+        if (! is_numeric($pixels) || ! is_finite((float) $pixels) || $pixels <= 0) {
+            throw new InvalidArgumentException(__('ui::errors.icon_size'));
         }
 
-        throw new InvalidArgumentException("Lucide {$lucide['version']} has no icon [{$name}].");
+        return $pixels + 0;
+    }
+
+    public static function content(string $name): string
+    {
+        if (! preg_match('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/', $name)) {
+            throw new InvalidArgumentException(__('ui::errors.icon_name'));
+        }
+
+        static $catalog;
+        $catalog ??= require __DIR__.'/../../resources/icons/catalog.php';
+
+        return $catalog[$name] ?? throw new InvalidArgumentException(__('ui::errors.unknown_icon', ['name' => $name]));
     }
 }

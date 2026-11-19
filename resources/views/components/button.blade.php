@@ -1,22 +1,8 @@
-@blaze(fold: true, unsafe: ['href'])
-
-@props([
-    'variant' => 'default',
-    'size' => 'default',
-    'type' => 'button',
-])
-
-@php
-$attributes = \Esoboy\Ui\Support\Theme::control($attributes);
-$attributes = $attributes->merge([
-    'data-slot' => 'button',
-    'data-variant' => $variant,
-    'data-size' => $size,
-]);
-@endphp
-
-@if ($attributes->has('href'))
-<a {{ $attributes }}>{{ $slot }}</a>
+@blaze
+@props(['variant' => 'default', 'size' => 'default', 'type' => 'button', 'link' => null, 'disabled' => false])
+@if ($link !== null)
+<a {{ $attributes->except(['href', 'type'])->class(['ui-button group/button', 'ui-button-size-'.$size, 'ui-button-variant-'.$variant])->merge(['href' => $disabled ? null : $link, 'role' => $disabled ? 'link' : null, 'aria-disabled' => $disabled ? 'true' : null, 'tabindex' => $disabled ? '-1' : null, 'data-slot' => 'button']) }}>{{ $slot }}</a>
 @else
-<button {{ $attributes->merge(['type' => $type]) }}>{{ $slot }}</button>
+<button
+    {{ $attributes->class(['ui-button group/button', 'ui-button-size-'.$size, 'ui-button-variant-'.$variant])->merge(['type' => $type, 'disabled' => $disabled, 'data-slot' => 'button']) }}>{{ $slot }}</button>
 @endif

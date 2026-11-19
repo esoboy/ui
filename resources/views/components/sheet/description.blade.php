@@ -1,7 +1,1 @@
-@blaze
-
-@aware([
-    'name',
-])
-
-<p {{ $attributes->merge(['id' => $name.'-description', 'data-slot' => 'sheet-description']) }}>{{ $slot }}</p>
+<p {{ $attributes->merge(['data-slot' => 'sheet-description']) }}>{{ $slot }}</p>

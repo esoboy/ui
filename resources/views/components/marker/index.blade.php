@@ -1,18 +1,3 @@
-@blaze(fold: true, unsafe: ['href', 'type'])
-
-@props([
-    'variant' => 'default',
-])
-
-@php
-$attributes = $attributes->merge(['data-slot' => 'marker', 'data-variant' => $variant]);
-@endphp
-
-{{-- A link with href, a button with type (e.g. "Load earlier"), otherwise a div. --}}
-@if ($attributes->has('href'))
-<a {{ $attributes }}>{{ $slot }}</a>
-@elseif ($attributes->has('type'))
-<button {{ $attributes }}>{{ $slot }}</button>
-@else
-<div {{ $attributes }}>{{ $slot }}</div>
-@endif
+@blaze
+@props(['variant' => 'default', 'link' => null])
+@if($link !== null)<a href="{{ $link }}" {{ $attributes->class('group/marker')->merge(['data-slot' => 'marker', 'data-variant' => $variant]) }}>{{ $slot }}</a>@else<div {{ $attributes->class('group/marker')->merge(['data-slot' => 'marker', 'data-variant' => $variant]) }}>{{ $slot }}</div>@endif

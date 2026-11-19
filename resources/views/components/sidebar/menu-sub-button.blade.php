@@ -1,8 +1,2 @@
-@blaze(fold: true, unsafe: ['href'])
-
-@props([
-    'active' => false,
-    'size' => 'md',
-])
-
-<a {{ $attributes->merge(['data-slot' => 'sidebar-menu-sub-button', 'data-sidebar' => 'menu-sub-button', 'data-size' => $size, 'data-active' => $active]) }}>{{ $slot }}</a>
+@props(['size' => 'md', 'active' => false])
+<a {{ $attributes->merge(['data-slot' => 'sidebar-menu-sub-button', 'data-size' => $size, 'data-active' => $active ? '' : null]) }}>{{ $slot }}</a>

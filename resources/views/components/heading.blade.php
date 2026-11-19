@@ -1,21 +1,30 @@
 @blaze
+@props(['level' => 2])
+@switch($level)
+    @case(1)
+        <h1 {{ $attributes->merge(['data-slot' => 'heading']) }}>{{ $slot }}</h1>
+    @break
 
-@props([
-    'level' => 2,
-    'variant' => 'title',
-    'size' => 'default',
-    'color' => 'default',
-])
+    @case(2)
+        <h2 {{ $attributes->merge(['data-slot' => 'heading']) }}>{{ $slot }}</h2>
+    @break
 
-@php
-$tag = match ($level) {
-    1, '1' => 'h1',
-    3, '3' => 'h3',
-    4, '4' => 'h4',
-    5, '5' => 'h5',
-    6, '6' => 'h6',
-    default => 'h2',
-};
-@endphp
+    @case(3)
+        <h3 {{ $attributes->merge(['data-slot' => 'heading']) }}>{{ $slot }}</h3>
+    @break
 
-<{{ $tag }} {{ $attributes->merge(['data-slot' => 'heading', 'data-variant' => $variant, 'data-size' => $size, 'data-color' => $color]) }}>{{ $slot }}</{{ $tag }}>
+    @case(4)
+        <h4 {{ $attributes->merge(['data-slot' => 'heading']) }}>{{ $slot }}</h4>
+    @break
+
+    @case(5)
+        <h5 {{ $attributes->merge(['data-slot' => 'heading']) }}>{{ $slot }}</h5>
+    @break
+
+    @case(6)
+        <h6 {{ $attributes->merge(['data-slot' => 'heading']) }}>{{ $slot }}</h6>
+    @break
+
+    @default
+        @php(throw new \InvalidArgumentException(__('ui::errors.heading_level')))
+@endswitch

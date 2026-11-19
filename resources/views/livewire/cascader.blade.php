@@ -1,21 +1,32 @@
-@php($labelling = ['id', 'aria-label', 'aria-labelledby'])
-<eso-cascader {{ $attributes->whereDoesntStartWith('wire:model')->except(['name', 'class', 'style', ...$labelling])->merge(['data-slot' => 'cascader', 'x-data' => 'uiCascader', 'x-on:keydown' => 'key($event)', 'x-on:toggle.capture' => 'toggled($event)', 'x-on:ui-cascader-picked' => 'picked($event.detail)']) }}>
-    <x-ui::select.trigger :size="$settings['size'] ?? 'default'" data-cascader-trigger :data-placeholder="! $labels" :disabled="$settings['disabled'] ?? false" :commandfor="$this->getId().'-cascader-popup'" :attributes="$attributes->only(['class', 'style', ...$labelling])->merge($settings['validation'] ?? [])">
-        <x-ui::select.value :placeholder="$labels ? implode(' '.($settings['separator'] ?? '/').' ', $labels) : ($settings['placeholder'] ?? null)" />
-    </x-ui::select.trigger>
-    <div id="{{ $this->getId() }}-cascader-popup" popover="auto" data-slot="cascader-content" data-side="bottom" data-align="start" style="--side-offset: 4px;" wire:ignore.self>
-        @foreach ($levels as $depth => $options)
-        <div data-slot="cascader-column" role="listbox" wire:key="column-{{ $depth }}">
-            @foreach ($options as $option)
-            @php($parent = ! empty($option['children']))
-            <x-ui::select.item :value="$option['value']" data-cascader-item :data-depth="$depth" :disabled="! empty($option['disabled'])" :aria-selected="($value[$depth] ?? null) === $option['value'] && count($value) === $depth + 1 ? 'true' : 'false'" :data-expanded="$parent && ($path[$depth] ?? null) === $option['value']" :aria-haspopup="$parent ? 'listbox' : null" :wire:click="'choose('.$depth.', '.\Illuminate\Support\Js::from($option['value']).')'" wire:key="item-{{ $depth }}-{{ $option['value'] }}">
-                {{ isset($settings['optionView']) ? view($settings['optionView'], ['option' => $option, 'depth' => $depth]) : $option['label'] }}
-                @if ($parent)<x-slot:indicator data-parent><x-ui::icon name="chevron-right" /></x-slot:indicator>@endif
-            </x-ui::select.item>
-            @endforeach
-        </div>
-        @endforeach
-    </div>
-    @if ($slots->has('default')){{ $slots }}@endif
-    @include('ui::livewire.form-value', ['value' => $labels ? $value : []])
-</eso-cascader>
+<div data-slot="cascader" data-ui-overlay x-data="uiPopover"
+    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby']) }}>
+    <x-ui::select.trigger><x-ui::button variant="outline" :disabled="$disabled" :id="$attributes->get('id')"
+            {{ $attributes->whereStartsWith('aria-') }} aria-haspopup="dialog"
+            data-slot="select-control" data-size="default" :data-placeholder="$this->label === '' ? true : null"><span data-slot="select-value">{{ $this->label !== '' ? $this->label : ($placeholder !== '' ? $placeholder : __('ui::ui.select')) }}</span><x-ui::icon
+                name="chevron-down" class="ui-select-chevron" /></x-ui::button></x-ui::select.trigger>
+    <x-ui::popover.content id="{{ $this->getId() }}-popup" align="start" data-match-trigger class="ui-list-popup">
+        <x-ui::scroll-area orientation="horizontal" class="ui-cascader-scroll" tabindex="-1">
+            <div class="ui-cascader-columns">
+                @forelse ($this->columns as $column)
+                    <x-ui::scroll-area class="ui-list-scroll ui-cascader-column" tabindex="-1" wire:key="cascade-level-{{ $loop->index }}-{{ $column[0]['parent'] }}"
+                        x-on:focusin="$el.scrollIntoView({ block: 'nearest', inline: 'nearest', container: 'nearest' })">
+                        <div role="group" aria-label="{{ __('ui::ui.node_level', ['level' => $loop->iteration]) }}"
+                            x-data="uiOptions('[data-node-action]')" x-on:keydown.stop="navigate($event)">
+                            @foreach ($column as $row)
+                                @php($active = $row['branch'] && in_array($row['value'], $path, true))
+                                <div data-node-row wire:key="cascade-{{ $row['value'] }}">
+                                    @include('ui::livewire.partials.tree-node', [
+                                        'browseDisabled' => $disabled || $readonly || $row['disabled'], 'collapsible' => false,
+                                    ])
+                                </div>
+                            @endforeach
+                        </div>
+                    </x-ui::scroll-area>
+                @empty
+                    @include('ui::partials.empty-state', ['emptyMessage' => 'select_nodes'])
+                @endforelse
+            </div>
+        </x-ui::scroll-area>
+    </x-ui::popover.content>
+    @include('ui::livewire.partials.selection-input')
+</div>

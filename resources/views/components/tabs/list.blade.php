@@ -1,11 +1,4 @@
-@blaze
-
-@aware([
-    'orientation' => 'horizontal',
-])
-
-@props([
-    'variant' => 'default',
-])
-
-<div {{ $attributes->merge(['role' => 'tablist', 'data-slot' => 'tabs-list', 'data-variant' => $variant, 'aria-orientation' => $orientation]) }}>{{ $slot }}</div>
+@props(['variant' => 'default'])
+@aware(['orientation' => 'horizontal'])
+<div role="tablist" aria-orientation="{{ $orientation }}" {{ $attributes->class('group/tabs-list')->merge(['data-slot' => 'tabs-list', 'data-variant' => $variant]) }} x-on:keydown="navigate($event)">
+    {{ $slot }}</div>

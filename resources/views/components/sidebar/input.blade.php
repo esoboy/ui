@@ -1,3 +1,1 @@
-@blaze
-
-<x-ui::input :attributes="$attributes->merge(['data-sidebar' => 'input'])" />
+<x-ui::input data-slot="sidebar-input" :attributes="$attributes" />

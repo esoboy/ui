@@ -1,8 +1,1 @@
-@blaze
-
-@props(['size' => 'icon-sm'])
-
-<x-ui::button variant="outline" :size="$size" :attributes="$attributes->merge(['data-carousel' => 'next'])" wire:ignore.self>
-    <x-ui::icon name="chevron-right" class="rtl:rotate-180" />
-    <span class="sr-only">{{ __('ui::carousel.next') }}</span>
-</x-ui::button>
+<span data-ui-trigger data-ui-slot-error="{{ __('ui::errors.navigation_slot') }}" x-ui-step="1" {{ $attributes }}>{{ $slot }}</span>

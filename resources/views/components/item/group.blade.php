@@ -1,3 +1,2 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['role' => 'list', 'data-slot' => 'item-group']) }}>{{ $slot }}</div>
+@blaze
+<div {{ $attributes->class('group/item-group')->merge(['data-slot' => 'item-group']) }}>{{ $slot }}</div>

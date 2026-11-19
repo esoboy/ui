@@ -1,5 +1,1 @@
-@blaze
-
-@aware(['uiDropdownId' => null])
-
-{!! \Esoboy\Ui\Support\ControlSlot::overlay((string) $slot, $attributes, 'dropdown-menu', $uiDropdownId) !!}
+<span data-ui-trigger data-ui-errors="{{ json_encode(__('ui::errors.trigger'), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR) }}" x-ui-trigger="'toggle'" {{ $attributes }}>{{ $slot }}</span>

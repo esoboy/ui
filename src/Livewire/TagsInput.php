@@ -3,57 +3,53 @@
 namespace Esoboy\Ui\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Modelable;
+use InvalidArgumentException;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class TagsInput extends Component
+/** @property-read list<string> $tags */
+class TagsInput extends ValueControl
 {
-    /** @var list<string> */
-    #[Modelable]
-    public array $value = [];
+    public string $draft = '';
 
-    /** @var array<string, mixed> */
     #[Reactive]
-    public array $settings = [];
+    public ?int $max = null;
 
-    public string $entry = '';
+    #[Reactive]
+    public int $maxLength = 100;
 
-    /**
-     * @param  array<string, mixed>  $settings
-     */
-    public function mount(array $settings = [], mixed $value = []): void
+    /** @return list<string> */
+    #[Computed]
+    public function tags(): array
     {
-        $this->settings = $settings;
-        $this->value = array_values(array_map('strval', (array) $value));
+        $value = $this->current ?? [];
+        if (! is_array($value) || ! array_is_list($value)) {
+            throw new InvalidArgumentException(__('ui::errors.tag_list'));
+        }
+        foreach ($value as $tag) {
+            if (! is_string($tag)) {
+                throw new InvalidArgumentException(__('ui::errors.tag_list'));
+            }
+        }
+
+        return $value;
     }
 
     public function add(): void
     {
-        if ($this->settings['disabled'] ?? false) {
+        $tag = trim($this->draft);
+        if ($this->disabled || $this->readonly || $tag === '' || mb_strlen($tag) > $this->maxLength || in_array($tag, $this->tags, true) || ($this->max !== null && count($this->tags) >= $this->max)) {
             return;
         }
-        foreach ((preg_split('/[,，\r\n]+/u', $this->entry) ?: []) as $text) {
-            $tag = trim($text);
-            if ($tag !== '' && ! in_array($tag, $this->value, true) && (! ($this->settings['max'] ?? null) || count($this->value) < $this->settings['max'])) {
-                $this->value[] = $tag;
-            }
-        }
-        $this->entry = '';
+        $this->changeValue([...$this->tags, $tag]);
+        $this->draft = '';
+        unset($this->tags);
     }
 
     public function remove(string $tag): void
     {
-        if (! ($this->settings['disabled'] ?? false)) {
-            $this->value = array_values(array_diff($this->value, [$tag]));
-        }
-    }
-
-    public function removeLast(): void
-    {
-        if ($this->entry === '' && ! ($this->settings['disabled'] ?? false)) {
-            array_pop($this->value);
-        }
+        $this->changeValue(array_values(array_filter($this->tags, fn (string $item): bool => $item !== $tag)));
+        unset($this->tags);
     }
 
     public function render(): View

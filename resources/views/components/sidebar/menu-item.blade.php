@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<li {{ $attributes->merge(['data-slot' => 'sidebar-menu-item', 'data-sidebar' => 'menu-item']) }}>{{ $slot }}</li>
+<div {{ $attributes->class('group/menu-item')->merge(['data-slot' => 'sidebar-menu-item']) }}>{{ $slot }}</div>

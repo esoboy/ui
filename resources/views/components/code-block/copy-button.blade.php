@@ -1,25 +1,2 @@
-@blaze
-
-@props([
-    'value' => null,
-    'variant' => 'ghost',
-    'size' => 'icon-xs',
-])
-
-{{-- Copies value, or the code of its block. The check shows for two seconds. --}}
-<span class="contents" x-data="uiCopyCode">
-<x-ui::button :variant="$variant" :size="$size" :attributes="$attributes->merge([
-    'data-code-block-copy' => true,
-    'data-value' => $value ?? false,
-    'aria-label' => __('ui::code-block.copy'),
-    'data-label-copy' => __('ui::code-block.copy'),
-    'data-label-copied' => __('ui::code-block.copied'),
-    'x-on:click' => 'copy($event.currentTarget)',
-    'x-bind:data-copied' => 'copied',
-    'x-bind:aria-label' => 'copied ? $el.dataset.labelCopied : $el.dataset.labelCopy',
-])">
-    <x-ui::icon name="copy" data-copy-icon="copy" />
-    <x-ui::icon name="check" data-copy-icon="copied" />
-</x-ui::button>
-<span aria-live="polite" class="sr-only" data-code-block-status><span x-show="copied" style="display: none">{{ __('ui::code-block.copied') }}</span></span>
-</span>
+@props(['value' => null, 'variant' => 'ghost', 'size' => 'icon-xs'])
+<x-ui::button :variant="$variant" :size="$size" data-slot="code-block-copy-button" :x-on:click="'copy('.\Illuminate\Support\Js::from($value).')'" x-bind:data-copied="copied ? '' : null" :x-bind:aria-label="'copied ? '.\Illuminate\Support\Js::from(__('ui::ui.copied')).' : '.\Illuminate\Support\Js::from(__('ui::ui.copy'))" :aria-label="__('ui::ui.copy')" {{ $attributes }}><x-ui::icon name="copy" x-show="!copied" /><x-ui::icon name="check" x-show="copied" x-cloak /><span class="ui-visually-hidden" aria-live="polite" x-show="copied" x-cloak>{{ __('ui::ui.copied') }}</span></x-ui::button>

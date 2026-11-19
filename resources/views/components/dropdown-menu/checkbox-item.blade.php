@@ -1,12 +1,2 @@
-@blaze
-
-@php($attributes = \Esoboy\Ui\Support\Theme::control($attributes))
-
-{{-- A native checkbox, so wire:model binds as usual; class styles the row. --}}
-<label {{ $attributes->only(['class', 'style'])->merge(['data-slot' => 'dropdown-menu-checkbox-item']) }}>
-    <input {{ $attributes->except(['class', 'style'])->merge(['type' => 'checkbox', 'role' => 'menuitemcheckbox']) }}>
-    <span data-slot="dropdown-menu-item-indicator">
-        <x-ui::icon name="check" />
-    </span>
-    {{ $slot }}
-</label>
+@props(['checked' => false, 'disabled' => false, 'closeOnSelect' => true, 'inset' => false])
+<label @if($inset) data-inset @endif data-slot="{{ $attributes->get('data-slot', 'dropdown-menu-checkbox-item') }}" class="{{ $attributes->get('class') }}"><x-ui::checkbox role="menuitemcheckbox" :attributes="$attributes->except(['class', 'data-slot'])->merge(['x-on:change' => $closeOnSelect ? 'select()' : null])" :checked="$checked" :disabled="$disabled" /><span>{{ $slot }}</span><span class="ui-menu-choice-indicator" aria-hidden="true"><x-ui::icon name="check" /></span></label>

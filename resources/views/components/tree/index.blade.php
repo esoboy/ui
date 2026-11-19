@@ -1,30 +1,20 @@
-@blaze
-
-@use('Esoboy\Ui\Support\Model')
-
-{{-- items: [['value' => ..., 'label' => ..., 'children' => [...], 'disabled' => bool, 'lazy' => bool], ...]. --}}
-@props([
-    'nodeView' => null,
-    'items' => null,
-    'checkable' => false,
-    'value' => null,
-    'expanded' => [],
-    'expandAll' => false,
-    'searchable' => false,
-    'placeholder' => null,
-    'load' => null,
-    'draggable' => false,
-    'disabled' => false,
-])
-
-@php
-$value = Model::value($attributes, $value);
-$items ??= [];
-$settings = compact('nodeView', 'checkable', 'expanded', 'expandAll', 'searchable', 'placeholder', 'load', 'draggable', 'disabled');
-$forward = $attributes->except('wire:key')->getAttributes();
-if (isset($forward['wire:move'])) $forward['wire:move'] = '$parent.'.$forward['wire:move'];
-$key = $attributes->get('wire:key') ?? $attributes->get('id') ?? Model::scope('tree'.(Model::key($attributes) ?? ''), $loop ?? null);
-@endphp
-
-{!! \Esoboy\Ui\Support\ViewSlots::mount('ui.tree', ['items' => $items, 'settings' => $settings, 'value' => $value, ...$forward], 'ui-tree-'.$key, ['default' => $slot]) !!}
-<x-ui::extras />
+@props(['value', 'initialValue', 'nodes' => [], 'multiple' => false, 'selectParents' => false, 'emptyTitle' => null, 'emptyDescription' => null])
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'tree', get_defined_vars()))
+<div data-slot="tree-field">
+    {!! \Livewire\Livewire::mount(
+        'ui::tree',
+        [
+            ...$binding->parameters,
+            'emptyTitle' => $emptyTitle,
+            'emptyDescription' => $emptyDescription,
+            'nodes' => $nodes,
+            'multiple' => $multiple,
+            'selectParents' => $selectParents,
+        ],
+        $binding->key,
+    ) !!}
+    {{ $slot }}
+    @isset($footer)
+        <div data-slot="tree-footer">{{ $footer }}</div>
+    @endisset
+</div>

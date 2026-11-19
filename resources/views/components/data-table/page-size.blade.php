@@ -1,19 +1,10 @@
-@blaze
-
-@props(['options'])
-
-<div {{ $attributes->merge(['data-slot' => 'data-table-page-size']) }}>
-    <span>{{ __('ui::data-table.rows_per_page') }}</span>
-    <x-ui::select wire:model.live.number="perPage">
-        <x-ui::select.trigger class="w-[70px]" :aria-label="__('ui::data-table.rows_per_page')">
-            <x-ui::select.value />
-        </x-ui::select.trigger>
-        <x-ui::select.content>
-            <x-ui::select.group>
-                @foreach ($options as $size)
-                    <x-ui::select.item :value="(string) $size">{{ $size }}</x-ui::select.item>
-                @endforeach
-            </x-ui::select.group>
-        </x-ui::select.content>
-    </x-ui::select>
+@props([
+    'options' => [['value' => 10, 'label' => '10'], ['value' => 25, 'label' => '25'], ['value' => 50, 'label' => '50']],
+    'emptyTitle' => null,
+    'emptyDescription' => null,
+])
+<div data-slot="data-table-page-size">
+    <span aria-hidden="true">{{ __('ui::ui.table_per_page') }}</span>
+    <x-ui::select :options="$options" :empty-title="$emptyTitle" :empty-description="$emptyDescription"
+        :aria-label="__('ui::ui.page_size')" {{ $attributes }}>{{ $slot }}</x-ui::select>
 </div>

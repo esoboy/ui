@@ -1,3 +1,2 @@
 @blaze
-
-<nav {{ $attributes->merge(['data-slot' => 'breadcrumb', 'aria-label' => __('ui::breadcrumb.label')]) }}>{{ $slot }}</nav>
+<nav {{ $attributes->merge(['data-slot' => 'breadcrumb', 'aria-label' => __('ui::ui.breadcrumb')]) }}>{{ $slot }}</nav>

@@ -1,20 +1,6 @@
 @blaze
-
-@use('Esoboy\Ui\Support\ControlState')
-
-@aware([
-    'uiField' => false,
-    'showError' => true,
-])
-
-@props([
-    'size' => 'default',
-])
-
-@php
-$attributes = \Esoboy\Ui\Support\Theme::control($attributes);
-$state = ControlState::for($attributes, $errors ?? null, $uiField, $showError);
-@endphp
-
-<input {{ $attributes->merge(['type' => 'checkbox', 'checked' => \Esoboy\Ui\Support\Model::checked($attributes, (bool) $attributes->get('checked', false), $attributes->get('value')), 'role' => 'switch', 'data-slot' => 'switch', 'data-size' => $size, ...$state->attributes()]) }}>
-<x-ui::field.error :state="$state" />
+@props(['checked' => false, 'invalid' => false, 'size' => 'default'])
+<span data-slot="switch" data-size="{{ $size }}" aria-invalid="{{ $invalid || $attributes->get('aria-invalid') === 'true' ? 'true' : 'false' }}" class="ui-switch group/switch {{ $attributes->get('class') }}">
+    <input {{ $attributes->except('class')->merge(['type' => 'checkbox', 'role' => 'switch', 'aria-invalid' => $invalid ? 'true' : null, 'id' => \Esoboy\Ui\Support\ControlAttributes::id($attributes)]) }} @checked($checked)>
+    <span data-slot="switch-thumb"></span>
+</span>

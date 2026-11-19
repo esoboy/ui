@@ -3,259 +3,341 @@
 namespace Esoboy\Ui\Livewire;
 
 use Carbon\CarbonImmutable;
-use Esoboy\Ui\Support\TimeOptions;
 use Illuminate\Contracts\View\View;
-use IntlDateFormatter;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\Modelable;
+use InvalidArgumentException;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class Calendar extends Component
+/**
+ * @property-read list<string> $selected
+ * @property-read CarbonImmutable $period
+ * @property-read ?string $navigationStart
+ * @property-read ?string $navigationEnd
+ * @property-read ?string $lastPageMonth
+ * @property-read list<array{date: string, label: int, current: bool, disabled: bool, hidden: bool, selected: bool, today: bool}> $days
+ */
+class Calendar extends ValueControl
 {
-    use SyncsModel;
-
-    #[Modelable]
-    public mixed $value = null;
-
-    /** @var array<string, mixed> */
     #[Reactive]
-    public array $settings = [];
+    public ?string $min = null;
+
+    #[Reactive]
+    public ?string $max = null;
+
+    #[Reactive]
+    public bool $multiple = false;
+
+    #[Reactive]
+    public bool $range = false;
+
+    #[Reactive]
+    public int $numberOfMonths = 1;
+
+    #[Reactive]
+    public string $captionLayout = 'label';
+
+    #[Reactive]
+    public string $monthLabelFormat = 'short';
+
+    #[Reactive]
+    public ?string $startMonth = null;
+
+    #[Reactive]
+    public ?string $endMonth = null;
+
+    #[Reactive]
+    public int $weekStartsOn = 0;
+
+    #[Reactive]
+    public bool $showWeekNumber = false;
+
+    #[Reactive]
+    public bool $fixedWeeks = false;
+
+    #[Reactive]
+    public ?string $locale = null;
+
+    /** @var array<array-key, mixed> ISO date labels validated before rendering. */
+    #[Reactive]
+    public array $dayLabels = [];
+
+    /** @var array<array-key, mixed> ISO date classes validated before rendering. */
+    #[Reactive]
+    public array $dayClasses = [];
+
+    /** @var array<array-key, mixed> ISO dates validated before rendering. */
+    #[Reactive]
+    public array $disabledDates = [];
 
     public string $month = '';
 
-    /** @var array{from: string, to: string} */
-    #[Locked]
-    public array $times = ['from' => '00:00', 'to' => '00:00'];
-
-    /**
-     * @param  array<string, mixed>  $settings
-     */
-    public function mount(array $settings = [], mixed $value = null): void
+    public function mount(mixed $initialValue = null, ?string $initialMonth = null): void
     {
-        $this->settings = $settings;
-        $this->value = $value;
-        $first = is_array($value) ? ($value['from'] ?? $value[0] ?? null) : $value;
-        $month = $settings['month'] ?? (is_string($first) ? $this->selectedMonth($first) : now()->format('Y-m'));
-        $this->month = preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month) ? $month : now()->format('Y-m');
-        [$minimum, $maximum] = $this->monthBounds();
-        if ($minimum && $this->month < $minimum) {
-            $this->month = $minimum;
+        parent::mount($initialValue);
+        if ($initialMonth !== null && ! $this->validDate($initialMonth)) {
+            throw new InvalidArgumentException(__('ui::errors.calendar_initial_month'));
         }
-        if ($maximum && $this->month > $maximum) {
-            $this->month = $maximum;
-        }
-        $this->syncTimes();
+        $this->month = ($initialMonth ?? $this->selected[0] ?? CarbonImmutable::today()->toDateString());
+        $this->month = substr($this->month, 0, 7).'-01';
     }
 
-    public function goTo(string $month): void
+    /** @return list<string> */
+    #[Computed]
+    public function selected(): array
     {
-        if (preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month) && $this->canShow($month)) {
-            $this->month = $month;
+        $value = $this->current;
+        if ($value === null || $value === '') {
+            return [];
         }
-    }
-
-    protected function modelChanged(): void
-    {
-        $first = is_array($this->value) ? ($this->value['from'] ?? $this->value[0] ?? null) : $this->value;
-        if (is_string($first)) {
-            $this->goTo($this->selectedMonth($first));
+        $selection = $this->multiple || $this->range ? $value : [$value];
+        if (! is_array($selection) || ! array_is_list($selection)) {
+            throw new InvalidArgumentException(__('ui::errors.date_list'));
         }
-        $this->syncTimes();
-    }
-
-    private function syncTimes(): void
-    {
-        if (! ($this->settings['time'] ?? false)) {
-            return;
-        }
-
-        $options = $this->timeOptions();
-        $value = is_array($this->value) ? $this->value : ['from' => $this->value];
-        foreach (['from' => $value['from'] ?? $value[0] ?? null, 'to' => $value['to'] ?? null] as $part => $at) {
-            $time = is_string($at) ? substr($at, 11) : '';
-            $this->times[$part] = TimeOptions::parse($time) === null
-                ? $options->initial($this->settings['timeValue'] ?? null)
-                : $time;
-        }
-    }
-
-    protected function timeOptions(): TimeOptions
-    {
-        return new TimeOptions($this->settings['step'] ?? null, combined: ($this->settings['timeMode'] ?? null) === 'combined');
-    }
-
-    public function previous(): void
-    {
-        $this->goTo(CarbonImmutable::parse($this->month.'-01')->subMonth()->format('Y-m'));
-    }
-
-    public function next(): void
-    {
-        $this->goTo(CarbonImmutable::parse($this->month.'-01')->addMonth()->format('Y-m'));
-    }
-
-    public function select(string $date): void
-    {
-        if (! $this->selectable($date)) {
-            return;
-        }
-
-        $mode = $this->settings['mode'] ?? 'single';
-        if ($mode === 'range') {
-            $from = $this->selectionKey($this->value['from'] ?? '') ?: null;
-            $to = $this->selectionKey($this->value['to'] ?? '') ?: null;
-            $range = ! $from || $to ? ['from' => $date, 'to' => null]
-                : ($date < $from ? ['from' => $date, 'to' => $from] : ['from' => $from, 'to' => $date]);
-            $this->value = ['from' => $this->at($range['from'], 'from'), 'to' => $this->at($range['to'], 'to')];
-        } elseif ($mode === 'multiple') {
-            $values = (array) $this->value;
-            $dates = array_map($this->selectionKey(...), $values);
-            $this->value = in_array($date, $dates, true)
-                ? array_values(array_filter($values, fn ($value) => $this->selectionKey($value) !== $date))
-                : [...$values, $this->at($date, 'from')];
-            sort($this->value);
-        } else {
-            $this->value = $this->at($date, 'from');
-        }
-        $this->dispatch('ui-calendar-picked', close: $mode === 'single' || ($mode === 'range' && ! empty($this->value['to'])));
-    }
-
-    public function preset(string $label): void
-    {
-        if ($this->settings['disabled'] ?? false) {
-            return;
-        }
-        $value = $this->settings['presets'][$label] ?? null;
-        if ($value === null) {
-            return;
-        }
-        $dates = is_array($value) ? $value : [$value];
-        foreach ($dates as $date) {
-            if ($date && (! is_string($date) || ! $this->selectable($this->selectionKey($date)))) {
-                return;
+        foreach ($selection as $date) {
+            if (! is_string($date) || ! $this->validDate($date)) {
+                throw new InvalidArgumentException(__('ui::errors.date_format'));
             }
         }
-        if ($this->settings['time'] ?? false) {
-            $value = match ($this->settings['mode'] ?? 'single') {
-                'range' => ['from' => $this->at($value['from'] ?? null, 'from'), 'to' => $this->at($value['to'] ?? null, 'to')],
-                'multiple' => array_map(fn ($date) => $this->at($date, 'from'), $value),
-                default => $this->at($value, 'from'),
-            };
+        if ($this->range && (count($selection) > 2 || (count($selection) === 2 && $selection[0] > $selection[1]))) {
+            throw new InvalidArgumentException(__('ui::errors.date_range'));
         }
-        $this->value = $value;
-        $first = is_array($value) ? ($value['from'] ?? $value[0] ?? null) : $value;
-        if ($first) {
-            $this->goTo($this->selectedMonth($first));
+
+        return $selection;
+    }
+
+    #[Computed]
+    public function period(): CarbonImmutable
+    {
+        if (! $this->validDate($this->month)) {
+            throw new InvalidArgumentException(__('ui::errors.calendar_display_month'));
         }
-        $this->dispatch('ui-calendar-picked', close: true);
+
+        $period = CarbonImmutable::parse($this->month)->startOfMonth();
+        $locale = $this->locale ?? app()->getLocale();
+        $period->locale($locale === 'cn' ? 'zh_CN' : $locale);
+
+        return $period;
     }
 
-    protected function at(?string $date, string $part): ?string
+    /** @return list<array{date: string, label: int, current: bool, disabled: bool, hidden: bool, selected: bool, today: bool}> */
+    #[Computed]
+    public function days(): array
     {
-        return $date && ($this->settings['time'] ?? false) ? $date.' '.$this->times[$part] : $date;
+        return $this->monthDays(0);
     }
 
-    protected function selectionKey(?string $date): string
+    #[Computed]
+    public function navigationStart(): ?string
     {
-        return substr($date ?? '', 0, 10);
+        $date = $this->startMonth ?? $this->min;
+
+        if ($date !== null) {
+            return substr($date, 0, 7).'-01';
+        }
+        if ($this->captionLayout !== 'dropdown') {
+            return null;
+        }
+
+        $default = CarbonImmutable::today()->subYears(100)->startOfYear()->toDateString();
+        $end = $this->endMonth ?? $this->max ?? $default;
+
+        return min($default, substr($end, 0, 4).'-01-01');
     }
 
-    protected function selectedMonth(string $date): string
+    #[Computed]
+    public function navigationEnd(): ?string
     {
-        return substr($date, 0, 7);
+        $date = $this->endMonth ?? $this->max;
+
+        if ($date !== null) {
+            return CarbonImmutable::parse($date)->endOfMonth()->toDateString();
+        }
+        if ($this->captionLayout !== 'dropdown') {
+            return null;
+        }
+
+        $default = CarbonImmutable::today()->endOfYear()->toDateString();
+        $start = $this->startMonth ?? $this->min ?? $default;
+
+        return max($default, substr($start, 0, 4).'-12-31');
     }
 
-    protected function selectable(string $date): bool
+    /** @return list<array{date: string, label: int, current: bool, disabled: bool, hidden: bool, selected: bool, today: bool, inRange: bool}> */
+    public function monthDays(int $offset): array
     {
-        $parsed = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
+        $period = $this->period->addMonths($offset);
+        $start = $period->startOfWeek($this->weekStartsOn);
+        $end = $period->endOfMonth()->endOfWeek(($this->weekStartsOn + 6) % 7);
+        $count = $this->fixedWeeks ? 42 : (int) $start->diffInDays($end->startOfDay()) + 1;
+        $days = [];
+        for ($offset = 0; $offset < $count; $offset++) {
+            $day = $start->addDays($offset);
+            $date = $day->toDateString();
+            $days[] = ['date' => $date, 'label' => $day->day, 'current' => $day->month === $period->month, 'disabled' => ! $this->allowed($date), 'hidden' => ($this->navigationStart !== null && $date < $this->navigationStart) || ($this->navigationEnd !== null && $date > $this->navigationEnd), 'selected' => in_array($date, $this->selected, true), 'today' => $day->isToday(), 'inRange' => $this->range && count($this->selected) === 2 && $date > $this->selected[0] && $date < $this->selected[1]];
+        }
 
-        return $parsed && $parsed->format('Y-m-d') === $date && ! $this->disabled($date);
+        return $days;
     }
 
-    public function disabled(string $date): bool
+    public function moveMonth(int $direction): void
     {
-        return ($this->settings['disabled'] ?? false) || (! empty($this->settings['min']) && $date < substr($this->settings['min'], 0, 10))
-            || (! empty($this->settings['max']) && $date > substr($this->settings['max'], 0, 10))
-            || in_array($date, $this->settings['disabledDates'] ?? [], true);
+        if (in_array($direction, [-1, 1], true)) {
+            $this->showMonth($this->period->addMonths($direction)->format('Y-m'));
+        }
     }
 
-    public function canShow(string $month): bool
+    public function choose(string $date): void
     {
-        [$min, $max] = $this->monthBounds();
+        if (! $this->validDate($date) || ! $this->allowed($date)) {
+            return;
+        }
+        $selected = $this->selected;
+        if ($this->range) {
+            $next = count($selected) === 1 ? [$selected[0], $date] : [$date];
+            sort($next);
+            if (count($next) === 2) {
+                foreach ($this->disabledDates as $excluded) {
+                    if ($excluded >= $next[0] && $excluded <= $next[1]) {
+                        return;
+                    }
+                }
+            }
+            $this->changeValue($next);
+            unset($this->selected, $this->days);
 
-        return (! $min || $month >= $min) && (! $max || $month <= $max);
+            return;
+        }
+        $this->changeValue($this->multiple
+            ? (in_array($date, $selected, true) ? array_values(array_diff($selected, [$date])) : [...$selected, $date])
+            : $date);
+        unset($this->selected, $this->days);
     }
 
-    /** @return array{?string, ?string} */
-    protected function monthBounds(): array
+    protected function validDate(string $date): bool
     {
-        return [
-            $this->settings['startMonth'] ?? (! empty($this->settings['min']) ? substr($this->settings['min'], 0, 7) : null),
-            $this->settings['endMonth'] ?? (! empty($this->settings['max']) ? substr($this->settings['max'], 0, 7) : null),
-        ];
+        if (! preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $date, $parts)) {
+            return false;
+        }
+
+        return checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1]);
     }
 
-    public function format(string $date, string $pattern): string
+    protected function allowed(string $date): bool
     {
-        $generator = \IntlDatePatternGenerator::create(app()->getLocale());
-        $pattern = $generator?->getBestPattern(preg_replace('/[^a-zA-Z]/', '', $pattern) ?? $pattern) ?: $pattern;
-        $formatter = new IntlDateFormatter(app()->getLocale(), IntlDateFormatter::NONE, IntlDateFormatter::NONE, config('app.timezone'), pattern: $pattern);
-
-        return $formatter->format(CarbonImmutable::parse($date)) ?: $date;
+        return ($this->min === null || $date >= $this->min) && ($this->max === null || $date <= $this->max) && ! in_array($date, $this->disabledDates, true);
     }
 
-    /** @return list<array<string, mixed>> */
+    public function showMonth(string $value): void
+    {
+        $month = $value.'-01';
+        if (! $this->disabled && $this->validDate($month) && $this->boundedMonth($month) === $month) {
+            $this->displayMonth($month);
+        }
+    }
+
+    /** @return list<array{value: int, label: string}> */
+    #[Computed]
+    public function years(): array
+    {
+        $year = $this->period->year;
+        $first = $this->navigationStart !== null ? (int) substr($this->navigationStart, 0, 4) : max(1, $year - 100);
+        $last = $this->lastPageMonth !== null ? (int) substr($this->lastPageMonth, 0, 4) : min(9999, $year + 20);
+
+        return array_map(fn (int $value): array => ['value' => $value, 'label' => (string) $value], range($first, $last));
+    }
+
+    /** @return list<array{value: int, label: string, disabled: bool}> */
+    #[Computed]
     public function months(): array
     {
-        $first = CarbonImmutable::parse($this->month.'-01');
-        $start = $this->settings['weekStartsOn'] ?? (int) \IntlCalendar::createInstance(null, app()->getLocale())->getFirstDayOfWeek() - 1;
-        $value = $this->value;
-        $mode = $this->settings['mode'] ?? 'single';
-        $from = $mode === 'range' ? substr($value['from'] ?? '', 0, 10) : null;
-        $to = $mode === 'range' ? substr($value['to'] ?? $value['from'] ?? '', 0, 10) : null;
-        $selected = $mode === 'range' ? [] : array_map(fn ($at) => substr($at ?? '', 0, 10), (array) $value);
-        $focus = $from ?: ($selected[0] ?? null);
-        $focus ??= now()->format('Y-m') === $this->month ? now()->format('Y-m-d') : $this->month.'-01';
-        $months = [];
+        return array_map(function (int $value): array {
+            $period = $this->period->setMonth($value);
+            $month = $period->toDateString();
 
-        for ($offset = 0; $offset < max(1, min(12, (int) ($this->settings['numberOfMonths'] ?? 1))); $offset++) {
-            $month = $first->addMonths($offset);
-            $day = $month->subDays(($month->dayOfWeek - $start + 7) % 7);
-            $weeks = [];
-            for ($week = 0; $week < 6; $week++) {
-                if ($week > 0 && $day->month !== $month->month) {
-                    break;
-                }
-                $days = [];
-                for ($index = 0; $index < 7; $index++, $day = $day->addDay()) {
-                    $key = $day->format('Y-m-d');
-                    $middle = $from && $to && $key > $from && $key < $to;
-                    $chosen = $mode === 'range' ? ($key === $from || $key === $to || $middle) : in_array($key, $selected, true);
-                    $flags = array_filter([
-                        'data-today' => $day->isToday(), 'data-outside' => $day->month !== $month->month,
-                        'data-selected' => $chosen, 'data-selected-single' => $mode !== 'range' && $chosen,
-                        'data-range-start' => $key === $from, 'data-range-end' => $key === $to,
-                        'data-range-middle' => (bool) $middle, 'data-disabled' => $this->disabled($key),
-                    ]);
-                    $days[] = ['key' => $key, 'number' => $day->day, 'label' => $this->format($key, 'EEEE, MMMM d, y'), 'flags' => array_map(fn () => 'true', $flags), 'selected' => $chosen, 'disabled' => $this->disabled($key), 'focus' => $key === $focus, 'hidden' => $day->month !== $month->month && ! ($this->settings['showOutsideDays'] ?? true)];
-                }
-                $weeks[] = $days;
-            }
-            $weekdays = [];
-            for ($index = 0; $index < 7; $index++) {
-                $date = CarbonImmutable::parse('2023-01-01')->addDays(($start + $index) % 7)->format('Y-m-d');
-                $short = $this->format($date, 'EEE');
-                $weekdays[] = ['label' => $this->format($date, 'EEEE'), 'text' => preg_match('/^[a-z]/i', $short) ? mb_substr($short, 0, 2) : $short];
-            }
-            $months[] = ['key' => $month->format('Y-m'), 'year' => $month->year, 'month' => $month->month, 'caption' => $this->format($month->format('Y-m-d'), 'MMMM y'), 'weeks' => $weeks, 'weekdays' => $weekdays];
+            return [
+                'value' => $value,
+                'label' => $period->isoFormat('MMMM'),
+                'disabled' => $this->boundedMonth($month) !== $month,
+            ];
+        }, range(1, 12));
+    }
+
+    public function showYear(int $year): void
+    {
+        if ($this->disabled || ! in_array($year, array_column($this->years(), 'value'), true)) {
+            return;
         }
+        $this->displayMonth($this->boundedMonth(sprintf('%04d-%02d-01', $year, $this->period->month)));
+    }
 
-        return $months;
+    public function showMonthOfYear(int $month): void
+    {
+        if ($month >= 1 && $month <= 12) {
+            $this->showMonth(sprintf('%04d-%02d', $this->period->year, $month));
+        }
+    }
+
+    protected function validateOptions(): void
+    {
+        foreach ([$this->dayLabels, $this->dayClasses] as $decorations) {
+            foreach ($decorations as $date => $content) {
+                if (! is_string($date) || ! $this->validDate($date) || ! is_string($content)) {
+                    throw new InvalidArgumentException(__('ui::errors.calendar_decorations'));
+                }
+            }
+        }
+        if (! array_is_list($this->disabledDates)) {
+            throw new InvalidArgumentException(__('ui::errors.date_exclusions'));
+        }
+        foreach (array_filter([$this->min, $this->max, $this->startMonth, $this->endMonth, ...$this->disabledDates], fn ($date) => $date !== null) as $date) {
+            if (! is_string($date) || ! $this->validDate($date)) {
+                throw new InvalidArgumentException(__('ui::errors.calendar_limits'));
+            }
+        }
+        if ($this->min !== null && $this->max !== null && $this->min > $this->max) {
+            throw new InvalidArgumentException(__('ui::errors.calendar_range'));
+        }
+        if (! in_array($this->monthLabelFormat, ['short', 'long'], true) || ($this->navigationStart !== null && $this->navigationEnd !== null && $this->navigationStart > $this->navigationEnd)) {
+            throw new InvalidArgumentException(__('ui::errors.calendar_month_options'));
+        }
+        if (($this->multiple && $this->range) || $this->numberOfMonths < 1 || $this->numberOfMonths > 12 || $this->weekStartsOn < 0 || $this->weekStartsOn > 6 || ! in_array($this->captionLayout, ['label', 'dropdown'], true)) {
+            throw new InvalidArgumentException(__('ui::errors.calendar_options'));
+        }
+    }
+
+    /** Latest possible first month when several months are displayed together. */
+    #[Computed]
+    public function lastPageMonth(): ?string
+    {
+        if ($this->navigationEnd === null) {
+            return null;
+        }
+        $last = CarbonImmutable::parse($this->navigationEnd)->startOfMonth()->subMonths($this->numberOfMonths - 1);
+
+        return max($last->toDateString(), $this->navigationStart ?? '0001-01-01');
+    }
+
+    private function boundedMonth(string $month): string
+    {
+        return max($this->navigationStart ?? '0001-01-01', min($month, $this->lastPageMonth ?? $month));
+    }
+
+    private function displayMonth(string $month): void
+    {
+        if ($month !== $this->month) {
+            $this->month = $month;
+            unset($this->period, $this->days, $this->months, $this->years);
+        }
+    }
+
+    public function rendering(): void
+    {
+        $this->validateOptions();
+        $this->displayMonth($this->boundedMonth($this->period->toDateString()));
     }
 
     public function render(): View
     {
-        return view('ui::livewire.calendar', ['months' => $this->months()]);
+        return view('ui::livewire.calendar');
     }
 }

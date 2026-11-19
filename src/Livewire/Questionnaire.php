@@ -2,180 +2,281 @@
 
 namespace Esoboy\Ui\Livewire;
 
-use Esoboy\Ui\Support\Options;
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Modelable;
+use Illuminate\Support\Facades\Validator;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class Questionnaire extends Component
+/**
+ * @phpstan-type Question array{name: string, prompt: string, description: string, required: bool, multiple: bool, choices: list<array{value: string, label: string, labelClass: string, description: string, disabled: bool}>, input: array{label: string, placeholder: string}|null, error: string}
+ * @phpstan-type Answer array{choices: list<string>, text: string, status: string}
+ *
+ * @property-read list<Question> $questions
+ * @property-read array<string, Answer> $answers
+ * @property-read int $position
+ */
+class Questionnaire extends ValueControl
 {
-    /** @var array<string, mixed> */
-    #[Modelable]
-    public array $value = [];
+    use HasEmptyState;
 
-    /** @var list<array<string, mixed>> */
+    /** @var array<int, array<string, mixed>> */
     #[Reactive]
     public array $items = [];
 
     #[Reactive]
-    public ?string $shortcuts = null;
+    public ?string $item = null;
 
     #[Reactive]
-    public ?string $questionView = null;
+    public string $shortcuts = '';
 
-    public ?string $current = null;
+    #[Reactive]
+    public string $submitLabel = '';
 
-    /** @var list<string> */
-    public array $attempted = [];
+    #[Reactive]
+    public string $layout = 'standard';
 
-    /** @var list<string> */
-    public array $skipped = [];
+    #[Reactive]
+    public bool $showProgress = true;
 
-    /**
-     * @param  list<array<string, mixed>>  $items
-     * @param  array<string, mixed>  $value
-     */
-    public function mount(array $items = [], array $value = [], ?string $current = null, ?string $shortcuts = null, ?string $questionView = null): void
+    #[Reactive]
+    public string $progressClass = '';
+
+    #[Locked]
+    public string $initialItem = '';
+
+    #[Locked]
+    public string $activeItem = '';
+
+    #[Locked]
+    public ?string $invalid = null;
+
+    #[Locked]
+    public mixed $originalValue = null;
+
+    public function mount(mixed $initialValue = null): void
     {
-        $this->items = $items;
-        $this->value = $value;
-        $this->shortcuts = $shortcuts;
-        $this->questionView = $questionView;
-        $this->current = collect($this->steps())->firstWhere('name', $current)['name'] ?? ($this->steps()[0]['name'] ?? null);
-        foreach ($items as $item) {
-            $this->value[$item['name']] ??= ($item['multiple'] ?? false) ? [] : null;
-            if ($item['other'] ?? false) {
-                $this->value[$item['other']] ??= '';
-            }
-        }
+        parent::mount($initialValue);
+        $this->originalValue = $this->current;
+        $this->activeItem = $this->initialItem;
     }
 
-    /** @return list<array<string, mixed>> */
-    public function steps(): array
+    /** @return list<Question> */
+    #[Computed]
+    public function questions(): array
     {
-        return array_values(array_filter($this->items, fn ($item) => empty($item['disabled'])));
-    }
-
-    /** @param array<string, mixed> $item */
-    public function answered(array $item): bool
-    {
-        $answer = $this->value[$item['name']] ?? null;
-        $options = Options::normalize($item['options'] ?? []);
-        $enabled = array_column(array_filter($options, fn ($option) => empty($option['disabled'])), 'value');
-        $chosen = array_intersect(array_map('strval', (array) $answer), $enabled);
-        $text = $this->value[$item['other'] ?? $item['name']] ?? '';
-
-        return $chosen !== [] || (($item['input'] ?? false) && is_string($text) && trim($text) !== '');
-    }
-
-    /** @param array<string, mixed> $item */
-    public function settled(array $item): bool
-    {
-        return $this->answered($item) || (empty($item['required']) && in_array($item['name'], $this->skipped, true));
-    }
-
-    public function choose(string $name, string $value): void
-    {
-        $item = collect($this->steps())->firstWhere('name', $name);
-        $option = $item ? collect(Options::normalize($item['options'] ?? []))->firstWhere('value', $value) : null;
-        if (! $option || ! empty($option['disabled'])) {
-            return;
-        }
-
-        $chosen = (array) ($this->value[$name] ?? []);
-        $this->value[$name] = ($item['multiple'] ?? false)
-            ? (in_array($value, $chosen, true) ? array_values(array_diff($chosen, [$value])) : [...$chosen, $value])
-            : $value;
-        $this->updatedValue($this->value[$name], $name);
-    }
-
-    public function updatedValue(mixed $value, ?string $key = null): void
-    {
-        if ($key === null) {
-            return;
-        }
+        Validator::make(['items' => $this->items, 'shortcuts' => $this->shortcuts, 'layout' => $this->layout], [
+            'layout' => ['in:standard,card,dialog'],
+            'shortcuts' => ['nullable', 'in:letters,numbers'],
+            'items' => ['array', 'list'],
+            'items.*.name' => ['required', 'string', 'regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/', 'distinct'],
+            'items.*.prompt' => ['required', 'string'],
+            'items.*.description' => ['sometimes', 'string'],
+            'items.*.error' => ['sometimes', 'string'],
+            'items.*.required' => ['sometimes', 'boolean'],
+            'items.*.multiple' => ['sometimes', 'boolean'],
+            'items.*.disabled' => ['sometimes', 'boolean'],
+            'items.*.choices' => ['sometimes', 'array', 'list'],
+            'items.*.choices.*.value' => ['required', 'string'],
+            'items.*.choices.*.label' => ['required', 'string'],
+            'items.*.choices.*.description' => ['sometimes', 'string'],
+            'items.*.choices.*.disabled' => ['sometimes', 'boolean'],
+            'items.*.input' => ['sometimes', 'array'],
+            'items.*.input.label' => ['required_with:items.*.input', 'string'],
+            'items.*.input.placeholder' => ['sometimes', 'string'],
+        ])->validate();
+        $questions = [];
         foreach ($this->items as $item) {
-            if ($key !== $item['name'] && $key !== ($item['other'] ?? null)) {
+            if ($item['disabled'] ?? false) {
                 continue;
             }
-            $this->skipped = array_values(array_diff($this->skipped, [$item['name']]));
-            if (empty($item['multiple']) && ! empty($value) && isset($item['other'])) {
-                $this->value[$key === $item['name'] ? $item['other'] : $item['name']] = $key === $item['name'] ? '' : null;
+            $choices = [];
+            foreach ($item['choices'] ?? [] as $choice) {
+                if (in_array($choice['value'], array_column($choices, 'value'), true)) {
+                    throw new \InvalidArgumentException(__('ui::errors.question_choice_values'));
+                }
+                $choices[] = ['value' => $this->text($choice['value']), 'label' => $this->text($choice['label']), 'labelClass' => $this->text($choice['labelClass'] ?? ''), 'description' => $this->text($choice['description'] ?? ''), 'disabled' => (bool) ($choice['disabled'] ?? false)];
             }
+            $questions[] = [
+                'name' => $this->text($item['name']), 'prompt' => $this->text($item['prompt']), 'description' => $this->text($item['description'] ?? ''),
+                'required' => (bool) ($item['required'] ?? false), 'multiple' => (bool) ($item['multiple'] ?? false),
+                'choices' => $choices, 'input' => isset($item['input']) ? ['label' => $this->text($item['input']['label']), 'placeholder' => $this->text($item['input']['placeholder'] ?? '')] : null,
+                'error' => $this->text($item['error'] ?? ''),
+            ];
         }
+
+        return $questions;
+    }
+
+    private function text(mixed $value): string
+    {
+        if (! is_string($value)) {
+            throw new \InvalidArgumentException(__('ui::errors.question_text'));
+        }
+
+        return $value;
+    }
+
+    #[Computed]
+    public function position(): int
+    {
+        $index = array_search($this->item ?? $this->activeItem, array_column($this->questions, 'name'), true);
+
+        return $index === false ? 0 : $index;
+    }
+
+    /** @return array<string, Answer> */
+    #[Computed]
+    public function answers(): array
+    {
+        $raw = is_array($this->current) ? $this->current : [];
+        $result = [];
+        foreach ($this->questions as $question) {
+            $answer = is_array($raw[$question['name']] ?? null) ? $raw[$question['name']] : [];
+            $allowed = array_column(array_filter($question['choices'], fn (array $choice): bool => ! $choice['disabled']), 'value');
+            $choices = array_values(array_unique(array_filter(is_array($answer['choices'] ?? null) ? $answer['choices'] : [], fn ($value): bool => is_string($value) && in_array($value, $allowed, true))));
+            $text = $question['input'] && is_string($answer['text'] ?? null) ? trim($answer['text']) : '';
+            if (! $question['multiple']) {
+                $choices = $text !== '' ? [] : array_slice($choices, 0, 1);
+            }
+            $status = $choices !== [] || $text !== '' ? 'answered' : (! $question['required'] && ($answer['status'] ?? '') === 'skipped' ? 'skipped' : 'unanswered');
+            $result[$question['name']] = ['choices' => $choices, 'text' => $text, 'status' => $status];
+        }
+
+        return $result;
+    }
+
+    public function choose(string $value): void
+    {
+        $question = $this->questions[$this->position] ?? null;
+        if (! $question || $this->disabled || $this->readonly) {
+            return;
+        }
+        foreach ($question['choices'] as $choice) {
+            if ($choice['value'] !== $value || $choice['disabled']) {
+                continue;
+            }
+            $answer = $this->answers[$question['name']];
+            $answer['choices'] = $question['multiple']
+                ? (in_array($value, $answer['choices'], true) ? array_values(array_diff($answer['choices'], [$value])) : [...$answer['choices'], $value])
+                : [$value];
+            if (! $question['multiple']) {
+                $answer['text'] = '';
+            }
+            $this->writeAnswer($question['name'], $answer);
+        }
+    }
+
+    public function writeText(string $text): void
+    {
+        $question = $this->questions[$this->position] ?? null;
+        if (! $question || ! $question['input'] || $this->disabled || $this->readonly) {
+            return;
+        }
+        $answer = $this->answers[$question['name']];
+        $answer['text'] = $text;
+        if (! $question['multiple'] && trim($text) !== '') {
+            $answer['choices'] = [];
+        }
+        $this->writeAnswer($question['name'], $answer);
+    }
+
+    /** @param Answer $answer */
+    private function writeAnswer(string $name, array $answer): void
+    {
+        $answer['status'] = $answer['choices'] !== [] || trim($answer['text']) !== '' ? 'answered' : 'unanswered';
+        $this->changeValue([...$this->answers, $name => $answer]);
+        unset($this->answers);
+        $this->invalid = null;
     }
 
     public function previous(): void
     {
-        $this->move(-1);
+        $this->move($this->position - 1);
     }
 
     public function next(): void
     {
-        $item = collect($this->steps())->firstWhere('name', $this->current);
-        if (! $item) {
-            return;
-        }
-        $this->attempted[] = $item['name'];
-        if ($this->settled($item)) {
-            $this->move(1);
-        } else {
-            $this->dispatch('ui-questionnaire-step');
+        if (! $this->disabled && $this->validateItem($this->position)) {
+            $this->move($this->position + 1);
         }
     }
 
     public function skip(): void
     {
-        $item = collect($this->steps())->firstWhere('name', $this->current);
-        if (! $item || ! empty($item['required'])) {
+        $question = $this->questions[$this->position] ?? null;
+        if (! $question || $question['required'] || $this->disabled || $this->readonly) {
             return;
         }
-        $this->value[$item['name']] = ($item['multiple'] ?? false) ? [] : null;
-        if (isset($item['other'])) {
-            $this->value[$item['other']] = '';
+        $this->changeValue([...$this->answers, $question['name'] => ['choices' => [], 'text' => '', 'status' => 'skipped']]);
+        unset($this->answers);
+        $this->invalid = null;
+        if ($this->mode !== 'controlled') {
+            $this->move($this->position + 1);
         }
-        $this->skipped[] = $item['name'];
-        $this->move(1);
-    }
-
-    protected function move(int $offset): void
-    {
-        $steps = $this->steps();
-        $index = array_search($this->current, array_column($steps, 'name'), true);
-        if ($offset > 0 && $index === count($steps) - 1) {
-            $this->submit();
-
-            return;
-        }
-        $this->current = $steps[$index + $offset]['name'] ?? $this->current;
-        $this->dispatch('ui-questionnaire-step');
     }
 
     public function submit(): void
     {
-        foreach ($this->steps() as $item) {
-            $this->attempted[] = $item['name'];
-            if (! $this->settled($item)) {
-                $this->current = $item['name'];
-                $this->dispatch('ui-questionnaire-step');
-
+        if ($this->disabled || $this->readonly || $this->questions === []) {
+            return;
+        }
+        foreach ($this->questions as $index => $question) {
+            if (! $this->validateItem($index)) {
                 return;
             }
         }
-        foreach ($this->items as $item) {
-            $this->value[$item['name']] ??= ($item['multiple'] ?? false) ? [] : null;
-            if (isset($item['other'])) {
-                $this->value[$item['other']] ??= '';
-            }
+        $this->dispatch('questionnaire-submitted', answers: $this->answers);
+    }
+
+    public function resetAnswers(): void
+    {
+        if ($this->disabled || $this->readonly) {
+            return;
         }
-        $this->dispatch('finish', value: $this->value);
+        $this->changeValue($this->originalValue);
+        unset($this->answers);
+        $this->activeItem = $this->initialItem;
+        unset($this->position);
+        $this->invalid = null;
+        $this->dispatch('item-changed', item: $this->questions[$this->position]['name'] ?? '');
+        $this->dispatch('questionnaire-focus', invalid: false);
+    }
+
+    private function validateItem(int $index): bool
+    {
+        $question = $this->questions[$index] ?? null;
+        if (! $question) {
+            return false;
+        }
+        if ($this->answers[$question['name']]['status'] !== 'unanswered' && $question['error'] === '') {
+            $this->invalid = null;
+
+            return true;
+        }
+        $this->move($index);
+        $this->invalid = $question['name'];
+        $this->dispatch('questionnaire-focus', invalid: true);
+
+        return false;
+    }
+
+    private function move(int $index): void
+    {
+        if ($this->disabled || ! isset($this->questions[$index])) {
+            return;
+        }
+        $name = $this->questions[$index]['name'];
+        if ($this->item === null) {
+            $this->activeItem = $name;
+            unset($this->position);
+        }
+        $this->dispatch('item-changed', item: $name);
+        $this->dispatch('questionnaire-focus', invalid: false);
     }
 
     public function render(): View
     {
-        $steps = $this->steps();
-
-        return view('ui::livewire.questionnaire', ['steps' => $steps, 'index' => array_search($this->current, array_column($steps, 'name'), true)]);
+        return view('ui::livewire.questionnaire');
     }
 }

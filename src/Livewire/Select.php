@@ -2,63 +2,71 @@
 
 namespace Esoboy\Ui\Livewire;
 
-use Esoboy\Ui\Support\ChoiceMarkup;
 use Esoboy\Ui\Support\Options;
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\Modelable;
+use InvalidArgumentException;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class Select extends Component
+class Select extends ChoiceControl
 {
-    #[Locked]
-    public ?string $ownerId = null;
-
-    #[Modelable]
-    public mixed $value = null;
+    /** @var list<array{value: string|int|null, label: string, disabled?: bool}> */
+    #[Reactive]
+    public array $options = [];
 
     #[Reactive]
-    public string $markup = '';
+    public bool $multiple = false;
 
-    /** @var array<int|string, mixed>|null */
     #[Reactive]
-    public ?array $options = null;
+    public string $placeholder = '';
 
-    /** @var array<string, mixed> */
     #[Reactive]
-    public array $settings = [];
+    public string $size = 'default';
 
-    public function choose(string $value): void
+    #[Reactive]
+    public ?string $displayValue = null;
+
+    #[Reactive]
+    public string $side = 'bottom';
+
+    #[Reactive]
+    public string $align = 'start';
+
+    #[Reactive]
+    public float $sideOffset = 4;
+
+    #[Reactive]
+    public float $alignOffset = 0;
+
+    #[Reactive]
+    public bool $alignItemWithTrigger = false;
+
+    #[Reactive]
+    public string $popupClass = '';
+
+    public function rendering(): void
     {
-        if ($this->settings['disabled'] ?? false) {
-            return;
+        if (! in_array($this->side, ['top', 'right', 'bottom', 'left', 'inline-start', 'inline-end'], true)
+            || ! in_array($this->align, ['start', 'center', 'end'], true)
+            || ! is_finite($this->sideOffset) || ! is_finite($this->alignOffset)) {
+            throw new InvalidArgumentException(__('ui::errors.select_placement'));
         }
+    }
 
-        $choice = collect($this->choices())->firstWhere('value', '===', $value);
-        if ($choice === null || ! empty($choice['disabled'])) {
-            return;
-        }
+    protected function multipleSelection(): bool
+    {
+        return $this->multiple;
+    }
 
-        $this->value = ($this->settings['number'] ?? false) && is_numeric($value) ? $value + 0 : $value;
-        $this->dispatch('ui-model-changed')->self();
+    /** @return list<array{value: string|int|null, label: string, disabled: bool}> */
+    #[Computed]
+    public function choices(): array
+    {
+        return Options::validate($this->options, allowNull: ! $this->multiple);
     }
 
     public function render(): View
     {
-        $markup = $this->options === null ? new ChoiceMarkup($this->markup) : null;
-        $choices = $markup?->options() ?? $this->choices();
-
-        return view('ui::livewire.select', [
-            'choiceMarkup' => $markup,
-            'choices' => $choices,
-            'label' => $this->value === null ? null : collect($choices)->firstWhere('value', '===', (string) $this->value)['label'] ?? null,
-        ]);
-    }
-
-    /** @return list<array<string, mixed>> */
-    private function choices(): array
-    {
-        return $this->options === null ? (new ChoiceMarkup($this->markup))->options() : Options::normalize($this->options);
+        return view('ui::livewire.select');
     }
 }

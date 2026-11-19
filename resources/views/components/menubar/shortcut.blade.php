@@ -1,4 +1,1 @@
-@blaze
-
-{{-- The same item as Dropdown Menu's. --}}
-<x-ui::dropdown-menu.shortcut :attributes="$attributes">{{ $slot }}</x-ui::dropdown-menu.shortcut>
+<span {{ $attributes->merge(['data-slot' => 'menubar-shortcut']) }}>{{ $slot }}</span>

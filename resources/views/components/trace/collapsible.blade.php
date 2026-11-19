@@ -1,4 +1,2 @@
-@blaze
-
-{{-- A Collapsible: open and wire:model work as on <x-ui::collapsible>. --}}
-<x-ui::collapsible :attributes="$attributes->merge(['data-slot' => 'trace-collapsible'])">{{ $slot }}</x-ui::collapsible>
+@props(['initialOpen' => false])
+<div {{ $attributes->merge(['data-slot' => 'trace-collapsible']) }} x-data="uiDisclosure(@js($initialOpen))" x-modelable="opened" x-id="['ui-trace']">{{ $slot }}</div>

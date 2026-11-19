@@ -1,30 +1,9 @@
-@blaze
-
-@props([
-    'active' => false,
-    'variant' => 'default',
-    'size' => 'default',
-    'tooltip' => null,
-])
-
-@php
-// The tooltip only shows while the sidebar is collapsed to icons (sidebar.css hides it otherwise).
-$tooltipId = \Esoboy\Ui\Support\Model::scope('ui-sidebar-tip-'.\Esoboy\Ui\Support\Sequence::next('sidebar-tooltip'), $loop ?? null);
-$attributes = $attributes->merge([
-    'data-slot' => 'sidebar-menu-button',
-    'data-sidebar' => 'menu-button',
-    'data-variant' => $variant,
-    'data-size' => $size,
-    'data-active' => $active,
-    'data-tooltip-trigger' => $tooltip !== null, ...($tooltip !== null ? ['data-ui-tooltip' => $tooltipId, 'x-data' => 'uiOverlayTrigger', 'x-on:pointerover' => 'enter($event)', 'x-on:pointerout' => 'leave($event)', 'x-on:focusin' => 'enter($event)', 'x-on:focusout' => 'leave($event)'] : []),
-]);
-@endphp
-
-@if ($attributes->has('href'))
-<a {{ $attributes }}>{{ $slot }}</a>
-@else
-<button {{ $attributes->merge(['type' => 'button']) }}>{{ $slot }}</button>
-@endif
+@props(['size' => 'default', 'variant' => 'default', 'tooltip' => null, 'active' => false])
 @if ($tooltip !== null)
-<x-ui::tooltip.content :id="$tooltipId" side="right" align="center" data-sidebar="menu-tooltip">{{ $tooltip }}</x-ui::tooltip.content>
+    <x-ui::tooltip x-bind:data-disabled="Alpine.$data($el.closest('[data-slot=sidebar]')).opened || Alpine.$data($el.closest('[data-slot=sidebar]')).mobile ? 'true' : 'false'">
+        <x-ui::tooltip.trigger><x-ui::sidebar.menu-button :size="$size" :variant="$variant" :active="$active" {{ $attributes }}>{{ $slot }}</x-ui::sidebar.menu-button></x-ui::tooltip.trigger>
+        <x-ui::tooltip.content side="right">{{ $tooltip }}</x-ui::tooltip.content>
+    </x-ui::tooltip>
+@else
+<button data-size="{{ $size }}" data-variant="{{ $variant }}" data-active="{{ $active ? 'true' : 'false' }}" type="button" {{ $attributes->class('ui-sidebar-menu-button group/menu-button peer/menu-button')->merge(['data-slot' => 'sidebar-menu-button']) }}>{{ $slot }}</button>
 @endif

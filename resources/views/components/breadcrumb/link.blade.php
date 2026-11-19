@@ -1,3 +1,2 @@
-@blaze(fold: true, unsafe: ['href'])
-
+@blaze
 <a {{ $attributes->merge(['data-slot' => 'breadcrumb-link']) }}>{{ $slot }}</a>

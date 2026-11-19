@@ -1,20 +1,6 @@
-@blaze
-
-@aware([
-    'autoScroll' => false,
-    'scrollPosition' => 'end',
-    'scrollEdgeThreshold' => 8,
-    'scrollPreviousItemPeek' => 64,
-    'scrollMargin' => 0,
-])
-
-{{-- <eso-message-scroller> keeps the transcript's scroll position; its state lives in data-* attributes, so morphs leave it alone. --}}
-<eso-message-scroller x-data="uiMessageScroller" {{ $attributes->merge([
-    'data-slot' => 'message-scroller',
-    'data-auto-scroll' => (bool) $autoScroll,
-    'data-scroll-position' => $scrollPosition,
-    'data-scroll-edge-threshold' => $scrollEdgeThreshold,
-    'data-scroll-previous-item-peek' => $scrollPreviousItemPeek,
-    'data-scroll-margin' => $scrollMargin,
-    'data-pending-scroll' => in_array($scrollPosition, ['end', 'last-anchor'], true),
-]) }} wire:ignore.self>{{ $slot }}</eso-message-scroller>
+<div {{ $attributes->except(['aria-label', 'tabindex'])->merge(['data-slot' => 'message-scroller']) }} x-data="uiMessageScroller">
+    <div data-slot="message-scroller-viewport" x-on:scroll.passive="measure()" {{ $attributes->only(['aria-label', 'tabindex'])->merge(['tabindex' => 0]) }}>
+        <div data-slot="message-scroller-content" data-ui-messages>{{ $slot }}</div>
+    </div>
+    @isset($controls){{ $controls }}@endisset
+</div>

@@ -1,33 +1,44 @@
-@blaze
-
-@use('Esoboy\Ui\Support\ControlState')
-@use('Esoboy\Ui\Support\Model')
-
-@aware([
-    'uiField' => false,
-    'showError' => true,
-])
-
 @props([
-    'value' => null,
-    'options' => null,
-    'placeholder' => null,
-    'disabled' => false,
+    'value',
+    'initialValue',
+    'options' => [],
+    'multiple' => false,
+    'placeholder' => '',
     'size' => 'default',
+    'displayValue' => null,
+    'side' => 'bottom',
+    'align' => 'start',
+    'sideOffset' => 4,
+    'alignOffset' => 0,
+    'alignItemWithTrigger' => false,
+    'popupClass' => '',
+    'emptyTitle' => null,
+    'emptyDescription' => null,
 ])
-
-@php
-$state = ControlState::for($attributes, $errors ?? null, $uiField, $showError);
-$value = Model::value($attributes, $value);
-$key = $attributes->get('wire:key') ?? $attributes->get('id') ?? Model::scope('select'.(Model::key($attributes) ?? ''), $loop ?? null);
-$settings = [
-    'disabled' => $disabled,
-    'placeholder' => $placeholder,
-    'size' => $size,
-    'number' => collect($attributes->whereStartsWith('wire:model')->getAttributes())->keys()->contains(fn ($name) => in_array('number', explode('.', $name), true)),
-    'validation' => $state->attributes(),
-];
-@endphp
-
-@livewire('ui.select', ['options' => $options, 'markup' => $options === null ? \Esoboy\Ui\Support\ViewSlots::capture($slot) : '', 'ownerId' => Model::component()?->getId(), 'settings' => $settings, 'value' => $value, ...$attributes->except('wire:key')->getAttributes()], key('ui-select-'.$key))
-<x-ui::field.error :state="$state" />
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'select', get_defined_vars()))
+<div data-slot="select-field">
+    {!! \Livewire\Livewire::mount(
+        'ui::select',
+        [
+            ...$binding->parameters,
+            'options' => $options,
+            'side' => $side,
+            'align' => $align,
+            'sideOffset' => $sideOffset,
+            'alignOffset' => $alignOffset,
+            'alignItemWithTrigger' => $alignItemWithTrigger,
+            'popupClass' => $popupClass,
+            'multiple' => $multiple,
+            'placeholder' => $placeholder,
+            'size' => $size,
+            'displayValue' => $displayValue,
+            'emptyTitle' => $emptyTitle,
+            'emptyDescription' => $emptyDescription,
+        ],
+        $binding->key,
+    ) !!}
+    {{ $slot }}
+    @isset($footer)
+        <div data-slot="select-footer">{{ $footer }}</div>
+    @endisset
+</div>

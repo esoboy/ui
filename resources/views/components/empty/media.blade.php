@@ -1,7 +1,3 @@
-@blaze(fold: true)
-
-@props([
-    'variant' => 'default',
-])
-
-<div {{ $attributes->merge(['data-slot' => 'empty-icon', 'data-variant' => $variant]) }}>{{ $slot }}</div>
+@blaze
+@props(['variant' => 'default'])
+<div {{ $attributes->merge(['data-slot' => 'empty-media', 'data-variant' => $variant]) }}>{{ $slot }}</div>

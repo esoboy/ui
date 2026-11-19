@@ -1,41 +1,8 @@
-@blaze
-
-@props([
-    'value' => null,
-    'min' => 0,
-    'max' => 100,
-    'variant' => 'default',
-])
-
+@props(['value' => null, 'max' => 100])
 @php
-$percent = $value === null ? null : max(0, min(100, ($value - $min) / max($max - $min, 1) * 100));
-
-// Blade renders the slot first: a Progress Label in it names the bar.
-$label = preg_match('/<[^>]*\sdata-slot="progress-label"[^>]*>/', (string) $slot, $tag) && preg_match('/\sid="([^"]+)"/', $tag[0], $id) ? $id[1] : null;
+    if (!is_numeric($max) || $max <= 0 || ($value !== null && (!is_numeric($value) || $value < 0 || $value > $max))) throw new \InvalidArgumentException(__('ui::errors.progress_value'));
 @endphp
-
-{{-- The circle variant draws its track and indicator as rings and centres its content (a Progress Value) in them. --}}
-<div {{ $attributes->merge([
-    'role' => 'progressbar',
-    'aria-labelledby' => $label ?? false,
-    'aria-valuemin' => $min,
-    'aria-valuemax' => $max,
-    'aria-valuenow' => $value ?? false,
-    'aria-valuetext' => $percent === null ? false : round($percent).'%',
-    'data-slot' => 'progress',
-    'data-variant' => $variant,
-    'data-indeterminate' => $value === null,
-    'data-complete' => $percent !== null && $percent >= 100,
-]) }}>
+<div data-slot="progress" {{ $attributes->except(['id', 'aria-label', 'aria-labelledby', 'aria-describedby']) }}>
     {{ $slot }}
-    @if ($variant === 'circle')
-    <svg data-slot="progress-circle">
-        <circle data-slot="progress-circle-track" />
-        <circle data-slot="progress-circle-indicator" pathLength="100" @if ($percent !== null) style="stroke-dashoffset: {{ 100 - $percent }}" @endif />
-    </svg>
-    @else
-    <div data-slot="progress-track">
-        <div data-slot="progress-indicator" @if ($percent !== null) style="inset-inline-start: 0; width: {{ $percent }}%" @endif></div>
-    </div>
-    @endif
+    <progress data-slot="progress-track" max="{{ $max }}" @if($value !== null) value="{{ $value }}" @endif {{ $attributes->only(['id', 'aria-label', 'aria-labelledby', 'aria-describedby']) }}></progress>
 </div>

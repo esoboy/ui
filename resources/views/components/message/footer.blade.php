@@ -1,3 +1,2 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['data-slot' => 'message-footer']) }}>{{ $slot }}</div>
+@blaze
+<footer {{ $attributes->merge(['data-slot' => 'message-footer']) }}>{{ $slot }}</footer>

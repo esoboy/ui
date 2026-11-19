@@ -1,36 +1,12 @@
-@blaze
-
-@use('Esoboy\Ui\Support\Sequence')
-
-@aware([
-    'current' => 1,
-])
-
-{{-- status overrides the position: complete, current, upcoming or error. --}}
-@props([
-    'title' => null,
-    'description' => null,
-    'status' => null,
-])
-
-@php
-$step = Sequence::next('steps');
-$status ??= $step < (int) $current ? 'complete' : ($step === (int) $current ? 'current' : 'upcoming');
-@endphp
-
-<li {{ $attributes->merge(['data-slot' => 'steps-item', 'data-status' => $status, 'aria-current' => $status === 'current' ? 'step' : false]) }}>
-    <span data-slot="steps-indicator">
-        @if ($status === 'complete')
-        <x-ui::icon name="check" />
-        @elseif ($status === 'error')
-        <x-ui::icon name="x" />
-        @else
-        {{ $step }}
-        @endif
+@props(['number', 'state'])
+<li {{ $attributes->merge(['data-slot' => 'steps-item', 'data-state' => $state, 'aria-current' => in_array($state, ['current', 'error'], true) ? 'step' : null]) }}>
+    <span data-slot="steps-indicator" aria-hidden="true">
+        @if ($state === 'complete')<x-ui::icon name="check" size="sm" />
+        @elseif ($state === 'error')<x-ui::icon name="x" size="sm" />
+        @else{{ $number }}@endif
     </span>
-    <span data-slot="steps-content">
-        @if ($title)<span data-slot="steps-title">{{ $title }}</span>@endif
-        @if ($description)<span data-slot="steps-description">{{ $description }}</span>@endif
+    <div data-slot="steps-label">
+        <span class="ui-visually-hidden">{{ __('ui::ui.step_'.$state) }}</span>
         {{ $slot }}
-    </span>
+    </div>
 </li>

@@ -1,5 +1,0 @@
-@layer components {
-    :where([data-slot="skeleton"]) {
-        @apply animate-pulse rounded-md bg-muted;
-    }
-}

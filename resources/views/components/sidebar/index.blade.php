@@ -1,30 +1,8 @@
-@blaze
-
-@use('Esoboy\Ui\Support\SidebarState')
-
-@aware([
-    'open' => true,
-    'scope' => 'default',
-])
-
-@props([
-    'side' => 'left',
-    'variant' => 'sidebar',
-    'collapsible' => 'offcanvas',
-])
-
+@props(['initialOpen' => true, 'collapsible' => 'offcanvas', 'variant' => 'sidebar', 'side' => 'left'])
 @php
-$open = SidebarState::open($open, $scope);
+    if (!in_array($collapsible, ['offcanvas', 'icon', 'none'], true) || !in_array($variant, ['sidebar', 'floating', 'inset'], true) || !in_array($side, ['left', 'right'], true)) throw new \InvalidArgumentException(__('ui::errors.sidebar_mode'));
 @endphp
-
-@if ($collapsible === 'none')
-<div {{ $attributes->merge(['data-slot' => 'sidebar']) }}>{{ $slot }}</div>
-@else
-{{-- Below md the container is a popover the provider opens as a sheet. --}}
-<div data-slot="sidebar" data-state="{{ $open ? 'expanded' : 'collapsed' }}" x-bind:data-state="expanded ? 'expanded' : 'collapsed'" data-collapsible="{{ $open ? '' : $collapsible }}" x-bind:data-collapsible="expanded ? '' : @js($collapsible)" data-collapsible-mode="{{ $collapsible }}" data-variant="{{ $variant }}" data-side="{{ $side }}">
-    <div data-slot="sidebar-gap"></div>
-    <div {{ $attributes->merge(['data-slot' => 'sidebar-container', 'data-side' => $side, 'popover' => 'manual']) }}>
-        <div data-sidebar="sidebar" data-slot="sidebar-inner">{{ $slot }}</div>
-    </div>
+<div {{ $attributes->class('group/sidebar-wrapper')->merge(['data-slot' => 'sidebar', 'data-collapsible' => $collapsible, 'data-variant' => $variant, 'data-side' => $side]) }} data-ui-overlay
+    x-data="uiSidebar(@js($initialOpen), @js($collapsible))" x-modelable="opened" x-bind:data-state="opened ? 'expanded' : 'collapsed'" x-bind:data-mobile="mobile ? 'true' : 'false'" x-id="['ui-sidebar']">
+    {{ $slot }}
 </div>
-@endif

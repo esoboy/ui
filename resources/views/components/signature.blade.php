@@ -1,34 +1,28 @@
-@blaze
-
-@use('Esoboy\Ui\Assets')
-@use('Esoboy\Ui\Support\ControlState')
-@use('Esoboy\Ui\Support\Model')
-
-@aware([
-    'uiField' => false,
-    'showError' => true,
-])
-
-{{-- Not in shadcn: a pad to sign on, styled as its Textarea. The value is a data URL, PNG or (smaller) SVG; the ink stays dark in it, whatever the theme. --}}
-@props([
-    'type' => 'image/png',
-    'placeholder' => null,
-    'value' => null,
-    'disabled' => false,
-])
-
+@props(['value', 'initialValue'])
 @php
-$state = ControlState::for($attributes, $errors ?? null, $uiField, $showError);
-$value = Model::value($attributes, $value);
-$value = is_string($value) && str_starts_with($value, 'data:image/') ? $value : null;
-$name = $attributes->get('name');
+    $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'signature', get_defined_vars(), [
+        'maxStrokes' => \Esoboy\Ui\Support\DrawingValue::MAX_STROKES,
+        'maxPoints' => \Esoboy\Ui\Support\DrawingValue::MAX_POINTS,
+    ]);
+    $strokes = \Esoboy\Ui\Support\DrawingValue::signature($binding->config['value']);
 @endphp
-
-
-<eso-signature {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->merge(['data-slot' => 'signature', 'x-data' => 'uiEngine('.json_encode(Model::binding($attributes)).')', 'data-engine' => app(Assets::class)->url('signature.js'), 'data-type' => $type, 'data-value' => $value ?? false, 'data-name' => $name ?? false, 'data-disabled' => (bool) $disabled, ...$state->attributes()]) }}>
-    <canvas data-slot="signature-canvas" role="img" aria-label="{{ __('ui::signature.label') }}" wire:ignore></canvas>
-    <span data-slot="signature-placeholder" @if ($value) hidden @endif wire:ignore>{{ $placeholder ?? __('ui::signature.placeholder') }}</span>
-    <x-ui::button variant="ghost" size="icon-sm" data-signature-clear :aria-label="__('ui::signature.clear')" :disabled="$disabled" :hidden="! $value" wire:ignore><x-ui::icon name="eraser" /></x-ui::button>
-    <input type="hidden" x-ref="input" @if ($name) name="{{ $name }}" @endif value="{{ $value }}" {{ Model::input($attributes) }}>
-</eso-signature>
-<x-ui::field.error :state="$state" />
+<div data-slot="signature-field">
+    <div data-slot="signature" x-data="uiSignature" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
+        @if($binding->key) wire:key="{{ $binding->key }}" @endif
+        x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
+        {{ $attributes->except(['wire:key', 'name'])->merge(['id' => $binding->id]) }}>
+        <div data-ui-signature-surface>
+            <canvas wire:ignore aria-label="{{ $attributes->get('aria-label', __('ui::ui.signature')) }}"
+                x-on:pointerdown.prevent="start($event)" x-on:pointermove.prevent="move($event)"
+                x-on:pointerup="finish($event)" x-on:pointercancel="cancel($event)" x-on:lostpointercapture="cancel($event)"
+                x-bind:aria-disabled="config.disabled || config.readonly"></canvas>
+        </div>
+        <x-ui::button variant="outline" x-on:click="clear()" :disabled="$binding->config['disabled'] || $binding->config['readonly']"
+            x-bind:disabled="config.disabled || config.readonly">{{ __('ui::ui.clear') }}</x-ui::button>
+        @if ($attributes->get('name'))
+            <input type="hidden" name="{{ $attributes->get('name') }}" value="{{ json_encode($strokes) }}"
+                x-bind:value="JSON.stringify(value ?? [])" @disabled($binding->config['disabled'])>
+        @endif
+    </div>
+    {{ $slot }}
+</div>

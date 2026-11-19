@@ -1,5 +1,0 @@
-@layer components {
-    :where([data-slot="spinner"]) {
-        @apply size-4 shrink-0 animate-spin;
-    }
-}

@@ -1,4 +1,3 @@
-@blaze
-
-{{-- The same item as Dropdown Menu's. --}}
-<x-ui::dropdown-menu.item :attributes="$attributes">{{ $slot }}</x-ui::dropdown-menu.item>
+@props(['variant' => 'default', 'inset' => false])
+<button type="button" role="menuitem" {{ $attributes->merge(['data-slot' => 'menu-item', 'data-variant' => $variant, 'data-inset' => $inset ? '' : null]) }}
+    x-on:click="select()">{{ $slot }}</button>

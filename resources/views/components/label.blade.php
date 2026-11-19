@@ -1,3 +1,2 @@
-@blaze(fold: true)
-
-<label {{ $attributes->merge(['data-slot' => 'label']) }}>{{ $slot }}</label>
+@blaze
+<label {{ $attributes->class('ui-label')->merge(['data-slot' => 'label']) }}>{{ $slot }}</label>

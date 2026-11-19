@@ -1,43 +1,27 @@
-@blaze
-
-@use('Esoboy\Ui\Support\Model')
-
-{{-- Not in shadcn: Origin UI's Cropper, with its screen reader description built in. Give it a height (class="h-80"); wire:model gets the crop { x, y, width, height } in the image's pixels, to cut on the server. --}}
-@props([
-    'image' => null,
-    'aspectRatio' => 1,
-    'cropPadding' => 25,
-    'minZoom' => 1,
-    'maxZoom' => 3,
-    'zoomSensitivity' => 0.005,
-    'keyboardStep' => 10,
-    'zoom' => null,
-    'value' => null,
-])
-
+@props(['value', 'initialValue', 'src', 'alt' => ''])
 @php
-$value = Model::value($attributes, $value);
-$value = is_array($value) && isset($value['x'], $value['y'], $value['width'], $value['height']) ? array_map('intval', array_intersect_key($value, array_flip(['x', 'y', 'width', 'height']))) : null;
+    $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'cropper', get_defined_vars(), []);
+    $rect = \Esoboy\Ui\Support\DrawingValue::crop($binding->config['value']);
 @endphp
-
-<eso-cropper {{ $attributes->whereDoesntStartWith('wire:model')->merge([
-    'data-slot' => 'cropper', 'x-data' => 'uiCropper('.json_encode(Model::binding($attributes)).')',
-    'x-on:focusout' => '!$el.contains($event.relatedTarget) && blur()',
-    'role' => 'application',
-    'tabindex' => '0',
-    'aria-label' => __('ui::cropper.label'),
-    'aria-description' => __('ui::cropper.description'),
-    'data-image' => $image ?? false,
-    'data-aspect-ratio' => $aspectRatio,
-    'data-crop-padding' => $cropPadding,
-    'data-min-zoom' => $minZoom,
-    'data-max-zoom' => $maxZoom,
-    'data-zoom-sensitivity' => $zoomSensitivity,
-    'data-keyboard-step' => $keyboardStep,
-    'data-zoom' => $zoom ?? false,
-    'data-value' => $value ? json_encode($value) : false,
-]) }}>
+<div data-slot="cropper-field">
+    <div data-slot="cropper" x-data="uiCropper" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
+        @if($binding->key) wire:key="{{ $binding->key }}" @endif
+        x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
+        {{ $attributes->except(['wire:key', 'name'])->merge(['id' => $binding->id]) }}>
+        <div data-ui-crop-surface x-on:pointerdown.prevent="start($event)" x-on:pointermove="move($event)"
+            x-on:pointerup="finish($event)" x-on:pointercancel="cancel($event)" x-on:lostpointercapture="cancel($event)">
+            <x-ui::image :src="$src" :alt="$alt" draggable="false" />
+            <div data-ui-crop-frame role="group" tabindex="0" aria-label="{{ __('ui::ui.crop') }}"
+                x-bind:style="cropStyle()"
+                :aria-disabled="config.disabled || config.readonly" :tabindex="config.disabled ? -1 : 0"
+                style="left:{{ $rect['x'] * 100 }}%;top:{{ $rect['y'] * 100 }}%;width:{{ $rect['width'] * 100 }}%;height:{{ $rect['height'] * 100 }}%"
+                x-on:keydown.left.prevent="nudge(-1, 0)" x-on:keydown.right.prevent="nudge(1, 0)"
+                x-on:keydown.up.prevent="nudge(0, -1)" x-on:keydown.down.prevent="nudge(0, 1)"><span data-ui-crop-resize></span></div>
+        </div>
+        @if ($attributes->get('name'))
+            <input type="hidden" name="{{ $attributes->get('name') }}" value="{{ json_encode($rect) }}"
+                x-bind:value="JSON.stringify(rectangle)" @disabled($binding->config['disabled'])>
+        @endif
+    </div>
     {{ $slot }}
-    <input type="hidden" x-ref="input" value="{{ json_encode($value) }}" {{ Model::input($attributes) }}>
-</eso-cropper>
-<x-ui::extras />
+</div>

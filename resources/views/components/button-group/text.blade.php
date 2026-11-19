@@ -1,3 +1,2 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['data-slot' => 'button-group-text']) }}>{{ $slot }}</div>
+@blaze
+<span {{ $attributes->merge(['data-slot' => 'button-group-text']) }}>{{ $slot }}</span>

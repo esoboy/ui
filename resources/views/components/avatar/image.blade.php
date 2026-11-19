@@ -1,4 +1,5 @@
-@blaze(fold: true)
-
-{{-- Sits over the fallback; ui.js hides it when it fails to load. --}}
-<img {{ $attributes->merge(['data-slot' => 'avatar-image', 'x-data' => '{ failed: false }', 'x-init' => 'failed = $el.complete && $el.naturalWidth === 0', 'x-bind:hidden' => 'failed', 'x-on:error' => 'failed = true', 'x-on:load' => 'failed = false']) }}>
+@blaze
+@props(['src', 'alt' => ''])
+<img src="{{ $src }}" alt="{{ $alt }}"
+    x-init="loaded = $el.complete && $el.naturalWidth > 0" x-on:load="loaded = true" x-on:error="loaded = false" x-bind:class="{ 'ui-avatar-pending': !loaded }"
+    {{ $attributes->merge(['data-slot' => 'avatar-image', 'loading' => 'lazy', 'decoding' => 'async']) }}>

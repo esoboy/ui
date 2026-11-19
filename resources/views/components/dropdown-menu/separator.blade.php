@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['role' => 'separator', 'data-slot' => 'dropdown-menu-separator']) }}></div>
+<x-ui::separator :attributes="$attributes->class('ui-menu-separator')" />

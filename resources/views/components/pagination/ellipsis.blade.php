@@ -1,6 +1,1 @@
-@blaze
-
-<span {{ $attributes->merge(['data-slot' => 'pagination-ellipsis', 'aria-hidden' => 'true']) }}>
-    <x-ui::icon name="ellipsis" />
-    <span class="sr-only">{{ __('ui::pagination.more') }}</span>
-</span>
+<span data-slot="pagination-ellipsis" aria-hidden="true" {{ $attributes }}><x-ui::icon name="ellipsis" /><span class="ui-visually-hidden">{{ __('ui::ui.more_pages') }}</span></span>

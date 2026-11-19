@@ -1,26 +1,2 @@
-@blaze
-
-@use('Esoboy\Ui\Support\CodeHighlight')
-
-@props([
-    'code' => null,
-    'language' => null,
-    'wrap' => false,
-    'lineNumbers' => false,
-    'startLine' => 1,
-])
-
-@php
-$rows = $code === null ? null : CodeHighlight::lines(preg_replace('/\r?\n$/', '', $code) ?? $code, $language);
-$compound = $rows === null && $language ? CodeHighlight::compound((string) $slot, $language) : $slot;
-@endphp
-
-<pre {{ $attributes->merge([
-    'data-slot' => 'code-block-content',
-    'data-language' => $language ?? false,
-    'data-wrap' => (bool) $wrap,
-    'data-numbered' => (bool) $lineNumbers,
-    'dir' => 'ltr',
-    'tabindex' => '0',
-    'style' => 'counter-reset: line '.($startLine - 1).';',
-]) }}><code data-slot="code-block-code">@if ($rows !== null)@foreach ($rows as $tokens)<x-ui::code-block.line :tokens="$tokens" />@endforeach@else{!! $compound !!}@endif</code></pre>
+@props(['wrap' => false, 'lineNumbers' => false, 'startLine' => 1])
+<pre {{ $attributes->merge(['data-slot' => 'code-block-content', 'data-wrap' => $wrap ? '' : null, 'data-numbered' => $lineNumbers ? '' : null, 'tabindex' => 0, 'dir' => 'ltr'])->style(['--ui-code-line-start: '.($startLine - 1)]) }}><code data-slot="code-block-code" data-ui-code>@if($lineNumbers && !str_contains((string) $slot, '<'))@foreach(explode("\n", preg_replace('/\n$/', '', str_replace(["\r\n", "\r"], "\n", (string) $slot))) as $line)<x-ui::code-block.line>{{ new \Illuminate\Support\HtmlString($line) }}</x-ui::code-block.line>@endforeach@else{{ $slot }}@endif</code></pre>

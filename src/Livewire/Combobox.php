@@ -2,105 +2,114 @@
 
 namespace Esoboy\Ui\Livewire;
 
-use Esoboy\Ui\Support\Options;
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Modelable;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class Combobox extends Component
+/** @property-read list<array{value: string|int|null, label: string, disabled: bool}> $results */
+class Combobox extends SearchableSelect
 {
-    use SyncsModel;
-
-    #[Modelable]
-    public mixed $value = null;
-
-    /** @var array<int|string, mixed> */
     #[Reactive]
-    public array $options = [];
+    public bool $clearable = false;
 
-    /** @var array<string, mixed> */
     #[Reactive]
-    public array $settings = [];
+    public bool $showRemove = true;
 
-    public string $query = '';
+    #[Reactive]
+    public bool $showTrigger = true;
 
-    /**
-     * @param  array<int|string, mixed>  $options
-     * @param  array<string, mixed>  $settings
-     */
-    public function mount(array $options = [], array $settings = [], mixed $value = null): void
-    {
-        $this->options = $options;
-        $this->settings = $settings;
-        $this->value = ($settings['multiple'] ?? false) ? array_values(array_map('strval', (array) $value)) : $value;
-        $this->query = ($settings['multiple'] ?? false) || ($settings['button'] ?? false) ? '' : $this->label();
-    }
+    #[Reactive]
+    public ?string $prefixIcon = null;
 
-    public function label(): string
-    {
-        if ($this->settings['autocomplete'] ?? false) {
-            return (string) $this->value;
-        }
-        $selected = array_map('strval', (array) $this->value);
+    #[Reactive]
+    public bool $searchInPopup = false;
 
-        return implode(', ', array_column(array_filter(Options::normalize($this->options), fn ($option) => in_array($option['value'], $selected, true)), 'label'));
-    }
+    #[Reactive]
+    public string $searchPlaceholder = '';
 
-    protected function modelChanged(): void
-    {
-        $this->query = ($this->settings['multiple'] ?? false) || ($this->settings['button'] ?? false) ? '' : $this->label();
-    }
+    #[Reactive]
+    public bool $autoHighlight = false;
+
+    #[Locked]
+    public bool $searching = false;
+
+    /** @var array<string, array{value: string|int|null, label: string, disabled: bool}|null> Last known options for the selected IDs only. */
+    #[Locked]
+    public array $rememberedChoices = [];
 
     public function updatedQuery(): void
     {
-        if (($this->settings['autocomplete'] ?? false) && ! ($this->settings['disabled'] ?? false)) {
-            $this->value = $this->query;
+        $this->searching = true;
+        parent::updatedQuery();
+    }
+
+    public function finishSearch(): void
+    {
+        $this->searching = false;
+        $this->query = $this->multiple || $this->searchInPopup ? '' : $this->label;
+        unset($this->results);
+    }
+
+    /** @return list<array{value: string|int|null, label: string, disabled: bool}> */
+    #[Computed]
+    public function results(): array
+    {
+        $query = $this->searching ? Str::lower(trim($this->query)) : '';
+
+        return array_values(array_filter($this->choices, fn (array $option): bool => $query === '' || Str::contains(Str::lower($option['label']), $query)));
+    }
+
+    public function rendering(): void
+    {
+        parent::rendering();
+        $previousKeys = array_keys($this->rememberedChoices);
+        $remembered = array_fill_keys(array_keys($this->selectedKeys), null);
+        foreach ($this->selectedChoices as $option) {
+            $remembered[self::choiceKey($option['value'])] = [
+                'value' => $option['value'], 'label' => $option['label'], 'disabled' => $option['disabled'],
+            ];
+        }
+        $this->rememberedChoices = $remembered;
+        if (! $this->searching || $previousKeys !== array_keys($remembered)) {
+            $this->finishSearch();
         }
     }
 
-    public function choose(string $value): void
+    protected function optionFor(string|int|null $value): ?array
     {
-        $option = collect(Options::normalize($this->options))->firstWhere('value', $value);
-        if (! $option || ! empty($option['disabled']) || ($this->settings['disabled'] ?? false)) {
-            return;
+        $option = parent::optionFor($value);
+        if ($option !== null || ! $this->isSelected($value)) {
+            return $option;
         }
-        $multiple = $this->settings['multiple'] ?? false;
-        $this->value = $multiple ? (in_array($value, (array) $this->value, true) ? array_values(array_diff($this->value, [$value])) : [...(array) $this->value, $value]) : $value;
-        $this->query = $multiple || ($this->settings['button'] ?? false) ? '' : $this->label();
-        $this->dispatch('ui-combobox-picked', close: ! $multiple);
+
+        return $this->rememberedChoices[self::choiceKey($value)] ?? null;
     }
 
-    public function remove(string $value): void
+    public function choose(string|int|null $value): void
     {
-        if (! ($this->settings['disabled'] ?? false) && ($this->settings['multiple'] ?? false)) {
-            $this->value = array_values(array_diff((array) $this->value, [$value]));
-        }
+        parent::choose($value);
+        $this->finishSearch();
     }
 
-    public function clear(): void
+    public function clearSelection(): void
     {
-        if (! ($this->settings['disabled'] ?? false)) {
-            $this->value = ($this->settings['multiple'] ?? false) ? [] : (($this->settings['autocomplete'] ?? false) ? '' : null);
-            $this->query = '';
+        $this->changeValue($this->multiple ? [] : null);
+        $this->query = '';
+        unset($this->selected, $this->selectedKeys, $this->selectedChoices, $this->label, $this->results);
+        $this->finishSearch();
+    }
+
+    public function removeLast(): void
+    {
+        if ($this->multiple && $this->selectedChoices !== []) {
+            $this->choose($this->selectedChoices[array_key_last($this->selectedChoices)]['value']);
         }
     }
 
     public function render(): View
     {
-        $options = Options::normalize($this->options);
-        $query = trim($this->query);
-        if (! ($this->settings['autocomplete'] ?? false) && $query === $this->label()) {
-            $query = '';
-        }
-        if (($this->settings['filter'] ?? true) && $query !== '') {
-            $options = array_values(array_filter($options, fn ($option) => mb_stripos($option['label'], $query) !== false));
-        }
-
-        return view('ui::livewire.combobox', [
-            'choices' => $options,
-            'label' => $this->label(),
-            'labels' => array_column(Options::normalize($this->options), 'label', 'value'),
-        ]);
+        return view('ui::livewire.combobox');
     }
 }

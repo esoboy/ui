@@ -1,3 +1,3 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['data-slot' => 'empty']) }}>{{ $slot }}</div>
+@blaze
+@props(['size' => 'default'])
+<div {{ $attributes->merge(['data-slot' => 'empty', 'data-size' => $size]) }}>{{ $slot }}</div>

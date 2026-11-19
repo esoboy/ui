@@ -1,11 +1,1 @@
-@blaze
-
-@aware([
-    'uiOpen' => false,
-    'uiModel' => null,
-])
-
-@php($open = (bool) \Esoboy\Ui\Support\Model::inherited($uiModel, $uiOpen))
-
-{{-- Any element marked data-collapsible-trigger toggles too, e.g. a Button or a sidebar menu button. --}}
-<button {{ $attributes->merge(['type' => 'button', 'data-slot' => 'collapsible-trigger', 'aria-expanded' => $open ? 'true' : 'false', 'data-panel-open' => (bool) $open, 'x-bind:aria-expanded' => 'String(open)', 'x-bind:data-panel-open' => 'open']) }}>{{ $slot }}</button>
+<span data-ui-trigger data-ui-errors="{{ json_encode(__('ui::errors.trigger'), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR) }}" x-ui-trigger="'toggle'" {{ $attributes->merge(['data-slot' => 'collapsible-trigger']) }}>{{ $slot }}</span>

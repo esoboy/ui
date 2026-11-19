@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<main {{ $attributes->merge(['data-slot' => 'sidebar-inset']) }}>{{ $slot }}</main>
+<div {{ $attributes->merge(['data-slot' => 'sidebar-inset']) }}>{{ $slot }}</div>

@@ -1,9 +1,7 @@
-@blaze(fold: true)
-
-@props([
-    'variant' => 'primary',
-    'size' => 'default',
-    'color' => 'default',
-])
-
-<span {{ $attributes->merge(['data-slot' => 'text', 'data-variant' => $variant, 'data-size' => $size, 'data-color' => $color]) }}>{{ $slot }}</span>
+@blaze
+@props(['link' => null])
+@if ($link !== null)
+<a {{ $attributes->except('href')->class('ui-text-link')->merge(['href' => $link, 'data-slot' => 'text']) }}>{{ $slot }}</a>
+@else
+<p {{ $attributes->merge(['data-slot' => 'text']) }}>{{ $slot }}</p>
+@endif

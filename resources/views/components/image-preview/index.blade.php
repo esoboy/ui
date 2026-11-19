@@ -1,22 +1,16 @@
-@blaze
-
-@use('Esoboy\Ui\Support\Model')
-
-@props(['controlsView' => null])
-
-@php
-    $document = \Esoboy\Ui\Support\HtmlFragment::parse((string) $slot);
-    $images = [];
-    foreach ($document->querySelectorAll('[data-slot="image-preview-trigger"]') as $trigger) {
-        if ($trigger->closest('eso-image-preview') === null) {
-            $images[] = ['src' => $trigger->getAttribute('data-src') ?? '', 'alt' => $trigger->getAttribute('data-alt') ?? ''];
-        }
-    }
-    $key = $attributes->get('wire:key') ?? $attributes->get('id') ?? Model::scope('image-preview', $loop ?? null);
-@endphp
-
-<eso-image-preview x-data="uiImagePreview" {{ $attributes->merge(['data-slot' => 'image-preview']) }}>
-    {{ $slot }}
-    @livewire('ui.image-preview', compact('images', 'controlsView'), key('ui-image-preview-'.$key))
-</eso-image-preview>
-<x-ui::extras />
+@props(['src', 'alt' => ''])
+<x-ui::dialog {{ $attributes }}><x-ui::dialog.trigger>{{ $trigger }}</x-ui::dialog.trigger><x-ui::dialog.content
+        :aria-label="$alt ?: __('ui::ui.preview')" data-slot="image-preview" class="ui-image-preview">
+        <div x-data="uiImage" x-effect="if (!opened) { zoom = 1; rotation = 0 }">
+            <div data-slot="image-preview-canvas" x-ref="canvas"><x-ui::image :src="$src" :alt="$alt" x-ref="image"
+                    x-bind:style="'transform: scale(' + (zoom * (rotation % 180 ? Math.min(1, $refs.canvas.clientWidth / $refs.image.clientHeight, $refs.canvas.clientHeight / $refs.image.clientWidth) : 1)) + ') rotate(' + rotation + 'deg)'" /></div>
+            <div data-slot="image-preview-toolbar"><x-ui::button variant="ghost" size="icon"
+                    x-on:click="zoom=Math.max(.25,zoom-.25)" :aria-label="__('ui::ui.zoom_out')"><x-ui::icon
+                        name="zoom-out" /></x-ui::button><x-ui::button variant="ghost" size="icon"
+                    x-on:click="zoom=Math.min(4,zoom+.25)" :aria-label="__('ui::ui.zoom_in')"><x-ui::icon
+                        name="zoom-in" /></x-ui::button><x-ui::button variant="ghost" size="icon"
+                    x-on:click="rotation=(rotation+90)%360" :aria-label="__('ui::ui.rotate')"><x-ui::icon
+                        name="rotate-cw" /></x-ui::button><x-ui::dialog.close><x-ui::button
+                        variant="outline">{{ __('ui::ui.close') }}</x-ui::button></x-ui::dialog.close></div>
+        </div>{{ $slot }}
+    </x-ui::dialog.content></x-ui::dialog>

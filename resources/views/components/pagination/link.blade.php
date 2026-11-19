@@ -1,9 +1,3 @@
-@blaze
-
-@props([
-    'active' => false,
-    'size' => 'icon',
-])
-
-{{-- A Button: an <a> with href, otherwise a <button> for wire:click. --}}
-<x-ui::button :variant="$active ? 'outline' : 'ghost'" :size="$size" :attributes="$attributes->merge(['aria-current' => $active ? 'page' : false, 'data-active' => $active])">{{ $slot }}</x-ui::button>
+@props(['active' => false, 'size' => 'icon'])
+<x-ui::button :link="$attributes->get('href', '#')" :variant="$active ? 'outline' : 'ghost'" :size="$size"
+    data-slot="pagination-link" :data-active="$active ? 'true' : 'false'" :aria-current="$active ? 'page' : null" :attributes="$attributes">{{ $slot }}</x-ui::button>

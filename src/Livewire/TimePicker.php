@@ -2,69 +2,39 @@
 
 namespace Esoboy\Ui\Livewire;
 
-use Esoboy\Ui\Support\TimeOptions;
+use Esoboy\Ui\Support\ClockTime;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
-use Livewire\Attributes\Modelable;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class TimePicker extends Component
+class TimePicker extends ValueControl
 {
-    use SyncsModel;
-
-    #[Modelable]
-    public mixed $value = null;
-
-    /** @var array<string, mixed> */
     #[Reactive]
-    public array $settings = [];
+    public bool $seconds = false;
+
+    #[Reactive]
+    public bool $clearable = false;
 
     #[Locked]
-    public ?int $shownHour = null;
+    public string $contentTarget = '';
 
-    public function showTimeHour(int $hour): void
+    public function chooseTime(string $unit, int $number): void
     {
-        if ($hour >= 0 && $hour < 24) {
-            $this->shownHour = $hour;
+        $next = ClockTime::replace(ClockTime::read($this->current, $this->seconds), $this->seconds, $unit, $number);
+        if ($next !== null) {
+            $this->changeValue($next);
         }
     }
 
-    protected function modelChanged(): void
+    public function clear(): void
     {
-        $this->shownHour = null;
-    }
-
-    public function pickTime(string $unit, int $option): void
-    {
-        if (($this->settings['disabled'] ?? false) || ($this->settings['readonly'] ?? false)) {
-            return;
+        if ($this->clearable) {
+            $this->changeValue(null);
         }
-
-        $choice = $this->options()->choose($this->value, $unit, $option);
-        if ($choice !== null) {
-            $this->value = $choice;
-            if ($unit === 'combined') {
-                $this->shownHour = null;
-                $this->dispatch('ui-time-picked');
-            }
-        }
-    }
-
-    private function options(): TimeOptions
-    {
-        return new TimeOptions(
-            $this->settings['step'] ?? null,
-            $this->settings['min'] ?? null,
-            $this->settings['max'] ?? null,
-            combined: ($this->settings['mode'] ?? null) === 'combined',
-        );
     }
 
     public function render(): View
     {
-        $label = TimeOptions::parse($this->value) === null ? '' : $this->value;
-
-        return view('ui::livewire.time-picker', ['label' => $label, 'timeOptions' => $this->options()]);
+        return view('ui::livewire.time-picker', ['time' => ClockTime::read($this->current, $this->seconds)]);
     }
 }

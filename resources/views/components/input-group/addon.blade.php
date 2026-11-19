@@ -1,7 +1,4 @@
-@blaze(fold: true)
-
-@props([
-    'align' => 'inline-start',
-])
-
-<div {{ $attributes->merge(['role' => 'group', 'data-slot' => 'input-group-addon', 'data-align' => $align]) }}>{{ $slot }}</div>
+@blaze
+@props(['align' => 'inline-start'])
+<div data-align="{{ $align }}" x-init="" x-on:click="if (!$event.target.closest('button,a,input,textarea,select')) $el.parentElement.querySelector('[data-slot=input-group-control]')?.focus()"
+    {{ $attributes->merge(['data-slot' => 'input-group-addon', 'role' => 'group']) }}>{{ $slot }}</div>

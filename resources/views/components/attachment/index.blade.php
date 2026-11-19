@@ -1,9 +1,3 @@
-@blaze(fold: true)
-
-@props([
-    'state' => 'done',
-    'size' => 'default',
-    'orientation' => 'horizontal',
-])
-
-<div {{ $attributes->merge(['data-slot' => 'attachment', 'data-state' => $state, 'data-size' => $size, 'data-orientation' => $orientation]) }}>{{ $slot }}</div>
+@blaze
+@props(['orientation' => 'horizontal', 'size' => 'default', 'state' => 'done'])
+<div {{ $attributes->class('group/attachment')->merge(['data-slot' => 'attachment', 'data-orientation' => $orientation, 'data-size' => $size, 'data-state' => $state]) }}>{{ $slot }}</div>

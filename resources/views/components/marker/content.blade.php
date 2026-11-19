@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<span {{ $attributes->merge(['data-slot' => 'marker-content']) }}>{{ $slot }}</span>
+<span  {{ $attributes->merge(['data-slot' => 'marker-content']) }}>{{ $slot }}</span>

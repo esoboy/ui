@@ -1,5 +1,0 @@
-@layer components {
-    :where([data-slot="aspect-ratio"]) {
-        @apply relative aspect-(--ratio);
-    }
-}

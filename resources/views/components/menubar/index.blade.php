@@ -1,3 +1,1 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['role' => 'menubar', 'data-slot' => 'menubar']) }}>{{ $slot }}</div>
+<div role="menubar" {{ $attributes->merge(['data-slot' => 'menubar']) }} x-data="uiMenubar" x-on:keydown="navigate($event)">{{ $slot }}</div>

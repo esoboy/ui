@@ -2,218 +2,59 @@
 
 namespace Esoboy\Ui\Support;
 
-/**
- * Cascader, Tree, Tree Select and Transfer options: a tree of ['value' => ..., 'label' => ..., 'children' => [...],
- * 'disabled' => bool]. Values compare as strings, as they do in the browser.
- */
+use InvalidArgumentException;
+
 final class Options
 {
     /**
-     * The labels along a value path, or [] when the path isn't in the tree.
-     *
-     * @param  list<array<string, mixed>>  $options
-     * @return list<string>
+     * @param  array<array-key, mixed>  $options
+     * @return ($allowNull is true ? list<array{value: string|int|null, label: string, disabled: bool, group?: string, shortcut?: string, icon?: string, description?: string|list<string>, separatorBefore?: bool, separatorAfter?: bool}> : list<array{value: string|int, label: string, disabled: bool, group?: string, shortcut?: string, icon?: string, description?: string|list<string>, separatorBefore?: bool, separatorAfter?: bool}>)
      */
-    public static function labels(array $options, mixed $path): array
+    public static function validate(array $options, bool $allowNull = false): array
     {
-        $labels = [];
-
-        foreach (array_values((array) $path) as $value) {
-            $option = self::child($options, (string) $value);
-
-            if ($option === null) {
-                return [];
-            }
-
-            $labels[] = (string) ($option['label'] ?? $option['value']);
-            $options = $option['children'] ?? [];
-        }
-
-        return $labels;
-    }
-
-    /**
-     * @param  list<array<string, mixed>>  $options
-     * @return array<string, mixed>|null
-     */
-    public static function child(array $options, string $value): ?array
-    {
-        foreach ($options as $option) {
-            if ((string) ($option['value'] ?? '') === $value) {
-                return $option;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * The labels of the given values anywhere in the tree, in tree order (Tree Select).
-     *
-     * @param  list<array<string, mixed>>  $options
-     * @param  array<int|string>  $values
-     * @return list<string>
-     */
-    public static function find(array $options, array $values): array
-    {
-        $wanted = array_map('strval', $values);
-        $labels = [];
+        $seen = [];
+        $result = [];
 
         foreach ($options as $option) {
-            if (in_array((string) ($option['value'] ?? ''), $wanted, true)) {
-                $labels[] = (string) ($option['label'] ?? $option['value']);
+            if (! is_array($option) || ! array_key_exists('value', $option) || ! isset($option['label']) || ! is_string($option['label'])
+                || (! ($allowNull && $option['value'] === null) && ! is_string($option['value']) && ! is_int($option['value']))) {
+                throw new InvalidArgumentException(__('ui::errors.option'));
             }
 
-            array_push($labels, ...self::find($option['children'] ?? [], $values));
-        }
-
-        return $labels;
-    }
-
-    /**
-     * The tree after a Tree's move event: the item with value $value taken out and put
-     * before or after the item with value $target, or last among its children. The
-     * tree is unchanged when either is missing or the target is inside the item.
-     *
-     * @param  list<array<string, mixed>>  $options
-     * @param  'before'|'after'|'inside'  $position
-     * @return list<array<string, mixed>>
-     */
-    public static function move(array $options, int|string $value, int|string $target, string $position): array
-    {
-        $moving = self::deep($options, (string) $value);
-
-        if ($moving === null || self::deep([$moving], (string) $target) !== null || self::deep($options, (string) $target) === null) {
-            return $options;
-        }
-
-        return self::place(self::without($options, (string) $value), $moving, (string) $target, $position);
-    }
-
-    /**
-     * The tree with a lazy item's children in place (Tree's load method): the item with
-     * that value, wherever it is, takes them and is no longer lazy.
-     *
-     * @param  list<array<string, mixed>>  $options
-     * @param  list<array<string, mixed>>  $children
-     * @return list<array<string, mixed>>
-     */
-    public static function put(array $options, int|string $parent, array $children): array
-    {
-        return array_map(function (array $option) use ($parent, $children) {
-            if ((string) ($option['value'] ?? '') === (string) $parent) {
-                unset($option['lazy']);
-
-                return ['children' => $children] + $option;
+            $key = $option['value'] === null ? 'null:' : 'value:'.$option['value'];
+            if (isset($seen[$key])) {
+                throw new InvalidArgumentException(__('ui::errors.duplicate_option', ['key' => $key]));
             }
-
-            if (isset($option['children'])) {
-                $option['children'] = self::put($option['children'], $parent, $children);
-            }
-
-            return $option;
-        }, $options);
-    }
-
-    /**
-     * @param  list<array<string, mixed>>  $options
-     * @return array<string, mixed>|null
-     */
-    private static function deep(array $options, string $value): ?array
-    {
-        foreach ($options as $option) {
-            if ((string) ($option['value'] ?? '') === $value) {
-                return $option;
-            }
-
-            if ($found = self::deep($option['children'] ?? [], $value)) {
-                return $found;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param  list<array<string, mixed>>  $options
-     * @return list<array<string, mixed>>
-     */
-    private static function without(array $options, string $value): array
-    {
-        $kept = [];
-
-        foreach ($options as $option) {
-            if ((string) ($option['value'] ?? '') === $value) {
-                continue;
-            }
-
-            if (isset($option['children'])) {
-                $option['children'] = self::without($option['children'], $value);
-            }
-
-            $kept[] = $option;
-        }
-
-        return $kept;
-    }
-
-    /**
-     * @param  list<array<string, mixed>>  $options
-     * @param  array<string, mixed>  $moving
-     * @return list<array<string, mixed>>
-     */
-    private static function place(array $options, array $moving, string $target, string $position): array
-    {
-        $placed = [];
-
-        foreach ($options as $option) {
-            if ((string) ($option['value'] ?? '') === $target) {
-                if ($position === 'inside') {
-                    unset($option['lazy']);
-                    $option['children'] = [...($option['children'] ?? []), $moving];
+            $seen[$key] = true;
+            $metadata = [];
+            foreach (['separatorBefore', 'separatorAfter'] as $separator) {
+                if (! array_key_exists($separator, $option)) {
+                    continue;
                 }
-
-                array_push($placed, ...match ($position) {
-                    'before' => [$moving, $option],
-                    'after' => [$option, $moving],
-                    default => [$option],
-                });
-
-                continue;
+                if (! is_bool($option[$separator])) {
+                    throw new InvalidArgumentException(__('ui::errors.option_separator'));
+                }
+                $metadata[$separator] = $option[$separator];
             }
-
-            if (isset($option['children'])) {
-                $option['children'] = self::place($option['children'], $moving, $target, $position);
+            if (array_key_exists('description', $option)) {
+                $description = $option['description'];
+                if (! is_string($description) && (! is_array($description) || ! array_is_list($description) || count(array_filter($description, 'is_string')) !== count($description))) {
+                    throw new InvalidArgumentException(__('ui::errors.option_description'));
+                }
+                $metadata['description'] = $description;
             }
-
-            $placed[] = $option;
+            foreach (['group', 'shortcut', 'icon'] as $field) {
+                if (! array_key_exists($field, $option)) {
+                    continue;
+                }
+                if (! is_string($option[$field])) {
+                    throw new InvalidArgumentException(__('ui::errors.option_metadata'));
+                }
+                $metadata[$field] = $option[$field];
+            }
+            $result[] = [...$metadata, 'value' => $option['value'], 'label' => $option['label'], 'disabled' => (bool) ($option['disabled'] ?? false)];
         }
 
-        return $placed;
-    }
-
-    /**
-     * The tree with only the keys the browser needs.
-     * Options may also be given as value => label pairs.
-     *
-     * @param  array<array-key, array<string, mixed>|string>  $options
-     * @return list<array<string, mixed>>
-     */
-    public static function normalize(array $options): array
-    {
-        $normalized = [];
-
-        foreach ($options as $key => $option) {
-            $option = is_array($option) ? $option : ['value' => array_is_list($options) ? $option : $key, 'label' => $option];
-
-            $normalized[] = array_filter([
-                'value' => (string) $option['value'],
-                'label' => (string) ($option['label'] ?? $option['value']),
-                'disabled' => ! empty($option['disabled']) ?: null,
-                'children' => ! empty($option['children']) ? self::normalize($option['children']) : null,
-            ], fn ($value) => $value !== null);
-        }
-
-        return $normalized;
+        return $result;
     }
 }

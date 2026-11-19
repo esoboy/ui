@@ -1,3 +1,2 @@
-@blaze(fold: true)
-
-<div {{ $attributes->merge(['data-slot' => 'alert-title']) }}>{{ $slot }}</div>
+@blaze
+<h4 {{ $attributes->merge(['data-slot' => 'alert-title']) }}>{{ $slot }}</h4>

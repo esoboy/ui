@@ -1,10 +1,35 @@
-@blaze
-@use('Esoboy\Ui\Support\Model')
-@props(['items' => [], 'value' => [], 'current' => null, 'shortcuts' => null, 'questionView' => null])
-@php
-$value = Model::value($attributes, $value);
-$forward = $attributes->except('wire:key')->getAttributes();
-if (isset($forward['wire:finish'])) $forward['wire:finish'] = '$parent.'.$forward['wire:finish'];
-$key = $attributes->get('wire:key') ?? $attributes->get('id') ?? Model::scope('questionnaire'.(Model::key($attributes) ?? ''), $loop ?? null);
-@endphp
-{!! \Esoboy\Ui\Support\ViewSlots::mount('ui.questionnaire', ['items' => $items, 'value' => $value, 'current' => $current, 'shortcuts' => $shortcuts, 'questionView' => $questionView, ...$forward], 'ui-questionnaire-'.$key, ['default' => $slot, 'actions' => $actions ?? null]) !!}
+@props([
+    'items' => [],
+    'item' => null,
+    'initialItem' => '',
+    'shortcuts' => '',
+    'submitLabel' => '',
+    'layout' => 'standard',
+    'showProgress' => true,
+    'progressClass' => '',
+    'value',
+    'initialValue',
+    'emptyTitle' => null,
+    'emptyDescription' => null,
+])
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'questionnaire', get_defined_vars()))
+<div data-slot="questionnaire-field">
+    {!! \Livewire\Livewire::mount(
+        'ui::questionnaire',
+        [
+            ...$binding->parameters,
+            'items' => $items,
+            'item' => $item,
+            'initialItem' => $initialItem,
+            'shortcuts' => $shortcuts,
+            'submitLabel' => $submitLabel,
+            'layout' => $layout,
+            'showProgress' => $showProgress,
+            'progressClass' => $progressClass,
+            'emptyTitle' => $emptyTitle,
+            'emptyDescription' => $emptyDescription,
+        ],
+        $binding->key,
+    ) !!}
+    {{ $slot }}
+</div>

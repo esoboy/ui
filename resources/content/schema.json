@@ -1,0 +1,319 @@
+{
+  "version": 1,
+  "extensions": [
+    "starterKit",
+    "textStyleKit",
+    "textAlign",
+    "highlight",
+    "subscript",
+    "superscript",
+    "listKit",
+    "tableKit",
+    "details",
+    "detailsSummary",
+    "detailsContent",
+    "image",
+    "audio",
+    "video",
+    "file",
+    "iframe",
+    "emoji",
+    "characterCount",
+    "findAndReplace",
+    "placeholder",
+    "typography",
+    "focus",
+    "selection",
+    "uniqueID",
+    "tableOfContents",
+    "fileHandler",
+    "dragHandle",
+    "markdown"
+  ],
+  "nodes": {
+    "doc": [],
+    "text": [],
+    "paragraph": [
+      "p"
+    ],
+    "heading": [
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6"
+    ],
+    "blockquote": [
+      "blockquote"
+    ],
+    "codeBlock": [
+      "pre",
+      "code"
+    ],
+    "hardBreak": [
+      "br"
+    ],
+    "horizontalRule": [
+      "hr"
+    ],
+    "bulletList": [
+      "ul"
+    ],
+    "orderedList": [
+      "ol"
+    ],
+    "listItem": [
+      "li"
+    ],
+    "taskList": [
+      "ul"
+    ],
+    "taskItem": [
+      "li",
+      "label",
+      "input",
+      "span",
+      "div"
+    ],
+    "table": [
+      "table",
+      "tbody",
+      "thead",
+      "colgroup",
+      "col"
+    ],
+    "tableRow": [
+      "tr"
+    ],
+    "tableCell": [
+      "td"
+    ],
+    "tableHeader": [
+      "th"
+    ],
+    "details": [
+      "details"
+    ],
+    "detailsSummary": [
+      "summary"
+    ],
+    "detailsContent": [
+      "div"
+    ],
+    "image": [
+      "img"
+    ],
+    "audio": [
+      "audio"
+    ],
+    "emoji": [
+      "span",
+      "img"
+    ],
+    "video": [
+      "video"
+    ],
+    "iframe": [
+      "iframe"
+    ],
+    "file": [
+      "a"
+    ]
+  },
+  "marks": {
+    "bold": [
+      "strong",
+      "b"
+    ],
+    "italic": [
+      "em",
+      "i"
+    ],
+    "strike": [
+      "s",
+      "del"
+    ],
+    "underline": [
+      "u"
+    ],
+    "code": [
+      "code"
+    ],
+    "link": [
+      "a"
+    ],
+    "textStyle": [
+      "span"
+    ],
+    "highlight": [
+      "mark"
+    ],
+    "subscript": [
+      "sub"
+    ],
+    "superscript": [
+      "sup"
+    ]
+  },
+  "globalAttributes": [
+    "id",
+    "data-id",
+    "data-toc-id",
+    "data-type",
+    "style"
+  ],
+  "attributes": {
+    "iframe": [
+      "src", "title", "width", "height", "loading", "sandbox", "allow", "allowfullscreen", "referrerpolicy"
+    ],
+    "a": [
+      "href",
+      "title",
+      "target",
+      "rel",
+      "download",
+      "aria-label",
+      "data-name",
+      "data-size",
+      "data-mime",
+      "data-ext"
+    ],
+    "img": [
+      "src",
+      "alt",
+      "title",
+      "width",
+      "height",
+      "data-file-width",
+      "data-file-height",
+      "data-align",
+      "data-display-size",
+      "loading",
+      "draggable",
+      "data-name",
+      "data-size",
+      "data-mime",
+      "data-ext"
+    ],
+    "audio": [
+      "src",
+      "controls",
+      "autoplay",
+      "loop",
+      "muted",
+      "preload",
+      "controlslist",
+      "crossorigin",
+      "disableremoteplayback",
+      "title",
+      "aria-label",
+      "data-name",
+      "data-size",
+      "data-mime",
+      "data-ext",
+      "data-seconds"
+    ],
+    "span": [
+      "data-name"
+    ],
+    "mark": [
+      "data-color"
+    ],
+    "ol": [
+      "start",
+      "type"
+    ],
+    "li": [
+      "data-checked"
+    ],
+    "input": [
+      "type",
+      "checked",
+      "disabled"
+    ],
+    "details": [
+      "open"
+    ],
+    "td": [
+      "colspan",
+      "rowspan",
+      "colwidth"
+    ],
+    "th": [
+      "colspan",
+      "rowspan",
+      "colwidth"
+    ],
+    "col": [
+      "span",
+      "width"
+    ],
+    "code": [
+      "class"
+    ],
+    "video": [
+      "src",
+      "controls",
+      "preload",
+      "title",
+      "aria-label",
+      "width",
+      "height",
+      "data-file-width",
+      "data-file-height",
+      "data-align",
+      "data-display-size",
+      "data-name",
+      "data-size",
+      "data-mime",
+      "data-ext",
+      "data-seconds"
+    ]
+  },
+  "mediaDisplaySizes": ["sm", "md", "lg", "original", "full"],
+  "iframe": {
+    "width": 640,
+    "height": 360,
+    "sandbox": "allow-scripts allow-presentation",
+    "playerOrigins": [
+      "https://www.youtube.com", "https://youtube.com",
+      "https://www.youtube-nocookie.com", "https://youtube-nocookie.com", "https://open.iqiyi.com"
+    ],
+    "attributes": {
+      "loading": "lazy",
+      "allow": "autoplay; encrypted-media; picture-in-picture; fullscreen",
+      "allowfullscreen": "",
+      "referrerpolicy": "strict-origin-when-cross-origin"
+    }
+  },
+  "styles": {
+    "color": "^(#[0-9a-f]{3,8}|[a-z]+|(?:rgb|rgba|hsl|hsla|oklch)\\([0-9.,% /+-]+\\))$",
+    "background-color": "^(#[0-9a-f]{3,8}|[a-z]+|(?:rgb|rgba|hsl|hsla|oklch)\\([0-9.,% /+-]+\\))$",
+    "font-family": "^[\\p{L}0-9 ,'\"_-]{1,120}$",
+    "font-size": "^[0-9]{1,3}(?:\\.[0-9]+)?(?:px|em|rem|%)$",
+    "line-height": "^(normal|[0-9]{1,3}(?:\\.[0-9]+)?(?:px|em|rem|%)?)$",
+    "text-align": "^(left|center|right|justify|start|end)$",
+    "width": "^[0-9]{1,5}(?:\\.[0-9]+)?(?:px|%)$",
+    "min-width": "^[0-9]{1,5}(?:\\.[0-9]+)?(?:px|%)$",
+    "height": "^[0-9]{1,5}(?:\\.[0-9]+)?(?:px|%)$",
+    "list-style-type": "^(decimal|decimal-leading-zero|lower-alpha|upper-alpha|lower-roman|upper-roman)$"
+  },
+  "maxLength": 1000000,
+  "markdownNodes": [
+    "doc",
+    "text",
+    "paragraph",
+    "heading",
+    "blockquote",
+    "hardBreak",
+    "horizontalRule",
+    "bulletList",
+    "orderedList",
+    "listItem",
+    "table",
+    "tableRow",
+    "tableCell",
+    "tableHeader"
+  ]
+}

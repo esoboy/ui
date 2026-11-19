@@ -1,18 +1,2 @@
-@blaze
-
-@aware(['uiModel' => null, 'uiValue' => null, 'uiName' => null])
-
-@props([
-    'value',
-])
-
-@php($attributes = \Esoboy\Ui\Support\Theme::control($attributes))
-
-{{-- A native radio inside the group; class styles the row. --}}
-<label {{ $attributes->only(['class', 'style'])->merge(['data-slot' => 'dropdown-menu-radio-item']) }}>
-    <input {{ $attributes->except(['class', 'style'])->merge(['type' => 'radio', 'role' => 'menuitemradio', 'value' => $value, 'name' => $uiName, 'checked' => (string) \Esoboy\Ui\Support\Model::inherited($uiModel, $uiValue) === (string) $value, ...(\Esoboy\Ui\Support\OverlayModel::attributes($uiModel)?->getAttributes() ?? [])]) }}>
-    <span data-slot="dropdown-menu-item-indicator">
-        <x-ui::icon name="check" />
-    </span>
-    {{ $slot }}
-</label>
+@props(['checked' => false, 'disabled' => false, 'closeOnSelect' => true, 'inset' => false])
+<label @if($inset) data-inset @endif data-slot="{{ $attributes->get('data-slot', 'dropdown-menu-radio-item') }}" class="{{ $attributes->get('class') }}"><x-ui::radio-group.item role="menuitemradio" :attributes="$attributes->except(['class', 'data-slot'])->merge(['x-on:change' => $closeOnSelect ? 'select()' : null])" :checked="$checked" :disabled="$disabled" /><span>{{ $slot }}</span><span class="ui-menu-choice-indicator" aria-hidden="true"><x-ui::icon name="check" /></span></label>

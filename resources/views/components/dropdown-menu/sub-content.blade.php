@@ -1,18 +1,4 @@
-@blaze(fold: true)
-
-@aware(['uiSubmenuId' => null])
-
-@props([
-    'sideOffset' => 0,
-    'alignOffset' => -3,
-])
-
-<div {{ $attributes->merge(['id' => $uiSubmenuId, 'x-data' => 'uiOverlayContent()', 'x-on:toggle' => 'toggled($event)', 'x-on:pointermove' => 'hover($event)', 'x-on:click' => 'click($event)', 'x-on:keydown' => 'key($event)',
-    'popover' => 'auto',
-    'role' => 'menu',
-    'tabindex' => '-1',
-    'data-slot' => 'dropdown-menu-sub-content',
-    'data-side' => 'right',
-    'data-align' => 'start',
-    'style' => "--side-offset: {$sideOffset}px; --align-offset: {$alignOffset}px;",
-]) }}>{{ $slot }}</div>
+@props(['side' => 'right', 'align' => 'start', 'sideOffset' => 0, 'alignOffset' => -3])
+<div {{ $attributes->class('ui-popup ui-list-popup')->merge(['data-slot' => 'dropdown-menu-sub-content', 'role' => 'menu']) }} data-ui-panel data-side="{{ $side }}" data-align="{{ $align }}" data-side-offset="{{ $sideOffset }}" data-align-offset="{{ $alignOffset }}" popover="auto" x-bind:id="$id('ui-popover')" x-on:keydown="navigate($event)" x-on:toggle="toggled($event)">
+    <x-ui::scroll-area class="ui-list-scroll" tabindex="-1">{{ $slot }}</x-ui::scroll-area>
+</div>
