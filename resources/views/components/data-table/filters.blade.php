@@ -1,12 +1,12 @@
 @props(['collapsible' => false, 'initiallyCollapsed' => true, 'clearAction' => null])
 @php($canCollapse = $collapsible && isset($secondary) && $secondary->isNotEmpty())
-<div {{ $attributes->merge(['data-slot' => 'data-table-filters']) }}>
+<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'data-table-filters']) }}>
     <x-ui::collapsible :open="! $canCollapse || ! $initiallyCollapsed">
         @isset($primary)
-            <div data-slot="data-table-filter-primary">{{ $primary }}</div>
+            <div data-esoboy-ui data-slot="data-table-filter-primary">{{ $primary }}</div>
         @endisset
         @if ($canCollapse || $clearAction)
-            <div data-slot="data-table-filter-actions">
+            <div data-esoboy-ui data-slot="data-table-filter-actions">
                 @if ($canCollapse)
                     <x-ui::collapsible.trigger>
                         <x-ui::button variant="outline" size="sm"><x-ui::icon name="list-filter" />{{ __('ui::ui.table_more_filters') }}</x-ui::button>

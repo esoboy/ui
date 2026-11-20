@@ -5,5 +5,5 @@
     }
     if ($initialSnapPoint !== null && !in_array($initialSnapPoint, $snapPoints, true)) throw new \InvalidArgumentException(__('ui::errors.drawer_initial_point'));
 @endphp
-<div {{ $attributes->merge(['data-slot' => 'drawer', 'data-swipe-handle' => $showSwipeHandle ? 'true' : 'false']) }} data-ui-overlay x-data="uiDrawer(@js($initialOpen), @js($modal), @js($snapPoints), @js($initialSnapPoint), @js($snapToSequentialPoints))" x-modelable="opened" x-id="['ui-dialog']">
+<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'drawer', 'data-swipe-handle' => $showSwipeHandle ? 'true' : 'false']) }} data-ui-overlay x-data="uiDrawer(@js($initialOpen), @js($modal), @js($snapPoints), @js($initialSnapPoint), @js($snapToSequentialPoints))" x-modelable="opened" x-id="['ui-dialog']">
     {{ $slot }}</div>

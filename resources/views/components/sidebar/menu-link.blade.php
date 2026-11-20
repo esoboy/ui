@@ -5,5 +5,5 @@
         <x-ui::tooltip.content side="right">{{ $tooltip }}</x-ui::tooltip.content>
     </x-ui::tooltip>
 @else
-<a data-size="{{ $size }}" data-variant="{{ $variant }}" data-active="{{ $active ? 'true' : 'false' }}" @if($active) aria-current="page" @endif {{ $attributes->class('ui-sidebar-menu-button group/menu-button peer/menu-button')->merge(['data-slot' => 'sidebar-menu-link']) }}>{{ $slot }}</a>
+<a data-size="{{ $size }}" data-variant="{{ $variant }}" data-active="{{ $active ? 'true' : 'false' }}" @if($active) aria-current="page" @endif {{ $attributes->class('ui-sidebar-menu-button group/menu-button peer/menu-button')->merge(['data-esoboy-ui' => '', 'data-slot' => 'sidebar-menu-link']) }}>{{ $slot }}</a>
 @endif

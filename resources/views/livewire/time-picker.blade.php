@@ -6,6 +6,6 @@
         @include('ui::livewire.partials.time-panel', ['awaitingDate' => false])
     @endteleport
     @if ($attributes->get('name') && $time !== null)
-        <input type="hidden" name="{{ $attributes->get('name') }}" value="{{ $time }}" @disabled($disabled)>
+        <input type="hidden" {{ $attributes->only(['name', 'form']) }} value="{{ $time }}" @disabled($disabled)>
     @endif
 </div>

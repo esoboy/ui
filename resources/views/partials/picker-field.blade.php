@@ -9,8 +9,8 @@
         'datetime-picker' => ['select_datetime', 'ui-list-popup ui-date-popup'],
     };
 @endphp
-<div data-slot="{{ $picker }}-field">
-    <div data-slot="{{ $picker }}" data-ui-overlay x-data="uiPopover">
+<div data-esoboy-ui data-slot="{{ $picker }}-field">
+    <div data-esoboy-ui data-slot="{{ $picker }}" data-ui-overlay x-data="uiPopover">
         {!! \Livewire\Livewire::mount($picker === 'time-picker' ? 'ui::time-picker' : 'ui::date-picker', [
             ...$binding->parameters, ...$options, 'contentTarget' => $target,
         ], $binding->key) !!}
@@ -24,12 +24,12 @@
                 <div id="{{ $target }}" class="ui-picker-target" wire:ignore x-on:keydown.stop></div>
             @endif
             @if (isset($extra) && $extra->hasActualContent())
-                <div data-slot="picker-extra" x-on:keydown.stop {{ $extra->attributes }}>{{ $extra }}</div>
+                <div data-esoboy-ui data-slot="picker-extra" x-on:keydown.stop {{ $extra->attributes }}>{{ $extra }}</div>
             @endif
         </x-ui::popover.content>
     </div>
     {{ $slot }}
     @if ($picker !== 'time-picker' && isset($footer))
-        <div data-slot="{{ $picker }}-footer">{{ $footer }}</div>
+        <div data-esoboy-ui data-slot="{{ $picker }}-footer">{{ $footer }}</div>
     @endif
 </div>

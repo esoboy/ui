@@ -1,2 +1,2 @@
 @blaze
-<ol {{ $attributes->merge(['data-slot' => 'timeline']) }}>{{ $slot }}</ol>
+<ol {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'timeline']) }}>{{ $slot }}</ol>

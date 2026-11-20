@@ -1,7 +1,7 @@
     <x-ui::input-group data-slot="combobox-control" :data-ui-anchor-box="$searchInPopup ? null : true" :class="$multiple ? 'ui-combobox-multiple' : null">
         @if ($multiple)
             @foreach ($this->selectedChoices as $option)
-                    <span data-slot="combobox-chip" tabindex="-1" data-value="{{ json_encode($option['value']) }}" wire:key="chip-{{ $option['value'] }}">{{ $option['label'] }}
+                    <span data-esoboy-ui data-slot="combobox-chip" tabindex="-1" data-value="{{ json_encode($option['value']) }}" wire:key="chip-{{ $option['value'] }}">{{ $option['label'] }}
                         @if($showRemove)<x-ui::button variant="ghost" size="icon-xs" data-slot="combobox-chip-remove" x-on:mousedown.prevent x-on:click="$root.querySelector('input[role=combobox]')?.focus({preventScroll: true})" :wire:click="'choose('.\Illuminate\Support\Js::from($option['value']).')'" :disabled="$disabled || $readonly || $option['disabled']" :aria-label="__('ui::ui.remove_item', ['label' => $option['label']])"><x-ui::icon name="x" /></x-ui::button>@endif
                     </span>
             @endforeach

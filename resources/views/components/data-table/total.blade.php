@@ -11,5 +11,5 @@
     };
 @endphp
 @if ($total !== null)
-    <span {{ $attributes->merge(['data-slot' => 'data-table-total']) }}>{{ trans_choice('ui::ui.table_total', $total, ['count' => $total]) }}</span>
+    <span {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'data-table-total']) }}>{{ trans_choice('ui::ui.table_total', $total, ['count' => $total]) }}</span>
 @endif

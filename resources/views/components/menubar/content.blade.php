@@ -1,5 +1,5 @@
 @props(['side' => 'bottom', 'align' => 'start', 'sideOffset' => 8, 'alignOffset' => -4])
-<div {{ $attributes->class('ui-popup ui-list-popup')->merge(['data-slot' => 'menubar-content', 'role' => 'menu']) }} data-ui-panel data-side="{{ $side }}" data-align="{{ $align }}"
+<div {{ $attributes->class('ui-popup ui-list-popup')->merge(['data-esoboy-ui' => '', 'data-slot' => 'menubar-content', 'role' => 'menu']) }} data-ui-panel data-side="{{ $side }}" data-align="{{ $align }}"
     data-side-offset="{{ $sideOffset }}" data-align-offset="{{ $alignOffset }}" popover="auto" x-bind:id="$id('ui-popover')" x-on:keydown="navigate($event)"
     x-on:toggle="toggled($event)">
     <x-ui::scroll-area class="ui-list-scroll" tabindex="-1">{{ $slot }}</x-ui::scroll-area>

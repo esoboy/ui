@@ -3,14 +3,14 @@
 namespace Esoboy\Ui\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
 
 /** @property-read list<array{value: string|int|null, label: string, disabled: bool}> $results */
-class Combobox extends SearchableSelect
+class Combobox extends PopupOptionControl
 {
+    use SearchesChoices;
+
     #[Reactive]
     public bool $clearable = false;
 
@@ -39,10 +39,9 @@ class Combobox extends SearchableSelect
     #[Locked]
     public array $rememberedChoices = [];
 
-    public function updatedQuery(): void
+    public function updatingQuery(): void
     {
         $this->searching = true;
-        parent::updatedQuery();
     }
 
     public function finishSearch(): void
@@ -52,13 +51,9 @@ class Combobox extends SearchableSelect
         unset($this->results);
     }
 
-    /** @return list<array{value: string|int|null, label: string, disabled: bool}> */
-    #[Computed]
-    public function results(): array
+    protected function searchTerm(): string
     {
-        $query = $this->searching ? Str::lower(trim($this->query)) : '';
-
-        return array_values(array_filter($this->choices, fn (array $option): bool => $query === '' || Str::contains(Str::lower($option['label']), $query)));
+        return $this->searching ? $this->query : '';
     }
 
     public function rendering(): void
@@ -96,8 +91,7 @@ class Combobox extends SearchableSelect
     public function clearSelection(): void
     {
         $this->changeValue($this->multiple ? [] : null);
-        $this->query = '';
-        unset($this->selected, $this->selectedKeys, $this->selectedChoices, $this->label, $this->results);
+        unset($this->selected, $this->selectedKeys, $this->selectedChoices, $this->label);
         $this->finishSearch();
     }
 

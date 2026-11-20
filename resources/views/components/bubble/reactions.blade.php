@@ -1,2 +1,2 @@
 @props(['side' => 'bottom', 'align' => 'end'])
-<div {{ $attributes->merge(['data-slot' => 'bubble-reactions', 'data-side' => $side, 'data-align' => $align]) }}>{{ $slot }}</div>
+<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'bubble-reactions', 'data-side' => $side, 'data-align' => $align]) }}>{{ $slot }}</div>

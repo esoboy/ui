@@ -1,4 +1,4 @@
-<form data-slot="questionnaire" novalidate wire:submit="submit" x-data="uiQuestionnaire"
+<form data-esoboy-ui data-slot="questionnaire" novalidate wire:submit="submit" x-data="uiQuestionnaire"
     x-on:keydown="navigate($event)" x-on:reset.prevent="$wire.resetAnswers()"
     x-on:questionnaire-focus.stop="focusItem($event.detail.invalid)"
     {{ $attributes->whereDoesntStartWith('wire:model')->except('name') }}>
@@ -42,7 +42,7 @@
             @else @include('ui::livewire.partials.questionnaire-actions') @endif
         @endif
         @foreach ($answers as $name => $previous)
-            @continue($name === $question['name'] || $previous['status'] !== 'answered')
+            @continue((! $readonly && $name === $question['name']) || $previous['status'] !== 'answered')
             @foreach ([...$previous['choices'], ...($previous['text'] !== '' ? [$previous['text']] : [])] as $value)
                 <input type="hidden" name="{{ $name }}" value="{{ $value }}" @disabled($disabled)>
             @endforeach

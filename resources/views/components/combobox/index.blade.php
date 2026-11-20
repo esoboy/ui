@@ -21,7 +21,7 @@
     'emptyDescription' => null,
 ])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'combobox', get_defined_vars()))
-<div data-slot="combobox-field">
+<div data-esoboy-ui data-slot="combobox-field">
     {!! \Livewire\Livewire::mount(
         'ui::combobox',
         [
@@ -42,8 +42,6 @@
             'searchInPopup' => $searchInPopup,
             'searchPlaceholder' => $searchPlaceholder,
             'autoHighlight' => $autoHighlight,
-            'size' => 'default',
-            'displayValue' => null,
             'emptyTitle' => $emptyTitle,
             'emptyDescription' => $emptyDescription,
         ],
@@ -51,6 +49,6 @@
     ) !!}
     {{ $slot }}
     @isset($footer)
-        <div data-slot="combobox-footer">{{ $footer }}</div>
+        <div data-esoboy-ui data-slot="combobox-footer">{{ $footer }}</div>
     @endisset
 </div>

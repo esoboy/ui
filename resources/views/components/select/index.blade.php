@@ -16,7 +16,7 @@
     'emptyDescription' => null,
 ])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'select', get_defined_vars()))
-<div data-slot="select-field">
+<div data-esoboy-ui data-slot="select-field">
     {!! \Livewire\Livewire::mount(
         'ui::select',
         [
@@ -39,6 +39,6 @@
     ) !!}
     {{ $slot }}
     @isset($footer)
-        <div data-slot="select-footer">{{ $footer }}</div>
+        <div data-esoboy-ui data-slot="select-footer">{{ $footer }}</div>
     @endisset
 </div>

@@ -1,10 +1,10 @@
 @php($monthYearFormat = __('ui::ui.month_year_format', [], \Esoboy\Ui\Support\Locale::normalize($locale ?? app()->getLocale())))
-<div {{ ($calendarAttributes ?? new \Illuminate\View\ComponentAttributeBag)->class(['group/calendar'])->merge(['data-slot' => 'calendar']) }} x-data="uiOptions('[data-calendar-day]')" x-on:keydown="navigateGrid($event, 7, true)">
-    <div data-slot="calendar-header">
+<div {{ ($calendarAttributes ?? new \Illuminate\View\ComponentAttributeBag)->class(['group/calendar'])->merge(['data-esoboy-ui' => '', 'data-slot' => 'calendar']) }} x-data="uiOptions('[data-calendar-day]')" x-on:keydown="navigateGrid($event, 7, true)">
+    <div data-esoboy-ui data-slot="calendar-header">
         <x-ui::button variant="ghost" size="icon-sm" wire:click="moveMonth(-1)" :disabled="$disabled || ($this->navigationStart !== null && $this->period->toDateString() <= $this->navigationStart)"
             :aria-label="__('ui::ui.previous_month')"><x-ui::icon name="chevron-left" /></x-ui::button>
         @if ($captionLayout === 'dropdown')
-            <div data-slot="calendar-dropdowns">
+            <div data-esoboy-ui data-slot="calendar-dropdowns">
                 <span>
                     <select aria-label="{{ __('ui::ui.select_month') }}" wire:change="showMonthOfYear($event.target.value)" @disabled($disabled)>
                         @foreach ($this->months as $option)
@@ -28,14 +28,14 @@
         <x-ui::button variant="ghost" size="icon-sm" wire:click="moveMonth(1)" :disabled="$disabled || $this->month === $this->lastPageMonth"
             :aria-label="__('ui::ui.next_month')"><x-ui::icon name="chevron-right" /></x-ui::button>
     </div>
-    <div data-slot="calendar-months">
+    <div data-esoboy-ui data-slot="calendar-months">
         @for ($monthOffset = 0; $monthOffset < $numberOfMonths; $monthOffset++)
             @php($visiblePeriod = $this->period->addMonths($monthOffset))
-            <div data-slot="calendar-month">
-                @if ($numberOfMonths > 1)<p data-slot="calendar-month-caption">{{ $visiblePeriod->isoFormat($monthYearFormat) }}</p>@endif
-                <table role="grid" aria-label="{{ $visiblePeriod->isoFormat($monthYearFormat) }}" data-slot="calendar-grid">
+            <div data-esoboy-ui data-slot="calendar-month">
+                @if ($numberOfMonths > 1)<p data-esoboy-ui data-slot="calendar-month-caption">{{ $visiblePeriod->isoFormat($monthYearFormat) }}</p>@endif
+                <table role="grid" aria-label="{{ $visiblePeriod->isoFormat($monthYearFormat) }}" data-esoboy-ui data-slot="calendar-grid">
                 <thead><tr>
-                    @if ($showWeekNumber)<th scope="col" data-slot="calendar-week-number-header" aria-label="{{ __('ui::ui.week_number') }}"></th>@endif
+                    @if ($showWeekNumber)<th scope="col" data-esoboy-ui data-slot="calendar-week-number-header" aria-label="{{ __('ui::ui.week_number') }}"></th>@endif
                     @for ($weekday = 0; $weekday < 7; $weekday++)
                         <th scope="col">{{ $visiblePeriod->startOfWeek($weekStartsOn)->addDays($weekday)->isoFormat('dd') }}</th>
                     @endfor
@@ -43,7 +43,7 @@
                 <tbody>
                     @foreach (array_chunk($this->monthDays($monthOffset), 7) as $week)
                         <tr>
-                            @if ($showWeekNumber)<th scope="row" data-slot="calendar-week-number">{{ str_pad((string) \Carbon\CarbonImmutable::parse($week[0]['date'])->week(null, $weekStartsOn, 1), 2, '0', STR_PAD_LEFT) }}</th>@endif
+                            @if ($showWeekNumber)<th scope="row" data-esoboy-ui data-slot="calendar-week-number">{{ str_pad((string) \Carbon\CarbonImmutable::parse($week[0]['date'])->week(null, $weekStartsOn, 1), 2, '0', STR_PAD_LEFT) }}</th>@endif
                             @foreach ($week as $day)
                                 <td class="{{ $dayClasses[$day['date']] ?? '' }}" data-hidden="{{ $day['hidden'] ? 'true' : 'false' }}" data-disabled="{{ $day['disabled'] ? 'true' : 'false' }}" aria-selected="{{ $day['selected'] || $day['inRange'] ? 'true' : 'false' }}" data-today="{{ $day['today'] ? 'true' : 'false' }}" data-range="{{ $day['inRange'] ? 'middle' : ($range && $day['selected'] ? ($day['date'] === $this->selected[0] ? 'start' : 'end') : '') }}">
                                     <x-ui::button variant="ghost" size="icon" data-calendar-day :data-selected-single="$day['selected'] ? 'true' : 'false'" :data-range-middle="$day['inRange'] ? 'true' : 'false'" :data-outside="$day['current'] ? 'false' : 'true'" :aria-label="$day['date']" :aria-current="$day['today'] ? 'date' : null"

@@ -1,2 +1,2 @@
 @blaze
-<footer {{ $attributes->merge(['data-slot' => 'message-footer']) }}>{{ $slot }}</footer>
+<footer {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'message-footer']) }}>{{ $slot }}</footer>

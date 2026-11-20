@@ -1,4 +1,4 @@
-<div data-slot="tags-input"
+<div data-esoboy-ui data-slot="tags-input"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby']) }}>
     <div class="ui-tags">
         @foreach ($this->tags as $tag)
@@ -7,7 +7,7 @@
                     :wire:click="'remove('.\Illuminate\Support\Js::from($tag).')'" :aria-label="__('ui::ui.remove_item', ['label' => $tag])"><x-ui::icon
                         name="x" :size="12" /></x-ui::button></x-ui::badge>
             @if ($attributes->get('name'))
-                <input type="hidden" name="{{ $attributes->get('name') }}[]" value="{{ $tag }}"
+                <input type="hidden" name="{{ $attributes->get('name') }}[]" {{ $attributes->only('form') }} value="{{ $tag }}"
                     @disabled($disabled)>
             @endif
         @endforeach

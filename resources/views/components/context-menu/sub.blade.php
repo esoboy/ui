@@ -1,1 +1,1 @@
-<div data-ui-overlay data-ui-submenu x-on:pointerenter="hover(true, 100)" x-on:pointerleave="hover(false, 100)" x-data="uiPopover" x-id="['ui-popover']" {{ $attributes->merge(['data-slot' => 'context-menu-sub']) }}>{{ $slot }}</div>
+<div data-ui-overlay data-ui-submenu x-on:pointerenter="hover(true, 100)" x-on:pointerleave="hover(false, 100)" x-data="uiPopover" x-id="['ui-popover']" {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'context-menu-sub']) }}>{{ $slot }}</div>

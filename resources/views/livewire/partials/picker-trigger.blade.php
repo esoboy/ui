@@ -1,5 +1,5 @@
 @php($showClear = $clearable && $label !== '' && ! $disabled && ! $readonly)
-<div data-slot="picker-control" @if ($showClear) data-clearable @endif>
+<div data-esoboy-ui data-slot="picker-control" @if ($showClear) data-clearable @endif>
     <x-ui::popover.trigger>
         <x-ui::button variant="outline" data-picker-trigger :data-slot="$picker.'-trigger'" :disabled="$disabled"
             :id="$attributes->get('id')" :class="$attributes->get('class')" {{ $attributes->whereStartsWith('aria-') }}

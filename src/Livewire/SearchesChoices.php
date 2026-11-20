@@ -15,12 +15,21 @@ trait SearchesChoices
         $this->dispatch('query-changed', query: $this->query);
     }
 
+    protected function searchTerm(): string
+    {
+        return $this->query;
+    }
+
     /** @return list<array{value: string|int|null, label: string, disabled: bool}> */
     #[Computed]
     public function results(): array
     {
-        $query = Str::lower(trim($this->query));
+        $query = Str::lower(trim($this->searchTerm()));
 
-        return array_values(array_filter($this->choices, fn (array $option): bool => $query === '' || Str::contains(Str::lower($option['label']), $query)));
+        if ($query === '') {
+            return $this->choices;
+        }
+
+        return array_values(array_filter($this->choices, fn (array $option): bool => Str::contains(Str::lower($option['label']), $query)));
     }
 }

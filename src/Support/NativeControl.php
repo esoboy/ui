@@ -20,17 +20,25 @@ final readonly class NativeControl
     {
         $binding = ControlAttributes::from($attributes, $component, $props);
         $parameters = $binding->parameters;
-        $model = $attributes->whereStartsWith('wire:model')->isNotEmpty() ? $attributes->wire('model')->value() : null;
         $value = match ($parameters['mode']) {
-            'bound' => data_get(Livewire::current(), $model),
+            'bound' => data_get(Livewire::current(), $binding->model),
             'controlled' => $parameters['externalValue'],
             default => $parameters['initialValue'],
         };
-        $config = [...$options, 'mode' => $parameters['mode'], 'model' => $model, 'value' => $value,
+        $config = [...$options, 'mode' => $parameters['mode'], 'model' => $binding->model, 'value' => $value,
             'disabled' => (bool) $parameters['disabled'], 'readonly' => (bool) $parameters['readonly']];
         self::validate($component, $config);
 
         return new self($binding->key, $parameters['id'], $config);
+    }
+
+    public function inputId(int $index): ?string
+    {
+        if ($this->id === null || $this->id === '') {
+            return null;
+        }
+
+        return $index === 0 ? $this->id : $this->id.'-'.$index;
     }
 
     /** @param array<string, mixed> $config */
@@ -42,10 +50,6 @@ final readonly class NativeControl
             if ($max === false || $max < 1 || ($value !== null && (filter_var($value, FILTER_VALIDATE_INT) === false || $value < 1 || $value > $max))) {
                 throw new InvalidArgumentException(__('ui::errors.rating'));
             }
-        } elseif ($component === 'cropper') {
-            DrawingValue::crop($value);
-        } elseif ($component === 'signature') {
-            DrawingValue::signature($value);
         } elseif (in_array($component, ['number-input', 'slider'], true)) {
             foreach (['min', 'max', 'step'] as $option) {
                 if ($config[$option] !== null && (! is_numeric($config[$option]) || ! is_finite((float) $config[$option]))) {

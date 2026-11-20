@@ -2,7 +2,6 @@
     $cursor = $paginator instanceof \Illuminate\Contracts\Pagination\CursorPaginator;
     $lengthAware = $paginator instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator;
     $name = \Illuminate\Support\Js::from($cursor ? $paginator->getCursorName() : $paginator->getPageName());
-    $live = (bool) \Livewire\Livewire::current();
     $previous = $cursor ? 'setPage('.\Illuminate\Support\Js::from($paginator->previousCursor()?->encode()).', '.$name.')' : 'previousPage('.$name.')';
     $next = $cursor ? 'setPage('.\Illuminate\Support\Js::from($paginator->nextCursor()?->encode()).', '.$name.')' : 'nextPage('.$name.')';
     $pages = [];

@@ -5,5 +5,5 @@
         <x-ui::tooltip.content side="right">{{ $tooltip }}</x-ui::tooltip.content>
     </x-ui::tooltip>
 @else
-<button data-size="{{ $size }}" data-variant="{{ $variant }}" data-active="{{ $active ? 'true' : 'false' }}" type="button" {{ $attributes->class('ui-sidebar-menu-button group/menu-button peer/menu-button')->merge(['data-slot' => 'sidebar-menu-button']) }}>{{ $slot }}</button>
+<button data-size="{{ $size }}" data-variant="{{ $variant }}" data-active="{{ $active ? 'true' : 'false' }}" type="button" {{ $attributes->class('ui-sidebar-menu-button group/menu-button peer/menu-button')->merge(['data-esoboy-ui' => '', 'data-slot' => 'sidebar-menu-button']) }}>{{ $slot }}</button>
 @endif

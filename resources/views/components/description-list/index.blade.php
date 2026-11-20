@@ -1,2 +1,2 @@
 @blaze
-<dl {{ $attributes->merge(['data-slot' => 'description-list']) }}>{{ $slot }}</dl>
+<dl {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'description-list']) }}>{{ $slot }}</dl>

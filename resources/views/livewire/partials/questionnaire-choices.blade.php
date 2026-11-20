@@ -9,7 +9,7 @@
                     </x-ui::questionnaire.choice>
                 @endforeach
                 @if ($question['input'])
-                    <x-ui::questionnaire.input :name="$answer['text'] !== '' ? $answerName : null" :value="$answer['text']"
+                    <x-ui::questionnaire.input :name="! $readonly && $answer['text'] !== '' ? $answerName : null" :value="$answer['text']"
                         :aria-label="$question['input']['label']" :placeholder="$question['input']['placeholder']"
                         :aria-invalid="$hasError ? 'true' : null" :disabled="$disabled" :readonly="$readonly"
                         wire:change="writeText($event.target.value)" />

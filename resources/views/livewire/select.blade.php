@@ -1,10 +1,10 @@
-<div data-slot="select" data-ui-overlay x-data="uiPopover"
+<div data-esoboy-ui data-slot="select" data-ui-overlay x-data="uiPopover"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'aria-label', 'aria-labelledby']) }}>
     <x-ui::select.trigger x-on:pointerdown.capture="$el.toggleAttribute('data-touch', $event.pointerType === 'touch')" x-on:keydown.capture="$el.removeAttribute('data-touch')">
         <x-ui::button variant="outline" :size="$size" :disabled="$disabled" :id="$attributes->get('id')" :class="$attributes->get('class')" {{ $attributes->whereStartsWith('aria-') }}
             aria-haspopup="listbox" data-slot="select-control" :data-size="$size" :data-placeholder="$this->label === '' && $displayValue === null ? true : null">
             @php($displayOption = count($this->selected) <= 1 ? collect($this->choices)->first(fn ($option) => $this->isSelected($option['value'])) : null)
-            <span data-slot="select-value">
+            <span data-esoboy-ui data-slot="select-value">
                 @if($displayValue !== null){{ $displayValue }}
                 @elseif(isset($displayOption['description']))
                     @include('ui::livewire.partials.option-label', ['option' => $displayOption])
@@ -13,7 +13,7 @@
             <x-ui::icon name="chevron-down" class="ui-select-chevron" />
         </x-ui::button>
     </x-ui::select.trigger>
-    <div id="{{ $this->getId() }}-listbox" data-slot="select-content" data-match-trigger data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-side-offset="{{ $sideOffset }}" data-align-offset="{{ $alignOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" role="listbox" tabindex="-1"
+    <div id="{{ $this->getId() }}-listbox" data-esoboy-ui data-slot="select-content" data-match-trigger data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-side-offset="{{ $sideOffset }}" data-align-offset="{{ $alignOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" role="listbox" tabindex="-1"
         aria-multiselectable="{{ $multiple ? 'true' : 'false' }}" class="ui-popup ui-list-popup {{ $popupClass }}" x-on:keydown="navigate($event)"
         x-on:toggle="toggled($event)"
         x-on:pointermove="if ($event.pointerType === 'mouse') { pointerFocus = true; $event.target.closest('[role=option]:not(:disabled)')?.focus({ preventScroll: true }) }"
@@ -22,10 +22,5 @@
             @include('ui::livewire.partials.select-list')
         </x-ui::scroll-area>
     </div>
-    @if ($attributes->get('name'))
-        @foreach ($this->selected as $selected)
-            <input type="hidden" name="{{ $attributes->get('name') }}{{ $multiple ? '[]' : '' }}"
-                value="{{ $selected }}" @disabled($disabled)>
-        @endforeach
-    @endif
+    @include('ui::livewire.partials.selection-input')
 </div>

@@ -4,4 +4,4 @@
     if (!in_array($type, ['single', 'multiple'], true)) throw new \InvalidArgumentException(__('ui::errors.toggle_group_type'));
     if (!in_array($orientation, ['horizontal', 'vertical'], true) || !is_numeric($spacing) || $spacing < 0 || $spacing > 12) throw new \InvalidArgumentException(__('ui::errors.toggle_group_layout'));
 @endphp
-<div data-orientation="{{ $orientation }}" data-spacing="{{ $spacing }}" data-size="{{ $size }}" style="--toggle-spacing: {{ $spacing * .25 }}rem" x-data="uiChoiceGroup" x-on:keydown="navigate($event)" role="{{ $type === 'single' ? 'radiogroup' : 'group' }}" {{ $attributes->class('group/toggle-group')->merge(['data-slot' => 'toggle-group']) }}>{{ $slot }}</div>
+<div data-orientation="{{ $orientation }}" data-spacing="{{ $spacing }}" data-size="{{ $size }}" style="--toggle-spacing: {{ $spacing * .25 }}rem" x-data="uiChoiceGroup" x-on:keydown="navigate($event)" role="{{ $type === 'single' ? 'radiogroup' : 'group' }}" {{ $attributes->class('group/toggle-group')->merge(['data-esoboy-ui' => '', 'data-slot' => 'toggle-group']) }}>{{ $slot }}</div>

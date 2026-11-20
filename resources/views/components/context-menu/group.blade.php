@@ -1,1 +1,1 @@
-<div role="group" {{ $attributes }}>{{ $slot }}</div>
+@include('ui::partials.menu.group')

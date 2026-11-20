@@ -1,4 +1,4 @@
-<div data-slot="transfer" {{ $attributes->whereDoesntStartWith('wire:model')->except('name') }}>
+<div data-esoboy-ui data-slot="transfer" {{ $attributes->whereDoesntStartWith('wire:model')->except('name') }}>
     <x-ui::input :id="$this->getId() . '-query'" wire:model.live.debounce.200ms="query" type="search" :placeholder="__('ui::ui.search')" :aria-label="__('ui::ui.search')"
         :disabled="$disabled" />
     <div class="ui-transfer-columns">

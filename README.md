@@ -67,7 +67,7 @@ php artisan vendor:publish --tag=ui-assets --force
 <x-ui::icon name="circle-question-mark" />
 ```
 
-`$roles` 接收形如 `[['value' => 'reader', 'label' => 'Reader']]` 的选项。独立状态控件支持 `wire:model`、一次性 `:initial-value` 或单向受控的 `:value`。公共 slot 归调用方，slot 中的业务操作由调用方的 Livewire 组件执行。图标名称取自包锁定版本的 Lucide 正式清单，未知名称和别名会抛出异常。[公开组件目录](https://github.com/esoboy/components/blob/v1.0.0/docs/components.md) · [状态与组合](https://github.com/esoboy/components/blob/v1.0.0/docs/state-and-composition.md) · [编辑器与内容契约](https://github.com/esoboy/components/blob/v1.0.0/docs/content.md)
+`$roles` 接收形如 `[['value' => 'reader', 'label' => 'Reader']]` 的选项。独立状态控件支持 `wire:model`、一次性 `:initial-value` 或单向受控的 `:value`。公共 slot 归调用方，slot 中的业务操作由调用方的 Livewire 组件执行。图标名称取自包锁定版本的 Lucide 正式清单，未知名称和别名会抛出异常。[公开组件目录](https://github.com/esoboy/components/blob/v1.0.1/docs/components.md) · [状态与组合](https://github.com/esoboy/components/blob/v1.0.1/docs/state-and-composition.md) · [编辑器与内容契约](https://github.com/esoboy/components/blob/v1.0.1/docs/content.md)
 
 ## 语言和主题
 
@@ -75,4 +75,4 @@ php artisan vendor:publish --tag=ui-assets --force
 
 在根节点添加 `.dark` 切换组件暗色。可用项目 CSS 覆盖 `--color-background`、`--color-foreground`、`--color-primary`、`--color-muted-foreground` 和 `--color-border` 等变量。组件的圆角使用 `--radius-ui`、`--radius-ui-lg` 等专用变量。组件样式位于 `components` 层，调用方可以用 `rounded-lg` 等应用工具类覆盖默认值。
 
-维护者可参阅[开发、构建与发布](https://github.com/esoboy/components/blob/v1.0.0/docs/development.md)。
+维护者可参阅[开发、构建与发布](https://github.com/esoboy/components/blob/v1.0.1/docs/development.md)。

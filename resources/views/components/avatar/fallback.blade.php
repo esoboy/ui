@@ -1,2 +1,2 @@
 @blaze
-<span {{ $attributes->merge(['data-slot' => 'avatar-fallback']) }} x-show="!loaded">{{ $slot }}</span>
+<span {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'avatar-fallback']) }} x-show="!loaded">{{ $slot }}</span>

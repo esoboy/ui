@@ -1,1 +1,1 @@
-<span {{ $attributes->merge(['data-slot' => 'avatar-group-count']) }}>{{ $slot }}</span>
+<span {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'avatar-group-count']) }}>{{ $slot }}</span>

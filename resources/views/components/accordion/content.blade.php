@@ -1,1 +1,1 @@
-<div {{ $attributes->merge(['data-slot' => 'accordion-content']) }}>{{ $slot }}</div>
+<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'accordion-content']) }}>{{ $slot }}</div>

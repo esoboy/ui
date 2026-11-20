@@ -120,7 +120,12 @@ class Questionnaire extends ValueControl
     #[Computed]
     public function position(): int
     {
-        $index = array_search($this->item ?? $this->activeItem, array_column($this->questions, 'name'), true);
+        return $this->positionOf($this->item ?? $this->activeItem);
+    }
+
+    private function positionOf(string $name): int
+    {
+        $index = array_search($name, array_column($this->questions, 'name'), true);
 
         return $index === false ? 0 : $index;
     }
@@ -236,11 +241,8 @@ class Questionnaire extends ValueControl
         }
         $this->changeValue($this->originalValue);
         unset($this->answers);
-        $this->activeItem = $this->initialItem;
-        unset($this->position);
         $this->invalid = null;
-        $this->dispatch('item-changed', item: $this->questions[$this->position]['name'] ?? '');
-        $this->dispatch('questionnaire-focus', invalid: false);
+        $this->requestItem($this->questions[$this->positionOf($this->initialItem)]['name'] ?? '');
     }
 
     private function validateItem(int $index): bool
@@ -254,25 +256,28 @@ class Questionnaire extends ValueControl
 
             return true;
         }
-        $this->move($index);
         $this->invalid = $question['name'];
-        $this->dispatch('questionnaire-focus', invalid: true);
+        $this->move($index, invalid: true);
 
         return false;
     }
 
-    private function move(int $index): void
+    private function move(int $index, bool $invalid = false): void
     {
         if ($this->disabled || ! isset($this->questions[$index])) {
             return;
         }
-        $name = $this->questions[$index]['name'];
+        $this->requestItem($this->questions[$index]['name'], $invalid);
+    }
+
+    private function requestItem(string $name, bool $invalid = false): void
+    {
         if ($this->item === null) {
             $this->activeItem = $name;
             unset($this->position);
         }
         $this->dispatch('item-changed', item: $name);
-        $this->dispatch('questionnaire-focus', invalid: false);
+        $this->dispatch('questionnaire-focus', invalid: $invalid);
     }
 
     public function render(): View

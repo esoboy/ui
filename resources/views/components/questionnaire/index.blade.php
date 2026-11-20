@@ -13,7 +13,7 @@
     'emptyDescription' => null,
 ])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'questionnaire', get_defined_vars()))
-<div data-slot="questionnaire-field">
+<div data-esoboy-ui data-slot="questionnaire-field">
     {!! \Livewire\Livewire::mount(
         'ui::questionnaire',
         [

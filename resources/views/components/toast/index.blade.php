@@ -1,4 +1,4 @@
 @props(['duration' => 5000, 'variant' => 'default'])
-<div {{ $attributes->merge(['data-slot' => 'toast', 'data-variant' => $variant, 'tabindex' => 0, 'role' => $variant === 'destructive' ? 'alertdialog' : 'dialog', 'aria-modal' => 'false']) }}
+<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'toast', 'data-variant' => $variant, 'tabindex' => 0, 'role' => $variant === 'destructive' ? 'alertdialog' : 'dialog', 'aria-modal' => 'false']) }}
     x-data="uiToast(@js($duration))" data-duration="{{ $duration }}" x-show="visible" x-bind:inert="limited" x-on:keydown.escape="close()" x-bind:style="layout" x-bind:data-behind="behind ? '' : null" x-bind:data-expanded="expanded ? '' : null" x-bind:data-limited="limited ? '' : null" x-bind:data-ending="opened ? null : ''" x-on:ui-toast-position="position($event.detail)" x-on:pointerdown="startSwipe($event)" x-on:pointermove="swipe($event)" x-on:pointerup="endSwipe($event)" x-on:pointercancel="endSwipe($event)" x-on:mouseenter="pause()" x-on:mouseleave="resume()" x-on:focusin="pause()"
     x-on:focusout="resume()">{{ $slot }}</div>

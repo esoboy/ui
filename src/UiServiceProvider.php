@@ -20,7 +20,6 @@ final class UiServiceProvider extends ServiceProvider
         $this->loadViewsFrom($root.'/resources/views', 'ui');
         $this->loadTranslationsFrom($root.'/lang', 'ui');
         Blade::include('ui::assets', 'uiScript');
-        Blade::anonymousComponentPath($root.'/resources/views/components', 'ui');
 
         Blade::component(Carousel::class, 'ui::carousel');
         Blade::component(DataTable::class, 'ui::data-table');

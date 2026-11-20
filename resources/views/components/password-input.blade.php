@@ -1,5 +1,5 @@
 @props(['invalid' => false])
-<div data-slot="password-input" x-data="{ revealed: false }">
+<div data-esoboy-ui data-slot="password-input" x-data="{ revealed: false }">
     <x-ui::input-group>
         <x-ui::input-group.input type="password" x-bind:type="revealed ? 'text' : 'password'" :invalid="$invalid" {{ $attributes }} />
         <x-ui::input-group.addon align="inline-end">

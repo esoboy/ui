@@ -193,9 +193,10 @@ class Calendar extends ValueControl
         }
         $selected = $this->selected;
         if ($this->range) {
-            $next = count($selected) === 1 ? [$selected[0], $date] : [$date];
-            sort($next);
-            if (count($next) === 2) {
+            $next = [$date];
+            if (count($selected) === 1 && $this->allowed($selected[0])) {
+                $next[] = $selected[0];
+                sort($next);
                 foreach ($this->disabledDates as $excluded) {
                     if ($excluded >= $next[0] && $excluded <= $next[1]) {
                         return;

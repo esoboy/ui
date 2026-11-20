@@ -1,1 +1,1 @@
-<div {{ $attributes->merge(['data-slot' => 'collapsible-content']) }} data-ui-panel x-bind:id="$id('ui-collapsible')" x-bind:data-panel-open="opened ? '' : null" x-show="opened" x-cloak>{{ $slot }}</div>
+<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'collapsible-content']) }} data-ui-panel x-bind:id="$id('ui-collapsible')" x-bind:data-panel-open="opened ? '' : null" x-show="opened" x-cloak>{{ $slot }}</div>

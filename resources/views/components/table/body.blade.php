@@ -1,2 +1,2 @@
 @blaze
-<tbody {{ $attributes->merge(['data-slot' => 'table-body']) }}>{{ $slot }}</tbody>
+<tbody {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'table-body']) }}>{{ $slot }}</tbody>

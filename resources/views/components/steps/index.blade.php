@@ -6,7 +6,7 @@
         throw new \InvalidArgumentException(__('ui::errors.steps'));
     }
 @endphp
-<ol {{ $attributes->merge(['data-slot' => 'steps', 'data-orientation' => $orientation]) }}>
+<ol {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'steps', 'data-orientation' => $orientation]) }}>
     @forelse ($items as $item)
         @php
             $number = $loop->iteration;

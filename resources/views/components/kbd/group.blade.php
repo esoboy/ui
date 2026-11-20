@@ -1,2 +1,2 @@
 @blaze
-<kbd {{ $attributes->merge(['data-slot' => 'kbd-group']) }}>{{ $slot }}</kbd>
+<kbd {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'kbd-group']) }}>{{ $slot }}</kbd>

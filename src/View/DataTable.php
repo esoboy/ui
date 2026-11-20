@@ -24,7 +24,7 @@ final class DataTable extends Component
     /** @var Paginator<array-key, mixed>|CursorPaginator<array-key, mixed>|null */
     public readonly Paginator|CursorPaginator|null $paginator;
 
-    /** @var array<array-key, mixed> */
+    /** @var array<array-key, mixed> Current page indexed by row key, available to Blade scoped slots. */
     public array $records = [];
 
     /** @var array<array-key, string> */

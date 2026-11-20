@@ -1,1 +1,1 @@
-<hr  {{ $attributes->merge(['data-slot' => 'item-separator']) }}>
+<hr  {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'item-separator']) }}>
