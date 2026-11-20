@@ -46,6 +46,10 @@ php artisan vendor:publish --tag=ui-assets --force
 
 静态副本位于 `public/vendor/esoboy/ui/`。升级后，过期副本会自动切换到当前包的路由，再次发布即可更新静态文件。
 
+### Laravel Boost
+
+使用 Laravel Boost 的项目可在宿主应用运行 `php artisan boost:install`，勾选 Agent Skills、第三方包 `esoboy/ui` 和目标编码助手。Boost 会安装 `esoboy-ui-development`，其中包含当前版本的组件用法和 Blade 示例。已经选过该包的项目在升级组件库后运行 `php artisan boost:update` 即可同步。
+
 ## 使用
 
 ```blade
@@ -67,7 +71,7 @@ php artisan vendor:publish --tag=ui-assets --force
 <x-ui::icon name="circle-question-mark" />
 ```
 
-`$roles` 接收形如 `[['value' => 'reader', 'label' => 'Reader']]` 的选项。独立状态控件支持 `wire:model`、一次性 `:initial-value` 或单向受控的 `:value`。公共 slot 归调用方，slot 中的业务操作由调用方的 Livewire 组件执行。图标名称取自包锁定版本的 Lucide 正式清单，未知名称和别名会抛出异常。[公开组件目录](https://github.com/esoboy/components/blob/v1.0.1/docs/components.md) · [状态与组合](https://github.com/esoboy/components/blob/v1.0.1/docs/state-and-composition.md) · [编辑器与内容契约](https://github.com/esoboy/components/blob/v1.0.1/docs/content.md)
+`$roles` 接收形如 `[['value' => 'reader', 'label' => 'Reader']]` 的选项。独立状态控件支持 `wire:model`、一次性 `:initial-value` 或单向受控的 `:value`。公共 slot 归调用方，slot 中的业务操作由调用方的 Livewire 组件执行。图标名称取自包锁定版本的 Lucide 正式清单，未知名称和别名会抛出异常。[公开组件目录](https://github.com/esoboy/components/blob/v1.0.2/docs/components.md) · [状态与组合](https://github.com/esoboy/components/blob/v1.0.2/docs/state-and-composition.md) · [编辑器与内容契约](https://github.com/esoboy/components/blob/v1.0.2/docs/content.md)
 
 ## 语言和主题
 
@@ -75,4 +79,4 @@ php artisan vendor:publish --tag=ui-assets --force
 
 在根节点添加 `.dark` 切换组件暗色。可用项目 CSS 覆盖 `--color-background`、`--color-foreground`、`--color-primary`、`--color-muted-foreground` 和 `--color-border` 等变量。组件的圆角使用 `--radius-ui`、`--radius-ui-lg` 等专用变量。组件样式位于 `components` 层，调用方可以用 `rounded-lg` 等应用工具类覆盖默认值。
 
-维护者可参阅[开发、构建与发布](https://github.com/esoboy/components/blob/v1.0.1/docs/development.md)。
+维护者可参阅[开发、构建与发布](https://github.com/esoboy/components/blob/v1.0.2/docs/development.md)。
