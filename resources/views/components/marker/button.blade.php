@@ -1,2 +1,2 @@
-@props(['color' => null, 'variant' => 'default'])
-<button {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'marker', $attributes)->class('group/marker')->merge(['data-esoboy-ui' => '', 'data-slot' => 'marker', 'data-variant' => $variant, 'type' => 'button']) }}>{{ $slot }}</button>
+@props(['variant' => 'default'])
+<button {{ $attributes->class('ui-marker-button group/marker')->merge(['class' => 'ui-marker ui-marker-variant-'.$variant, 'type' => 'button']) }}>{{ $slot }}</button>

@@ -1,2 +1,2 @@
 @blaze
-<li {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'breadcrumb-item']) }}>{{ $slot }}</li>
+<li {{ $attributes->class('ui-breadcrumb-item') }}>{{ $slot }}</li>

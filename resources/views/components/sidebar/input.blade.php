@@ -1,1 +1,1 @@
-<x-ui::input data-slot="sidebar-input" :attributes="$attributes" />
+<x-ui::input :attributes="$attributes->class('ui-sidebar-input')" />

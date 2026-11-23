@@ -1,1 +1,1 @@
-<ul {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'pagination-content']) }}>{{ $slot }}</ul>
+<ul {{ $attributes->class('ui-pagination-content') }}>{{ $slot }}</ul>

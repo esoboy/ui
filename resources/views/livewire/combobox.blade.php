@@ -1,12 +1,9 @@
-@php
-    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'options', $attributes);
-@endphp
-<div data-esoboy-ui data-slot="combobox" data-disabled="{{ $disabled ? 'true' : 'false' }}" data-ui-overlay x-data="uiCombobox" x-on:keydown="navigate($event)"
+<div data-disabled="{{ $disabled ? 'true' : 'false' }}" data-ui-overlay x-data="uiCombobox" x-on:keydown="navigate($event)"
     @if ($paginated ?? false) data-confirmed-icon="{{ $this->current }}" x-on:input="editIconQuery($event.target.value)" x-on:click="chooseIcon($event)" @endif
     x-on:pointerdown.capture="if (!opened) $el.toggleAttribute('data-touch', $event.pointerType === 'touch')"
     x-on:keydown.capture="if (!opened) $el.removeAttribute('data-touch')"
     x-on:focusout="if (!$root.contains($event.relatedTarget)) close()"
-    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby']) }}>
+    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby'])->class('ui-combobox-body') }}>
     @if($searchInPopup)
         @php($emptyLabel = $placeholder !== '' ? $placeholder : __('ui::ui.select'))
         @php($triggerLabel = $this->label !== '' ? $this->label : $emptyLabel)
@@ -21,7 +18,7 @@
     @else
         @include('ui::livewire.partials.combobox-input')
     @endif
-    <div id="{{ $this->getId() }}-popup" data-esoboy-ui data-slot="combobox-content" data-match-trigger data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-align-offset="{{ $alignOffset }}" data-side-offset="{{ $sideOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" class="ui-popup ui-list-popup {{ $popupClass }}"
+    <div id="{{ $this->getId() }}-popup" data-match-trigger data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-align-offset="{{ $alignOffset }}" data-side-offset="{{ $sideOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" class="ui-combobox-content ui-popup ui-list-popup {{ $popupClass }}"
         x-on:toggle="toggled($event); if ($event.target === $el && $event.newState === 'closed') {{ ($paginated ?? false) ? 'finishBrowsing()' : '$wire.finishSearch()' }}"
         x-on:pointermove="highlightOption($event.target.closest('[role=option]'), true)" x-on:pointerleave="if (pointingToOption) highlightOption(null)">
         @if($searchInPopup)@include('ui::livewire.partials.combobox-input')@endif
@@ -31,7 +28,7 @@
             @include('ui::partials.empty-state', ['emptyMessage' => $searching && trim($query) !== '' ? 'matches' : 'options'])
         @else
             <x-ui::scroll-area class="ui-list-scroll" tabindex="-1" wire:key="combobox-results-{{ md5($query.($this->searching ? '-searching' : '-selected')) }}-{{ $resultPage ?? 1 }}">
-                <div id="{{ $this->getId() }}-list" data-esoboy-ui data-slot="combobox-list" role="listbox" aria-multiselectable="{{ $multiple ? 'true' : 'false' }}" data-auto-highlight="{{ $autoHighlight && $this->searching && $query !== '' ? 'true' : 'false' }}"
+                <div class="ui-combobox-list" id="{{ $this->getId() }}-list" role="listbox" aria-multiselectable="{{ $multiple ? 'true' : 'false' }}" data-auto-highlight="{{ $autoHighlight && $this->searching && $query !== '' ? 'true' : 'false' }}"
                     x-init="$nextTick(() => initializeOptions($el))"
                     @isset($resultPage) x-on:mousedown.prevent @endisset
                     aria-busy="false" wire:loading.attr="aria-busy">

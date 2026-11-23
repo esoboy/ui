@@ -1,3 +1,3 @@
-@props(['color' => null, 'variant' => 'default', 'inset' => false])
-<a role="menuitem" {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'menu', $attributes)->merge(['data-esoboy-ui' => '', 'data-slot' => 'menu-item', 'data-variant' => $variant, 'data-inset' => $inset ? '' : null]) }}
+@props(['variant' => 'default', 'inset' => false])
+<a role="menuitem" {{ $attributes->merge(['class' => 'ui-dropdown-menu-link ui-menu-item ui-menu-item-variant-'.$variant, 'data-inset' => $inset ? '' : null]) }}
     x-on:click="select()">{{ $slot }}</a>

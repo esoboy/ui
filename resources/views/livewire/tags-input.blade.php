@@ -1,8 +1,5 @@
-@php
-    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'tags', $attributes);
-@endphp
-<div data-esoboy-ui data-slot="tags-input"
-    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby']) }}>
+<div
+    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby'])->class('ui-tags-input-body') }}>
     <div class="ui-tags">
         @foreach ($this->tags as $tag)
             <x-ui::badge variant="secondary" wire:key="tag-{{ $tag }}">{{ $tag }}<x-ui::button

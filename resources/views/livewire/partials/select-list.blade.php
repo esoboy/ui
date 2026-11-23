@@ -4,10 +4,10 @@
 @endphp
 @forelse ($groups as $group)
     @if ($group->first()['separatorBefore'] ?? false)
-        <div data-esoboy-ui data-slot="select-separator" role="separator"></div>
+        <div class="ui-select-separator" role="separator"></div>
     @endif
-    <div data-esoboy-ui data-slot="select-group" role="group" @isset($group->first()['group']) aria-label="{{ $group->first()['group'] }}" @endisset>
-        @isset($group->first()['group'])<div data-esoboy-ui data-slot="option-group-label" role="presentation">{{ $group->first()['group'] }}</div>@endisset
+    <div class="ui-select-group" role="group" @isset($group->first()['group']) aria-label="{{ $group->first()['group'] }}" @endisset>
+        @isset($group->first()['group'])<div class="ui-option-group-label" role="presentation">{{ $group->first()['group'] }}</div>@endisset
         @include('ui::livewire.partials.options', ['choices' => $group, 'popup' => true, 'showGroupLabels' => false])
     </div>
 @empty

@@ -1,4 +1,4 @@
-<div {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'invalid', 'placeholder']) }}>
+<div {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'invalid', 'placeholder'])->class('ui-picker-body') }}>
     @include('ui::livewire.partials.picker-trigger', [
         'picker' => 'time-picker', 'label' => $time ?? '', 'icon' => 'clock', 'prompt' => __('ui::ui.select_time'),
     ])

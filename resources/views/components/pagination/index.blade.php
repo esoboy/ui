@@ -1,11 +1,10 @@
-@props(['color' => null, 'paginator' => null, 'maxPages' => null, 'jumpable' => false])
+@props(['paginator' => null, 'maxPages' => null, 'jumpable' => false])
 @php
-    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'pagination', $attributes);
     $owner = \Livewire\Livewire::current();
     $actions = $paginator instanceof \Illuminate\Contracts\Pagination\CursorPaginator ? ['setPage'] : ['gotoPage', 'previousPage', 'nextPage'];
     $live = $paginator && $owner && array_diff($actions, get_class_methods($owner)) === [];
 @endphp
-<nav {{ $attributes->merge(['data-paginated' => $paginator ? '' : null, 'data-esoboy-ui' => '', 'data-slot' => 'pagination', 'aria-label' => __('ui::ui.pagination')]) }}>
+<nav {{ $attributes->merge(['data-paginated' => $paginator ? '' : null, 'class' => 'ui-pagination', 'aria-label' => __('ui::ui.pagination')]) }}>
     @if ($slot->isNotEmpty())
         {{ $slot }}
     @elseif ($paginator)
@@ -13,7 +12,7 @@
     @endif
 
     @if ($jumpable && $paginator instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
-        <div data-esoboy-ui data-slot="pagination-jump" data-page-name="{{ $paginator->getPageName() }}"
+        <div class="ui-pagination-jump" data-page-name="{{ $paginator->getPageName() }}"
             data-page-url="{{ $paginator->url(1) }}" x-data="{
                 jump() {
                     const input = this.$refs.number

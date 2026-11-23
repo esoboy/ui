@@ -1,1 +1,1 @@
-@includeIsolated('ui::partials.trigger', ['operation' => 'close', 'attributes' => $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'toast-close']), 'slot' => $slot])
+@includeIsolated('ui::partials.trigger', ['operation' => 'close', 'attributes' => $attributes->class('ui-toast-close'), 'slot' => $slot])

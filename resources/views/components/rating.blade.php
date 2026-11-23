@@ -1,15 +1,14 @@
-@props(['color' => null, 'max' => 5, 'value', 'initialValue'])
+@props(['max' => 5, 'value', 'initialValue'])
 @php
-    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'rating', $attributes);
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'rating', get_defined_vars(), ['max' => $max]);
     $score = $binding->config['value'];
     $name = $attributes->get('name') ?? $binding->key ?? 'rating-'.\Illuminate\Support\Str::uuid();
     $locked = $binding->config['disabled'] || $binding->config['readonly'];
 @endphp
-<div data-esoboy-ui data-slot="rating" role="radiogroup" x-data="uiRating" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
+<div role="radiogroup" x-data="uiRating" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
     @if($binding->key) wire:key="{{ $binding->key }}" @endif
     x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
-    {{ $attributes->except(['name', 'wire:key', 'readonly', 'disabled', 'required'])->merge(['id' => $binding->id, 'aria-readonly' => $binding->config['readonly'] ? 'true' : null, 'aria-disabled' => $binding->config['disabled'] ? 'true' : null]) }}>
+    {{ $attributes->except(['name', 'wire:key', 'readonly', 'disabled', 'required'])->merge(['id' => $binding->id, 'aria-readonly' => $binding->config['readonly'] ? 'true' : null, 'aria-disabled' => $binding->config['disabled'] ? 'true' : null])->class('ui-rating') }}>
     @for ($rating = 1; $rating <= $max; $rating++)
         <label>
             <input type="radio" name="{{ $name }}" {{ $attributes->only('form') }} value="{{ $rating }}"

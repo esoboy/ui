@@ -1,6 +1,5 @@
-@props(['color' => null, 'value', 'initialValue', 'min' => 0, 'max' => 100, 'step' => 1, 'orientation' => 'horizontal', 'inverted' => false])
+@props(['value', 'initialValue', 'min' => 0, 'max' => 100, 'step' => 1, 'orientation' => 'horizontal', 'inverted' => false])
 @php
-    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'slider', $attributes);
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'slider', get_defined_vars(), ['min' => $min, 'max' => $max, 'step' => $step, 'orientation' => $orientation, 'inverted' => $inverted]);
     $disabled = $binding->config['disabled'];
     $readonly = $binding->config['readonly'];
@@ -14,16 +13,16 @@
     $values = is_array($binding->config['value']) ? $binding->config['value'] : [$binding->config['value'] ?? $min];
     sort($values);
 @endphp
-<div data-esoboy-ui data-slot="slider-field">
-    <div data-esoboy-ui data-slot="slider" x-data="uiSlider()"
+<div {{ $attributes->only('class')->class('ui-slider ui-slider-field') }}>
+    <div x-data="uiSlider()"
         data-ui-control="{{ json_encode($config, JSON_THROW_ON_ERROR) }}" @if ($internal) wire:ignore.children @endif
         @if($binding->key) wire:key="{{ $binding->key }}" @endif
         x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)" data-orientation="{{ $orientation }}" data-inverted="{{ $inverted ? 'true' : 'false' }}"
         x-on:pointerdown="start($event)" x-on:pointermove="move($event)" x-on:pointerup="finish($event)" x-on:pointercancel="finish($event)"
-        {{ $attributes->except(['wire:key', 'id', 'name', ...array_keys($fieldAttributes->all())]) }}>
-        <div data-esoboy-ui data-slot="slider-track"><div data-esoboy-ui data-slot="slider-range" x-bind:style="rangeStyle()"></div></div>
+        {{ $attributes->except(['class', 'wire:key', 'id', 'name', ...array_keys($fieldAttributes->all())])->class('ui-slider-body') }}>
+        <div class="ui-slider-track"><div class="ui-slider-range" x-bind:style="rangeStyle()"></div></div>
         @foreach ($values as $index => $number)
-            <input type="range" data-esoboy-ui data-slot="slider-thumb" data-slider-index="{{ $index }}"
+            <input class="ui-slider-thumb" type="range" data-slider-index="{{ $index }}"
                 value="{{ $number }}" {{ $thumb->merge(['id' => $binding->inputId($index), 'aria-label' => __('ui::ui.slider_value', ['number' => $index + 1])]) }}
                 @if ($internal) x-effect="syncThumb($el, {{ $index }})" x-bind:disabled="config.disabled || config.readonly" @endif
                 x-bind:value="positions[{{ $index }}]" x-bind:style="thumbStyle({{ $index }})" x-on:input.stop="change({{ $index }}, $event.target.value)"

@@ -1,2 +1,2 @@
 @blaze
-<span {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'attachment-name']) }}>{{ $slot }}</span>
+<span {{ $attributes->class('ui-attachment-name') }}>{{ $slot }}</span>

@@ -1,3 +1,3 @@
 @blaze
 @props(['variant' => 'default'])
-<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'item-media', 'data-variant' => $variant]) }}>{{ $slot }}</div>
+<div {{ $attributes->class('ui-item-media ui-item-media-variant-'.$variant) }}>{{ $slot }}</div>

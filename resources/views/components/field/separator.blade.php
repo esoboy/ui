@@ -1,1 +1,1 @@
-<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'field-separator', 'data-content' => $slot->isNotEmpty() ? 'true' : 'false']) }}><x-ui::separator />@if($slot->isNotEmpty())<span data-esoboy-ui data-slot="field-separator-content">{{ $slot }}</span>@endif</div>
+<div {{ $attributes->merge(['class' => 'ui-field-separator', 'data-content' => $slot->isNotEmpty() ? 'true' : 'false']) }}><x-ui::separator />@if($slot->isNotEmpty())<span class="ui-field-separator-content">{{ $slot }}</span>@endif</div>

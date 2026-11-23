@@ -1,13 +1,12 @@
-@props(['color' => null, 'items', 'current' => 1, 'orientation' => 'horizontal', 'status' => 'normal', 'emptyTitle' => null, 'emptyDescription' => null])
+@props(['items', 'current' => 1, 'orientation' => 'horizontal', 'status' => 'normal', 'emptyTitle' => null, 'emptyDescription' => null])
 @php
-    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'steps', $attributes);
     $current = filter_var($current, FILTER_VALIDATE_INT);
     if (!is_array($items) || !array_is_list($items) || $current === false || $current < 1 || ($items !== [] && $current > count($items) + 1)
         || !in_array($orientation, ['horizontal', 'vertical'], true) || !in_array($status, ['normal', 'error'], true)) {
         throw new \InvalidArgumentException(__('ui::errors.steps'));
     }
 @endphp
-<ol {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'steps', 'data-orientation' => $orientation]) }}>
+<ol {{ $attributes->merge(['class' => 'ui-steps', 'data-orientation' => $orientation]) }}>
     @forelse ($items as $item)
         @php
             $number = $loop->iteration;

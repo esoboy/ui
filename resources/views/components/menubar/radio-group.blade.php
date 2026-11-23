@@ -1,1 +1,1 @@
-<div role="group" {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'menubar-radio-group']) }}>{{ $slot }}</div>
+<div role="group" {{ $attributes->class('ui-menubar-radio-group') }}>{{ $slot }}</div>

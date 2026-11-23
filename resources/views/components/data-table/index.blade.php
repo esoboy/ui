@@ -5,22 +5,22 @@
     $sort = $dataTable->boundValue($sortModel);
     $scope = $attributes->get('id') ?? $selectionModel ?? $layoutModel ?? $sortModel ?? 'table';
 @endphp
-<div {{ $attributes->whereDoesntStartWith('wire:model')->merge(['data-esoboy-ui' => '', 'data-slot' => 'data-table']) }}
+<div {{ $attributes->whereDoesntStartWith('wire:model')->class('ui-data-table') }}
     x-data="{
         widths: {},
         measure(head) { this.widths[head.dataset.widthVar] = head.getBoundingClientRect().width + 'px' }
     }" x-bind:style="widths" data-selection-model="{{ $selectionModel }}">
-    <div data-esoboy-ui data-slot="data-table-container">
+    <div class="ui-data-table-container">
         @isset($toolbar)
-            <div data-esoboy-ui data-slot="data-table-toolbar">{{ $toolbar }}</div>
+            <div class="ui-data-table-toolbar">{{ $toolbar }}</div>
         @endisset
 
-        <div data-esoboy-ui data-slot="data-table-frame">
+        <div class="ui-data-table-frame">
             @include('ui::partials.data-table.grid')
         </div>
 
         @if (isset($footer) || $paginator)
-            <div data-esoboy-ui data-slot="data-table-footer">
+            <div class="ui-data-table-footer">
                 @isset($footer)
                     {{ $footer }}
                 @else

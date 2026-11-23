@@ -1,1 +1,1 @@
-<nav {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'sidebar-menu']) }}>{{ $slot }}</nav>
+<nav {{ $attributes->class('ui-sidebar-menu') }}>{{ $slot }}</nav>

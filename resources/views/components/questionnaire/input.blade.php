@@ -1,2 +1,2 @@
 @blaze
-<input {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'questionnaire-input', 'type' => 'text']) }}>
+<input {{ $attributes->merge(['class' => 'ui-questionnaire-input', 'type' => 'text']) }}>

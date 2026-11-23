@@ -1,4 +1,4 @@
-<div {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'invalid', 'placeholder']) }}
+<div {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'invalid', 'placeholder'])->class('ui-picker-body') }}
     @unless ($withTime)
         x-on:value-changed.self="if (!$wire.multiple && (!$wire.range || $event.detail.value.length === 2)) close(true)"
     @endunless>

@@ -1,4 +1,4 @@
 @blaze
-@props(['color' => null, 'variant' => 'default'])
-<div {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'alert', $attributes)->class('group/alert')->merge(['role' => 'alert', 'data-esoboy-ui' => '', 'data-slot' => 'alert', 'data-variant' => $variant]) }}>
+@props(['status' => null, 'variant' => 'default'])
+<div {{ $attributes->class(['ui-alert group/alert', 'ui-alert-variant-'.$variant, \Esoboy\Ui\Support\ComponentStatus::cssClass($status)])->merge(['role' => 'alert']) }}>
     {{ $slot }}</div>

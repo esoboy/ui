@@ -1,6 +1,6 @@
 @aware(['dataTable'])
 @if ($dataTable->layoutModel)
-    <x-ui::popover :attributes="$attributes">
+    <x-ui::popover :attributes="$attributes->class('ui-data-table-column-settings')">
         <x-ui::popover.trigger>
             <x-ui::button class="ui-table-columns-trigger" variant="outline" size="sm"><x-ui::icon name="settings-2" />{{ __('ui::ui.table_columns') }}</x-ui::button>
         </x-ui::popover.trigger>

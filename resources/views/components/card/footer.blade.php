@@ -1,2 +1,2 @@
 @blaze
-<footer {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'card-footer']) }}>{{ $slot }}</footer>
+<footer {{ $attributes->class('ui-card-footer') }}>{{ $slot }}</footer>

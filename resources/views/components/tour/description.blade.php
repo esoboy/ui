@@ -1,1 +1,1 @@
-<p {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'tour-description']) }}>{{ $slot }}</p>
+<p {{ $attributes->class('ui-tour-description') }}>{{ $slot }}</p>

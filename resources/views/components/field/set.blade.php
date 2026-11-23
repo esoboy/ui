@@ -1,2 +1,2 @@
 @blaze
-<fieldset {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'field-set']) }}>{{ $slot }}</fieldset>
+<fieldset {{ $attributes->class('ui-field-set') }}>{{ $slot }}</fieldset>

@@ -1,2 +1,2 @@
 @blaze
-<h4 {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'timeline-title']) }}>{{ $slot }}</h4>
+<h4 {{ $attributes->class('ui-timeline-title') }}>{{ $slot }}</h4>

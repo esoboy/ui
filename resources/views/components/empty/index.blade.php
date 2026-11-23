@@ -1,3 +1,3 @@
 @blaze
 @props(['size' => 'default'])
-<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'empty', 'data-size' => $size]) }}>{{ $slot }}</div>
+<div {{ $attributes->merge(['class' => 'ui-empty', 'data-size' => $size]) }}>{{ $slot }}</div>

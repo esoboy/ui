@@ -1,5 +1,4 @@
 @props([
-    'color' => null,
     'value',
     'initialValue',
     'options' => [],
@@ -16,13 +15,12 @@
     'emptyTitle' => null,
     'emptyDescription' => null,
 ])
-@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'select', get_defined_vars()))
-<div data-esoboy-ui data-slot="select-field">
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'select', get_defined_vars()))
+<div {{ $attributes->only('class')->class('ui-select ui-select-field') }}>
     {!! \Livewire\Livewire::mount(
         'ui::select',
         [
             ...$binding->parameters,
-            'color' => $color,
             'options' => $options,
             'side' => $side,
             'align' => $align,
@@ -41,6 +39,6 @@
     ) !!}
     {{ $slot }}
     @isset($footer)
-        <div data-esoboy-ui data-slot="select-footer">{{ $footer }}</div>
+        <div class="ui-select-footer">{{ $footer }}</div>
     @endisset
 </div>

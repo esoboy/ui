@@ -1,1 +1,1 @@
-<li {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'navigation-menu-item']) }}>{{ $slot }}</li>
+<li {{ $attributes->class('ui-navigation-menu-item') }}>{{ $slot }}</li>

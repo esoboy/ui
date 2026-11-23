@@ -1,1 +1,1 @@
-<x-ui::dropdown-menu {{ $attributes }}>{{ $slot }}</x-ui::dropdown-menu>
+<x-ui::dropdown-menu {{ $attributes->class('ui-menubar-menu') }}>{{ $slot }}</x-ui::dropdown-menu>

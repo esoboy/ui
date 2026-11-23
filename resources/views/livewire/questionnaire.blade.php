@@ -1,7 +1,7 @@
-<form data-esoboy-ui data-slot="questionnaire" novalidate wire:submit="submit" x-data="uiQuestionnaire"
+<form novalidate wire:submit="submit" x-data="uiQuestionnaire"
     x-on:keydown="navigate($event)" x-on:reset.prevent="$wire.resetAnswers()"
     x-on:questionnaire-focus.stop="focusItem($event.detail.invalid)"
-    {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'questionnaire', $attributes)->whereDoesntStartWith('wire:model')->except('name') }}>
+    {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->class('ui-questionnaire-body') }}>
     @php
         $questions = $this->questions;
         $position = $this->position;
@@ -20,8 +20,8 @@
             <x-ui::questionnaire.item wire:key="question-{{ $question['name'] }}" :disabled="$disabled" :data-status="$answer['status']" :aria-invalid="$hasError ? 'true' : null" aria-labelledby="{{ $uid }}-title">
                 <x-ui::card>
                     <x-ui::card.header>
-                        <x-ui::card.title id="{{ $uid }}-title" data-slot="questionnaire-title">{{ $question['prompt'] }}</x-ui::card.title>
-                        @if($question['description'] !== '')<x-ui::card.description data-slot="questionnaire-description">{{ $question['description'] }}</x-ui::card.description>@endif
+                        <x-ui::card.title class="ui-questionnaire-title" id="{{ $uid }}-title">{{ $question['prompt'] }}</x-ui::card.title>
+                        @if($question['description'] !== '')<x-ui::card.description class="ui-questionnaire-description">{{ $question['description'] }}</x-ui::card.description>@endif
                         @if($showProgress)<x-ui::card.action><x-ui::questionnaire.progress :current="$position + 1" :total="count($questions)" /></x-ui::card.action>@endif
                     </x-ui::card.header>
                     <x-ui::card.content>@include('ui::livewire.partials.questionnaire-choices')</x-ui::card.content>

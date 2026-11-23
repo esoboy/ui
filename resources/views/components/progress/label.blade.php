@@ -1,1 +1,1 @@
-<span {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'progress-label']) }}>{{ $slot }}</span>
+<span {{ $attributes->class('ui-progress-label') }}>{{ $slot }}</span>

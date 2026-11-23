@@ -1,2 +1,2 @@
 @props(['orientation' => 'vertical'])
-<x-ui::separator :orientation="$orientation" data-slot="button-group-separator" :attributes="$attributes" />
+<x-ui::separator :orientation="$orientation" :attributes="$attributes->class('ui-button-group-separator')" />

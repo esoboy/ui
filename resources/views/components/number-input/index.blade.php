@@ -8,12 +8,12 @@
         'enterkeyhint', 'list', 'form', 'tabindex', 'invalid',
     ]);
 @endphp
-<div data-esoboy-ui data-slot="number-input-field">
-    <div data-esoboy-ui data-slot="number-input" x-data="uiNumber()"
+<div {{ $attributes->only('class')->class('ui-number-input ui-number-input-field') }}>
+    <div x-data="uiNumber()"
         data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
         @if($binding->key) wire:key="{{ $binding->key }}" @endif
         x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
-        {{ $attributes->except(['wire:key', 'id', ...array_keys($fieldAttributes->all())]) }}>
+        {{ $attributes->except(['class', 'wire:key', 'id', ...array_keys($fieldAttributes->all())])->class('ui-number-input-body') }}>
         <x-ui::input-group>
         <x-ui::input-group.addon>
         <x-ui::input-group.button size="icon-xs" x-on:click="adjust(-1)" x-bind:disabled="config.disabled || config.readonly || (config.min !== null && value !== null && value <= config.min)" :disabled="$disabled || $readonly || ($min !== null && $binding->config['value'] !== null && $binding->config['value'] <= $min)"
@@ -30,6 +30,6 @@
     </div>
     {{ $slot }}
     @isset($footer)
-        <div data-esoboy-ui data-slot="number-input-footer">{{ $footer }}</div>
+        <div class="ui-number-input-footer">{{ $footer }}</div>
     @endisset
 </div>

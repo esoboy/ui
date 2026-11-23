@@ -1,2 +1,2 @@
 @blaze
-<legend {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'questionnaire-title']) }}>{{ $slot }}</legend>
+<legend {{ $attributes->class('ui-questionnaire-title') }}>{{ $slot }}</legend>

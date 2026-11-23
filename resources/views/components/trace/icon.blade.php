@@ -1,1 +1,1 @@
-<span aria-hidden="true" {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'trace-icon']) }}>{{ $slot }}</span>
+<span aria-hidden="true" {{ $attributes->class('ui-trace-icon') }}>{{ $slot }}</span>

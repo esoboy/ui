@@ -1,6 +1,6 @@
 @props(['value', 'initialValue', 'options' => [], 'emptyTitle' => null, 'emptyDescription' => null])
-@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'mentions', get_defined_vars()))
-<div data-esoboy-ui data-slot="mentions-field">
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'mentions', get_defined_vars()))
+<div {{ $attributes->only('class')->class('ui-mentions ui-mentions-field') }}>
     {!! \Livewire\Livewire::mount(
         'ui::mentions',
         [

@@ -12,7 +12,7 @@
 ## alert
 
 ```blade
-<x-ui::alert><x-ui::alert.title>操作已完成</x-ui::alert.title><x-ui::alert.description>这里显示结果说明。</x-ui::alert.description></x-ui::alert>
+<x-ui::alert status="success"><x-ui::alert.title>操作已完成</x-ui::alert.title><x-ui::alert.description>这里显示结果说明。</x-ui::alert.description></x-ui::alert>
 ```
 
 ## alert-dialog
@@ -41,7 +41,7 @@
 ## badge
 
 ```blade
-<x-ui::badge>示例内容</x-ui::badge>
+<x-ui::badge variant="secondary" status="neutral">草稿</x-ui::badge>
 ```
 
 ## breadcrumb
@@ -60,7 +60,7 @@
 ## button
 
 ```blade
-<x-ui::button>示例内容</x-ui::button>
+<x-ui::button variant="outline" status="info">查看详情</x-ui::button>
 ```
 
 ## button-group
@@ -386,7 +386,7 @@
 ## progress
 
 ```blade
-<x-ui::progress :value="65" aria-label="完成度" />
+<x-ui::progress :value="65" aria-label="完成度" class="[--ui-progress-fill:var(--color-success)]" />
 ```
 
 ## qr-code
@@ -501,7 +501,7 @@
 ## switch
 
 ```blade
-<x-ui::switch aria-label="switch" />
+<x-ui::switch status="success" aria-label="启用同步" />
 ```
 
 ## table
@@ -551,7 +551,7 @@
 ## toast
 
 ```blade
-<x-ui::toast
+<x-ui::toast status="success"
     :duration="0"><x-ui::toast.content><div class="grid flex-1 gap-1"><x-ui::toast.title>操作完成</x-ui::toast.title><x-ui::toast.description>结果说明。</x-ui::toast.description><x-ui::toast.close><x-ui::button
             variant="ghost">关闭</x-ui::button></x-ui::toast.close></div></x-ui::toast.content></x-ui::toast>
 ```

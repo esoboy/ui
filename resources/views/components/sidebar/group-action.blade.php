@@ -1,1 +1,1 @@
-<button type="button" {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'sidebar-group-action']) }}>{{ $slot }}</button>
+<button type="button" {{ $attributes->class('ui-sidebar-group-action') }}>{{ $slot }}</button>

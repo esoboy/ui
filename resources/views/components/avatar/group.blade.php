@@ -1,2 +1,2 @@
 @blaze
-<div {{ $attributes->class('group/avatar-group')->merge(['data-esoboy-ui' => '', 'data-slot' => 'avatar-group']) }}>{{ $slot }}</div>
+<div {{ $attributes->class('ui-avatar-group group/avatar-group') }}>{{ $slot }}</div>

@@ -1,5 +1,4 @@
 @props([
-    'color' => null,
     'items' => [],
     'item' => null,
     'initialItem' => '',
@@ -13,13 +12,12 @@
     'emptyTitle' => null,
     'emptyDescription' => null,
 ])
-@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'questionnaire', get_defined_vars()))
-<div data-esoboy-ui data-slot="questionnaire-field">
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'questionnaire', get_defined_vars()))
+<div {{ $attributes->only('class')->class('ui-questionnaire ui-questionnaire-field') }}>
     {!! \Livewire\Livewire::mount(
         'ui::questionnaire',
         [
             ...$binding->parameters,
-            'color' => $color,
             'items' => $items,
             'item' => $item,
             'initialItem' => $initialItem,

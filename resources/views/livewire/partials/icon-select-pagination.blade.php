@@ -1,4 +1,4 @@
-<div data-esoboy-ui data-slot="icon-select-pagination" x-on:click="if ($event.target.closest('button')) browseChanged = true">
+<div class="ui-icon-select-pagination" x-on:click="if ($event.target.closest('button')) browseChanged = true">
     <x-ui::button variant="ghost" size="icon-xs" tabindex="-1" x-on:mousedown.prevent
         wire:click="showResultPage({{ $resultPage - 1 }})" wire:loading.attr="disabled" :disabled="$resultPage === 1"
         aria-keyshortcuts="PageUp" :aria-label="__('ui::ui.previous_page')" :title="__('ui::ui.previous_page')">

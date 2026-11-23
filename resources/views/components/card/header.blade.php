@@ -1,2 +1,2 @@
 @blaze
-<header {{ $attributes->class('group/card-header')->merge(['data-esoboy-ui' => '', 'data-slot' => 'card-header']) }}>{{ $slot }}</header>
+<header {{ $attributes->class('ui-card-header group/card-header') }}>{{ $slot }}</header>

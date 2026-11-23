@@ -1,5 +1,4 @@
 @props([
-    'color' => null,
     'comboboxField',
     'value',
     'initialValue',
@@ -22,13 +21,12 @@
     'emptyTitle' => null,
     'emptyDescription' => null,
 ])
-@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, $comboboxField, get_defined_vars()))
-<div data-esoboy-ui data-slot="{{ $comboboxField }}-field">
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), $comboboxField, get_defined_vars()))
+<div {{ $attributes->only('class')->class(['ui-'.$comboboxField, 'ui-'.$comboboxField.'-field']) }}>
     {!! \Livewire\Livewire::mount(
         'ui::'.$comboboxField,
         [
             ...$binding->parameters,
-            'color' => $color,
             'options' => $options,
             'side' => $side,
             'align' => $align,
@@ -52,6 +50,6 @@
     ) !!}
     {{ $slot }}
     @isset($footer)
-        <div data-esoboy-ui data-slot="{{ $comboboxField }}-footer">{{ $footer }}</div>
+        <div class="ui-{{ $comboboxField }}-footer">{{ $footer }}</div>
     @endisset
 </div>

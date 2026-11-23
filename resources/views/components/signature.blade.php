@@ -1,18 +1,17 @@
-@props(['color' => null, 'value', 'initialValue'])
+@props(['value', 'initialValue'])
 @php
-    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'signature', $attributes);
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'signature', get_defined_vars(), [
         'maxStrokes' => \Esoboy\Ui\Support\DrawingValue::MAX_STROKES,
         'maxPoints' => \Esoboy\Ui\Support\DrawingValue::MAX_POINTS,
     ]);
     $strokes = \Esoboy\Ui\Support\DrawingValue::signature($binding->config['value']);
 @endphp
-<div data-esoboy-ui data-slot="signature-field">
-    <div data-esoboy-ui data-slot="signature" x-data="uiSignature" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
+<div {{ $attributes->only('class')->class('ui-signature ui-signature-field') }}>
+    <div x-data="uiSignature" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
         @if($binding->key) wire:key="{{ $binding->key }}" @endif
         x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
-        {{ $attributes->except(['wire:key', 'name'])->merge(['id' => $binding->id]) }}>
-        <div data-ui-signature-surface>
+        {{ $attributes->except(['class', 'wire:key', 'name'])->merge(['id' => $binding->id])->class('ui-signature-body') }}>
+        <div class="ui-signature-surface" data-ui-signature-surface>
             <canvas wire:ignore aria-label="{{ $attributes->get('aria-label', __('ui::ui.signature')) }}"
                 x-on:pointerdown.prevent="start($event)" x-on:pointermove.prevent="move($event)"
                 x-on:pointerup="finish($event)" x-on:pointercancel="cancel($event)" x-on:lostpointercapture="cancel($event)"

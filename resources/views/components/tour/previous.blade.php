@@ -1,1 +1,1 @@
-@includeIsolated('ui::partials.step', ['direction' => -1, 'attributes' => $attributes, 'slot' => $slot])
+@includeIsolated('ui::partials.step', ['direction' => -1, 'attributes' => $attributes->class('ui-tour-previous'), 'slot' => $slot])

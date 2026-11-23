@@ -1,7 +1,5 @@
 @php
-    // The trigger and the teleported panel share this ancestor for local theme variables.
-    $sharedAttributes = filled($color) ? ['style'] : [];
-    $binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except($sharedAttributes), $picker, get_defined_vars());
+    $binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), $picker, get_defined_vars());
     $identity = $binding->key ?? (string) \Illuminate\Support\Str::uuid();
     $owner = \Livewire\Livewire::current();
     $target = 'ui-picker-'.hash('xxh128', ($owner ? $owner->getId() : '').'|'.$identity);
@@ -11,12 +9,12 @@
         'datetime-picker' => ['select_datetime', 'ui-list-popup ui-date-popup'],
     };
 @endphp
-<div data-esoboy-ui data-slot="{{ $picker }}-field">
-    <div data-esoboy-ui data-slot="{{ $picker }}" data-ui-overlay x-data="uiPopover" {{ $attributes->only($sharedAttributes) }}>
+<div class="ui-{{ $picker }} ui-{{ $picker }}-field {{ $attributes->get('class') }}">
+    <div class="ui-picker-overlay" data-ui-overlay x-data="uiPopover">
         {!! \Livewire\Livewire::mount($picker === 'time-picker' ? 'ui::time-picker' : 'ui::date-picker', [
-            ...$binding->parameters, ...$options, 'color' => $color, 'contentTarget' => $target,
+            ...$binding->parameters, ...$options, 'contentTarget' => $target,
         ], $binding->key) !!}
-        <x-ui::popover.content align="start" class="ui-picker-popup {{ $popupClass }}" :aria-label="__('ui::ui.'.$prompt)">
+        <x-ui::popover.content align="start" class="ui-picker-popup ui-{{ $picker }}-panel {{ $popupClass }}" :aria-label="__('ui::ui.'.$prompt)">
             {{-- The control updates its panel here. The caller owns the adjacent slot. --}}
             @if ($picker === 'datetime-picker')
                 <x-ui::scroll-area class="ui-list-scroll ui-datetime-body" tabindex="-1">
@@ -26,12 +24,12 @@
                 <div id="{{ $target }}" class="ui-picker-target" wire:ignore x-on:keydown.stop></div>
             @endif
             @if (isset($extra) && $extra->hasActualContent())
-                <div data-esoboy-ui data-slot="picker-extra" x-on:keydown.stop {{ $extra->attributes }}>{{ $extra }}</div>
+                <div x-on:keydown.stop {{ $extra->attributes->class('ui-picker-extra') }}>{{ $extra }}</div>
             @endif
         </x-ui::popover.content>
     </div>
     {{ $slot }}
     @if ($picker !== 'time-picker' && isset($footer))
-        <div data-esoboy-ui data-slot="{{ $picker }}-footer">{{ $footer }}</div>
+        <div class="ui-{{ $picker }}-footer">{{ $footer }}</div>
     @endif
 </div>

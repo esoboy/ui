@@ -1,1 +1,1 @@
-<span {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'questionnaire-skip', 'wire:click' => 'skip']) }}>{{ $slot }}</span>
+<span {{ $attributes->merge(['class' => 'ui-questionnaire-skip', 'wire:click' => 'skip']) }}>{{ $slot }}</span>

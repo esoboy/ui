@@ -1,11 +1,10 @@
-@props(['color' => null, 'value', 'initialValue', 'nodes' => [], 'multiple' => false, 'selectParents' => false, 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
-@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'tree-select', get_defined_vars()))
-<div data-esoboy-ui data-slot="tree-select-field">
+@props(['value', 'initialValue', 'nodes' => [], 'multiple' => false, 'selectParents' => false, 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'tree-select', get_defined_vars()))
+<div {{ $attributes->only('class')->class('ui-tree-select ui-tree-select-field') }}>
     {!! \Livewire\Livewire::mount(
         'ui::tree-select',
         [
             ...$binding->parameters,
-            'color' => $color,
             'emptyTitle' => $emptyTitle,
             'emptyDescription' => $emptyDescription,
             'nodes' => $nodes,
@@ -17,6 +16,6 @@
     ) !!}
     {{ $slot }}
     @isset($footer)
-        <div data-esoboy-ui data-slot="tree-select-footer">{{ $footer }}</div>
+        <div class="ui-tree-select-footer">{{ $footer }}</div>
     @endisset
 </div>

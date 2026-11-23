@@ -1,8 +1,8 @@
-    <x-ui::input-group data-slot="combobox-control" :data-ui-anchor-box="$searchInPopup ? null : true" :class="$multiple ? 'ui-combobox-multiple' : null">
+    <x-ui::input-group :data-ui-anchor-box="$searchInPopup ? null : true" class="ui-combobox-control {{ $multiple ? 'ui-combobox-multiple' : '' }}">
         @if ($multiple)
             @foreach ($this->selectedChoices as $option)
-                    <span data-esoboy-ui data-slot="combobox-chip" tabindex="-1" data-value="{{ json_encode($option['value']) }}" wire:key="chip-{{ $option['value'] }}">{{ $option['label'] }}
-                        @if($showRemove)<x-ui::button variant="ghost" size="icon-xs" data-slot="combobox-chip-remove" x-on:mousedown.prevent x-on:click="$root.querySelector('input[role=combobox]')?.focus({preventScroll: true})" :wire:click="'choose('.\Illuminate\Support\Js::from($option['value']).')'" :disabled="$disabled || $readonly || $option['disabled']" :aria-label="__('ui::ui.remove_item', ['label' => $option['label']])"><x-ui::icon name="x" /></x-ui::button>@endif
+                    <span class="ui-combobox-chip" tabindex="-1" data-value="{{ json_encode($option['value']) }}" wire:key="chip-{{ $option['value'] }}">{{ $option['label'] }}
+                        @if($showRemove)<x-ui::button class="ui-combobox-chip-remove" variant="ghost" size="icon-xs" x-on:mousedown.prevent x-on:click="$root.querySelector('input[role=combobox]')?.focus({preventScroll: true})" :wire:click="'choose('.\Illuminate\Support\Js::from($option['value']).')'" :disabled="$disabled || $readonly || $option['disabled']" :aria-label="__('ui::ui.remove_item', ['label' => $option['label']])"><x-ui::icon name="x" /></x-ui::button>@endif
                     </span>
             @endforeach
         @endif
@@ -18,9 +18,9 @@
         @if(!$multiple)
         <x-ui::input-group.addon align="inline-end">
             @if ($clearable && $this->selected !== [])
-                <x-ui::input-group.button size="icon-xs" data-slot="combobox-clear" x-on:mousedown.prevent x-on:click="$root.querySelector('input[role=combobox]')?.focus({preventScroll: true}); {{ ($paginated ?? false) ? 'selectIcon(null)' : '' }}" :wire:click="($paginated ?? false) ? null : 'clearSelection'" aria-label="{{ __('ui::ui.clear') }}" :disabled="$disabled || $readonly"><x-ui::icon name="x" /></x-ui::input-group.button>
+                <x-ui::input-group.button class="ui-combobox-clear" size="icon-xs" x-on:mousedown.prevent x-on:click="$root.querySelector('input[role=combobox]')?.focus({preventScroll: true}); {{ ($paginated ?? false) ? 'selectIcon(null)' : '' }}" :wire:click="($paginated ?? false) ? null : 'clearSelection'" aria-label="{{ __('ui::ui.clear') }}" :disabled="$disabled || $readonly"><x-ui::icon name="x" /></x-ui::input-group.button>
             @elseif($showTrigger)
-                <x-ui::input-group.button size="icon-xs" data-slot="combobox-trigger" x-on:click="toggle()" x-bind:aria-expanded="opened" aria-controls="{{ $this->getId() }}-list" aria-label="{{ __('ui::ui.select') }}" :disabled="$disabled"><x-ui::icon name="chevron-down" class="ui-select-chevron" /></x-ui::input-group.button>
+                <x-ui::input-group.button class="ui-combobox-toggle" size="icon-xs" x-on:click="toggle()" x-bind:aria-expanded="opened" aria-controls="{{ $this->getId() }}-list" aria-label="{{ __('ui::ui.select') }}" :disabled="$disabled"><x-ui::icon name="chevron-down" class="ui-select-chevron" /></x-ui::input-group.button>
             @endif
         </x-ui::input-group.addon>
         @endif

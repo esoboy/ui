@@ -1,4 +1,4 @@
 @props(['page'])
-<button type="button" data-esoboy-ui data-slot="carousel-page" x-on:click="goTo({{ (int) $page }})"
+<button type="button" x-on:click="goTo({{ (int) $page }})"
     x-show="pages >= {{ (int) $page }}" x-bind:aria-current="current === {{ (int) $page }} ? 'page' : null"
-    {{ $attributes->merge(['aria-label' => __('ui::ui.slide_number', ['number' => $page])]) }}>{{ $slot }}</button>
+    {{ $attributes->merge(['aria-label' => __('ui::ui.slide_number', ['number' => $page])])->class('ui-carousel-page') }}>{{ $slot }}</button>

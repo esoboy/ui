@@ -5,15 +5,15 @@
     }
 @endphp
 
-<x-ui::dialog {{ $attributes->except('aria-label') }}>
+<x-ui::dialog {{ $attributes->except('aria-label')->class('ui-media-preview') }}>
     @if ($slot->hasActualContent())
         <x-ui::dialog.trigger data-ui-media-trigger>{{ $slot }}</x-ui::dialog.trigger>
     @endif
 
-    <x-ui::dialog.content data-slot="media-preview" data-type="{{ $type }}" :show-close-button="false"
+    <x-ui::dialog.content variant="media" class="ui-media-preview-panel" data-type="{{ $type }}" :show-close-button="false"
         :aria-label="$attributes->get('aria-label') ?? ($alt ?: __('ui::ui.preview'))">
         <div @if ($type === 'image') x-data="uiImage" x-effect="if (!opened) { zoom = 1; rotation = 0 }" @endif>
-            <div data-esoboy-ui data-slot="media-preview-canvas">
+            <div class="ui-media-preview-canvas">
                 @if ($type === 'image')
                     <x-ui::image :src="$src" :alt="$alt" x-bind:style="imageStyle($el)" />
                 @elseif ($type === 'audio')
@@ -25,7 +25,7 @@
                 @endif
             </div>
 
-            <div data-esoboy-ui data-slot="media-preview-toolbar">
+            <div class="ui-media-preview-toolbar">
                 @if ($type === 'image')
                     <x-ui::button variant="ghost" size="icon" x-on:click="zoom = Math.max(.25, zoom - .25)" :aria-label="__('ui::ui.zoom_out')">
                         <x-ui::icon name="zoom-out" />

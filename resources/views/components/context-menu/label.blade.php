@@ -1,1 +1,1 @@
-@include('ui::partials.menu.label')
+@include('ui::partials.menu.label', ['attributes' => $attributes->class('ui-context-menu-label')])

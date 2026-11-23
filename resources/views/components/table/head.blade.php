@@ -1,2 +1,2 @@
 @blaze
-<th {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'table-head', 'scope' => 'col']) }}>{{ $slot }}</th>
+<th {{ $attributes->merge(['class' => 'ui-table-head', 'scope' => 'col']) }}>{{ $slot }}</th>

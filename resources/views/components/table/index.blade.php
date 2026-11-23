@@ -1,2 +1,2 @@
 @blaze
-<div data-esoboy-ui data-slot="table-container"><table {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'table']) }}>{{ $slot }}</table></div>
+<div {{ $attributes->only('class')->class('ui-table ui-table-container') }}><table {{ $attributes->except('class')->class('ui-table-element') }}>{{ $slot }}</table></div>

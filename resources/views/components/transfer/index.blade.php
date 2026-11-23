@@ -1,6 +1,6 @@
 @props(['value', 'initialValue', 'options' => [], 'emptyTitle' => null, 'emptyDescription' => null])
-@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'transfer', get_defined_vars()))
-<div data-esoboy-ui data-slot="transfer-field">
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'transfer', get_defined_vars()))
+<div {{ $attributes->only('class')->class('ui-transfer ui-transfer-field') }}>
     {!! \Livewire\Livewire::mount(
         'ui::transfer',
         [
@@ -13,6 +13,6 @@
     ) !!}
     {{ $slot }}
     @isset($footer)
-        <div data-esoboy-ui data-slot="transfer-footer">{{ $footer }}</div>
+        <div class="ui-transfer-footer">{{ $footer }}</div>
     @endisset
 </div>

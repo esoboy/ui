@@ -1,11 +1,10 @@
-@props(['color' => null, 'value', 'initialValue', 'multiple' => false, 'options' => [], 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
-@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'command', get_defined_vars()))
-<div data-esoboy-ui data-slot="command-field">
+@props(['value', 'initialValue', 'multiple' => false, 'options' => [], 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
+@php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'command', get_defined_vars()))
+<div {{ $attributes->only('class')->class('ui-command ui-command-field') }}>
     {!! \Livewire\Livewire::mount(
         'ui::command',
         [
             ...$binding->parameters,
-            'color' => $color,
             'multiple' => $multiple,
             'options' => $options,
             'placeholder' => $placeholder,
@@ -16,6 +15,6 @@
     ) !!}
     {{ $slot }}
     @isset($footer)
-        <div data-esoboy-ui data-slot="command-footer">{{ $footer }}</div>
+        <div class="ui-command-footer">{{ $footer }}</div>
     @endisset
 </div>

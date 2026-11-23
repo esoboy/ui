@@ -1,1 +1,1 @@
-<span {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'menubar-shortcut']) }}>{{ $slot }}</span>
+<span {{ $attributes->class('ui-menubar-shortcut') }}>{{ $slot }}</span>

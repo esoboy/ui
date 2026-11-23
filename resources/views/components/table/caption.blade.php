@@ -1,2 +1,2 @@
 @blaze
-<caption {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'table-caption']) }}>{{ $slot }}</caption>
+<caption {{ $attributes->class('ui-table-caption') }}>{{ $slot }}</caption>

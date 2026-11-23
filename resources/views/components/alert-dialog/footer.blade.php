@@ -1,1 +1,1 @@
-<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'alert-dialog-footer']) }}>{{ $slot }}</div>
+<div {{ $attributes->class('ui-alert-dialog-footer') }}>{{ $slot }}</div>

@@ -1,1 +1,1 @@
-<p {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'dialog-description']) }}>{{ $slot }}</p>
+<p {{ $attributes->class('ui-dialog-description') }}>{{ $slot }}</p>
