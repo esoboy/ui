@@ -46,7 +46,7 @@ php artisan vendor:publish --tag=ui-assets --force
 
 静态副本位于 `public/vendor/esoboy/ui/`。升级后，过期副本会自动切换到当前包的路由，再次发布即可更新静态文件。
 
-从 1.x 升级到 2.0 时，将 `<x-ui::image-preview>` 改为 `<x-ui::media-preview type="image">`，保留原来的 `src` 和 `alt`，并将 `<x-slot:trigger>` 的内容移入默认插槽。[媒体预览示例](https://github.com/esoboy/components/blob/v2.0.0/docs/components.md#media-preview)
+从 `v1.0.2` 或更早版本升级到 `v1.0.3` 时，将 `<x-ui::image-preview>` 改为 `<x-ui::media-preview type="image">`，保留原来的 `src` 和 `alt`，并将 `<x-slot:trigger>` 的内容移入默认插槽。[媒体预览示例](https://github.com/esoboy/components/blob/v1.0.3/docs/components.md#media-preview)
 
 ### Laravel Boost
 
@@ -73,7 +73,7 @@ php artisan vendor:publish --tag=ui-assets --force
 <x-ui::icon name="circle-question-mark" />
 ```
 
-`$roles` 接收形如 `[['value' => 'reader', 'label' => 'Reader']]` 的选项。独立状态控件支持 `wire:model`、一次性 `:initial-value` 或单向受控的 `:value`。公共 slot 归调用方，slot 中的业务操作由调用方的 Livewire 组件执行。图标名称取自包锁定版本的 Lucide 正式清单，未知名称和别名会抛出异常。[公开组件目录](https://github.com/esoboy/components/blob/v2.0.0/docs/components.md) · [状态与组合](https://github.com/esoboy/components/blob/v2.0.0/docs/state-and-composition.md) · [编辑器与内容契约](https://github.com/esoboy/components/blob/v2.0.0/docs/content.md)
+`$roles` 接收形如 `[['value' => 'reader', 'label' => 'Reader']]` 的选项。独立状态控件支持 `wire:model`、一次性 `:initial-value` 或单向受控的 `:value`。公共 slot 归调用方，slot 中的业务操作由调用方的 Livewire 组件执行。图标名称取自包锁定版本的 Lucide 正式清单，未知名称和别名会抛出异常。[公开组件目录](https://github.com/esoboy/components/blob/v1.0.3/docs/components.md) · [状态与组合](https://github.com/esoboy/components/blob/v1.0.3/docs/state-and-composition.md) · [编辑器与内容契约](https://github.com/esoboy/components/blob/v1.0.3/docs/content.md)
 
 ## 语言和主题
 
@@ -107,4 +107,4 @@ php artisan vendor:publish --tag=ui-assets --force
 | 菜单项文字与图标 | `dropdown-menu`、`context-menu`、`menubar` 下的 `.item` 和 `.link` |
 | 签名笔迹和二维码码点 | `signature`、`qr-code` |
 
-维护者可参阅[开发、构建与发布](https://github.com/esoboy/components/blob/v2.0.0/docs/development.md)。
+维护者可参阅[开发、构建与发布](https://github.com/esoboy/components/blob/v1.0.3/docs/development.md)。
