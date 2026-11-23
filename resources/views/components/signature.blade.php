@@ -1,5 +1,6 @@
-@props(['value', 'initialValue'])
+@props(['color' => null, 'value', 'initialValue'])
 @php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'signature', $attributes);
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'signature', get_defined_vars(), [
         'maxStrokes' => \Esoboy\Ui\Support\DrawingValue::MAX_STROKES,
         'maxPoints' => \Esoboy\Ui\Support\DrawingValue::MAX_POINTS,

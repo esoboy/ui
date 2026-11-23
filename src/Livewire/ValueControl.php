@@ -22,6 +22,9 @@ abstract class ValueControl extends Component
     public mixed $externalValue = null;
 
     #[Reactive]
+    public ?string $color = null;
+
+    #[Reactive]
     public bool $disabled = false;
 
     #[Reactive]

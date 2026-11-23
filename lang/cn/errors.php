@@ -1,9 +1,11 @@
 <?php
 
 return [
+    'component_color' => '请提供 Tailwind 调色板名称、CSS 颜色或颜色变量。',
     'binding_sources' => 'wire:model、value 和 initial-value 只能选用一种值来源。',
     'binding_identity' => 'Livewire 中未绑定的 :component 需要稳定的 id 或 wire:key。',
     'heading_level' => '标题级别必须在 1 到 6 之间。',
+    'media_preview_type' => '媒体预览类型必须为 image、audio 或 video。',
     'progress_value' => '进度值或最大值无效。',
     'scroll_orientation' => '滚动区域的方向无效。',
     'sidebar_mode' => '侧边栏的模式、样式或位置无效。',

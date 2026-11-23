@@ -1,7 +1,7 @@
 <form data-esoboy-ui data-slot="questionnaire" novalidate wire:submit="submit" x-data="uiQuestionnaire"
     x-on:keydown="navigate($event)" x-on:reset.prevent="$wire.resetAnswers()"
     x-on:questionnaire-focus.stop="focusItem($event.detail.invalid)"
-    {{ $attributes->whereDoesntStartWith('wire:model')->except('name') }}>
+    {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'questionnaire', $attributes)->whereDoesntStartWith('wire:model')->except('name') }}>
     @php
         $questions = $this->questions;
         $position = $this->position;

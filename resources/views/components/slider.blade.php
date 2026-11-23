@@ -1,5 +1,6 @@
-@props(['value', 'initialValue', 'min' => 0, 'max' => 100, 'step' => 1, 'orientation' => 'horizontal', 'inverted' => false])
+@props(['color' => null, 'value', 'initialValue', 'min' => 0, 'max' => 100, 'step' => 1, 'orientation' => 'horizontal', 'inverted' => false])
 @php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'slider', $attributes);
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'slider', get_defined_vars(), ['min' => $min, 'max' => $max, 'step' => $step, 'orientation' => $orientation, 'inverted' => $inverted]);
     $disabled = $binding->config['disabled'];
     $readonly = $binding->config['readonly'];

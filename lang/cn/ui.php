@@ -29,6 +29,7 @@ return [
     'node_level' => '第 :level 级',
     'week_number' => '周数',
     'select' => '请选择',
+    'select_icon' => '请选择图标',
     'empty_states' => [
         'options' => ['title' => '暂无可选项'],
         'commands' => ['title' => '暂无可用命令'],

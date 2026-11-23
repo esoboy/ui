@@ -1,5 +1,6 @@
-@props(['paginator' => null, 'maxPages' => null, 'jumpable' => false])
+@props(['color' => null, 'paginator' => null, 'maxPages' => null, 'jumpable' => false])
 @php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'pagination', $attributes);
     $owner = \Livewire\Livewire::current();
     $actions = $paginator instanceof \Illuminate\Contracts\Pagination\CursorPaginator ? ['setPage'] : ['gotoPage', 'previousPage', 'nextPage'];
     $live = $paginator && $owner && array_diff($actions, get_class_methods($owner)) === [];

@@ -1,5 +1,7 @@
 @php
-    $binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, $picker, get_defined_vars());
+    // The trigger and the teleported panel share this ancestor for local theme variables.
+    $sharedAttributes = filled($color) ? ['style'] : [];
+    $binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except($sharedAttributes), $picker, get_defined_vars());
     $identity = $binding->key ?? (string) \Illuminate\Support\Str::uuid();
     $owner = \Livewire\Livewire::current();
     $target = 'ui-picker-'.hash('xxh128', ($owner ? $owner->getId() : '').'|'.$identity);
@@ -10,9 +12,9 @@
     };
 @endphp
 <div data-esoboy-ui data-slot="{{ $picker }}-field">
-    <div data-esoboy-ui data-slot="{{ $picker }}" data-ui-overlay x-data="uiPopover">
+    <div data-esoboy-ui data-slot="{{ $picker }}" data-ui-overlay x-data="uiPopover" {{ $attributes->only($sharedAttributes) }}>
         {!! \Livewire\Livewire::mount($picker === 'time-picker' ? 'ui::time-picker' : 'ui::date-picker', [
-            ...$binding->parameters, ...$options, 'contentTarget' => $target,
+            ...$binding->parameters, ...$options, 'color' => $color, 'contentTarget' => $target,
         ], $binding->key) !!}
         <x-ui::popover.content align="start" class="ui-picker-popup {{ $popupClass }}" :aria-label="__('ui::ui.'.$prompt)">
             {{-- The control updates its panel here. The caller owns the adjacent slot. --}}

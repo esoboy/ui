@@ -1,5 +1,6 @@
-@props(['orientation' => 'horizontal', 'loop' => false, 'align' => 'center', 'controls' => true, 'pagination' => 'dots'])
+@props(['color' => null, 'orientation' => 'horizontal', 'loop' => false, 'align' => 'center', 'controls' => true, 'pagination' => 'dots'])
 @php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'carousel', $attributes);
     $count = $carouselSlideCount();
     if (!in_array($pagination, ['dots', 'numbers', 'fraction', 'none'], true)) {
         throw new \InvalidArgumentException(__('ui::errors.carousel_pagination'));
@@ -20,7 +21,7 @@
             @elseif ($pagination === 'fraction')
                 <div data-esoboy-ui data-slot="carousel-fraction" aria-live="polite" aria-atomic="true" aria-label="{{ __('ui::ui.pagination') }}">
                     @for ($page = 1; $page <= $count; $page++)
-                        <span x-show="current === {{ $page }}">{{ $page }}</span>
+                        <span data-ui-carousel-current x-show="current === {{ $page }}">{{ $page }}</span>
                     @endfor
                     <span aria-hidden="true">/</span>
                     @for ($page = 1; $page <= $count; $page++)

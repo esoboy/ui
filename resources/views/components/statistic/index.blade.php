@@ -1,5 +1,5 @@
-@props(['title', 'value' => null, 'precision' => null, 'groupSeparator' => ',', 'decimalSeparator' => '.', 'prefix' => null, 'suffix' => null, 'description' => null, 'loading' => false, 'formatter' => null])
-<div {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'statistic', 'aria-busy' => $loading ? 'true' : null]) }}>
+@props(['color' => null, 'title', 'value' => null, 'precision' => null, 'groupSeparator' => ',', 'decimalSeparator' => '.', 'prefix' => null, 'suffix' => null, 'description' => null, 'loading' => false, 'formatter' => null])
+<div {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'statistic', $attributes)->merge(['data-esoboy-ui' => '', 'data-slot' => 'statistic', 'aria-busy' => $loading ? 'true' : null]) }}>
     <x-ui::statistic.label>{{ $title }}</x-ui::statistic.label>
     @if ($loading)
         <x-ui::skeleton role="status" :aria-label="__('ui::ui.loading')" />

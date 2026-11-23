@@ -1,5 +1,8 @@
 @blaze
-@props(['level' => 2])
+@props(['color' => null, 'level' => 2])
+@php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'ink', $attributes);
+@endphp
 @switch($level)
     @case(1)
         <h1 {{ $attributes->merge(['data-esoboy-ui' => '', 'data-slot' => 'heading']) }}>{{ $slot }}</h1>

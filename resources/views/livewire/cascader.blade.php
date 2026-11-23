@@ -1,3 +1,6 @@
+@php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'nodes', $attributes);
+@endphp
 <div data-esoboy-ui data-slot="cascader" data-ui-overlay x-data="uiPopover"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby']) }}>
     <x-ui::select.trigger><x-ui::button variant="outline" :disabled="$disabled" :id="$attributes->get('id')"

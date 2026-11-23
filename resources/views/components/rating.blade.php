@@ -1,5 +1,6 @@
-@props(['max' => 5, 'value', 'initialValue'])
+@props(['color' => null, 'max' => 5, 'value', 'initialValue'])
 @php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'rating', $attributes);
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'rating', get_defined_vars(), ['max' => $max]);
     $score = $binding->config['value'];
     $name = $attributes->get('name') ?? $binding->key ?? 'rating-'.\Illuminate\Support\Str::uuid();

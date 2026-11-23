@@ -12,13 +12,13 @@
                 wire:model.live.debounce.200ms="query" value="{{ $query }}" aria-controls="{{ $this->getId() }}-list" x-bind:aria-expanded="opened"
                 placeholder="{{ $searchInPopup ? $searchPlaceholder : ($multiple || $placeholder !== '' ? $placeholder : __('ui::ui.select')) }}"
                 data-selected="{{ $this->label !== '' ? 'true' : 'false' }}" :disabled="$disabled" :readonly="$readonly"
-                x-on:keydown.escape="if (!opened && !panel.matches(':popover-open')) { $event.stopPropagation(); $wire.clearSelection() }"
+                x-on:keydown.escape="if (!opened && !panel.matches(':popover-open')) { $event.stopPropagation(); {{ ($paginated ?? false) ? 'selectIcon(null)' : '$wire.clearSelection()' }} }"
                 x-on:pointerdown="if ($event.button === 0 && $event.pointerType === 'mouse') open(false)" x-on:click="open(false)" x-on:input="open(false); highlightOption(null)" x-on:keydown.arrow-down.stop="navigate($event)" x-on:keydown.arrow-up.stop="navigate($event)" />
         </span>
         @if(!$multiple)
         <x-ui::input-group.addon align="inline-end">
             @if ($clearable && $this->selected !== [])
-                <x-ui::input-group.button size="icon-xs" data-slot="combobox-clear" x-on:mousedown.prevent x-on:click="$root.querySelector('input[role=combobox]')?.focus({preventScroll: true})" wire:click="clearSelection" aria-label="{{ __('ui::ui.clear') }}" :disabled="$disabled || $readonly"><x-ui::icon name="x" /></x-ui::input-group.button>
+                <x-ui::input-group.button size="icon-xs" data-slot="combobox-clear" x-on:mousedown.prevent x-on:click="$root.querySelector('input[role=combobox]')?.focus({preventScroll: true}); {{ ($paginated ?? false) ? 'selectIcon(null)' : '' }}" :wire:click="($paginated ?? false) ? null : 'clearSelection'" aria-label="{{ __('ui::ui.clear') }}" :disabled="$disabled || $readonly"><x-ui::icon name="x" /></x-ui::input-group.button>
             @elseif($showTrigger)
                 <x-ui::input-group.button size="icon-xs" data-slot="combobox-trigger" x-on:click="toggle()" x-bind:aria-expanded="opened" aria-controls="{{ $this->getId() }}-list" aria-label="{{ __('ui::ui.select') }}" :disabled="$disabled"><x-ui::icon name="chevron-down" class="ui-select-chevron" /></x-ui::input-group.button>
             @endif

@@ -1,3 +1,6 @@
+@php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'options', $attributes);
+@endphp
 <div data-esoboy-ui data-slot="command" x-data="uiOptions" x-on:keydown="navigate($event)"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except('name') }}>
     <div data-esoboy-ui data-slot="command-input-wrapper">

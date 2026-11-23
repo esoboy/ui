@@ -240,17 +240,16 @@
 <x-ui::icon name="circle-check" size="md" />
 ```
 
+## icon-select
+
+```blade
+<x-ui::icon-select name="icon" initial-value="circle-check" clearable aria-label="选择图标" />
+```
+
 ## image
 
 ```blade
 <x-ui::image src="/demo-landscape.svg" alt="灰色山景" />
-```
-
-## image-preview
-
-```blade
-<x-ui::image-preview src="/demo-landscape.svg" alt="灰色山景"><x-slot:trigger><x-ui::button
-            variant="outline">预览图片</x-ui::button></x-slot:trigger></x-ui::image-preview>
 ```
 
 ## input
@@ -296,6 +295,22 @@
 
 ```blade
 <x-ui::marker>示例内容</x-ui::marker>
+```
+
+## media-preview
+
+```blade
+<x-ui::media-preview src="/demo-landscape.svg" type="image" alt="灰色山景">
+    <x-ui::image src="/demo-landscape.svg" alt="预览山景" class="w-32" />
+</x-ui::media-preview>
+
+<x-ui::media-preview src="/demo/tone.wav" type="audio">
+    <x-ui::button variant="outline">试听提示音</x-ui::button>
+</x-ui::media-preview>
+
+<x-ui::media-preview src="/demo/lakeside.mp4" type="video">
+    <x-ui::button variant="outline"><x-ui::icon name="play" /> 预览短片</x-ui::button>
+</x-ui::media-preview>
 ```
 
 ## mentions

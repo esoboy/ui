@@ -1,4 +1,5 @@
 @props([
+    'color' => null,
     'value',
     'initialValue',
     'options' => [],
@@ -21,6 +22,7 @@
         'ui::select',
         [
             ...$binding->parameters,
+            'color' => $color,
             'options' => $options,
             'side' => $side,
             'align' => $align,

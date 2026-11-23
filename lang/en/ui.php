@@ -29,6 +29,7 @@ return [
     'node_level' => 'Level :level',
     'week_number' => 'Week number',
     'select' => 'Select an option',
+    'select_icon' => 'Select an icon',
     'empty_states' => [
         'options' => ['title' => 'No options available'],
         'commands' => ['title' => 'No commands available'],

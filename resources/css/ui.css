@@ -2058,6 +2058,9 @@ esoboy-editor {
     .ui-list-scroll[data-overflow] > [data-slot='scroll-area-viewport']:where([data-esoboy-ui]) {
         overscroll-behavior-y: contain;
     }
+    [data-slot='icon-select-pagination']:where([data-esoboy-ui]) {
+        @apply flex shrink-0 items-center justify-between gap-2 border-t border-border px-1 pt-1 text-xs text-muted-foreground tabular-nums;
+    }
     [data-slot='scroll-area']:where([data-esoboy-ui]):not([data-overflow])
         > [data-slot='scroll-area-scrollbar']:where([data-esoboy-ui]) {
         display: none;
@@ -2470,17 +2473,21 @@ esoboy-editor {
         border: 1px solid black;
         cursor: nwse-resize;
     }
-    .ui-image-preview {
+    [data-ui-media-trigger][role='button'] {
+        display: inline-block;
+    }
+    [data-slot='media-preview']:where([data-esoboy-ui]):not([data-type='audio']) {
         width: min(60rem, calc(100vw - 2rem));
         max-width: min(60rem, calc(100vw - 2rem));
     }
-    [data-slot='image-preview-canvas']:where([data-esoboy-ui]) {
+    [data-slot='media-preview-canvas']:where([data-esoboy-ui]) {
         min-width: 0;
         overflow: hidden;
         display: grid;
+        grid-template-columns: minmax(0, 1fr);
         place-items: center;
     }
-    [data-slot='image-preview-canvas']:where([data-esoboy-ui]) img {
+    [data-slot='media-preview-canvas']:where([data-esoboy-ui]) > :is(img, video) {
         width: auto;
         height: auto;
         min-height: 0;
@@ -2488,7 +2495,11 @@ esoboy-editor {
         max-width: 100%;
         object-fit: contain;
     }
-    [data-slot='image-preview-toolbar']:where([data-esoboy-ui]) {
+    [data-slot='media-preview-canvas']:where([data-esoboy-ui]) > audio {
+        width: 100%;
+        min-width: 0;
+    }
+    [data-slot='media-preview-toolbar']:where([data-esoboy-ui]) {
         display: flex;
         gap: 0.5rem;
         justify-content: center;
@@ -3961,8 +3972,8 @@ esoboy-editor {
         opacity: 0.5;
     }
     [data-slot='tabs-tab']:where([data-esoboy-ui]) {
-        @apply aria-selected:bg-background aria-selected:text-foreground ui-dark:aria-selected:border-input ui-dark:aria-selected:bg-input/30 ui-dark:aria-selected:text-foreground;
-        @apply after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:aria-selected:after:opacity-100;
+        @apply aria-selected:bg-background aria-selected:text-[color:var(--ui-tab-color,var(--color-foreground))] ui-dark:aria-selected:border-input ui-dark:aria-selected:bg-input/30 ui-dark:aria-selected:text-[color:var(--ui-tab-color,var(--color-foreground))];
+        @apply after:absolute after:bg-[color:var(--ui-tab-color,var(--color-foreground))] after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:aria-selected:after:opacity-100;
     }
     [data-slot='tabs-list']:where([data-esoboy-ui])[data-variant='default']
         [data-slot='tabs-tab']:where([data-esoboy-ui])[aria-selected='true'] {
@@ -4224,10 +4235,15 @@ esoboy-editor {
         [data-slot='item-description']:where([data-esoboy-ui]) {
         white-space: normal;
     }
-    [data-slot='menu-item']:where([data-esoboy-ui]):not([data-variant='destructive']):focus * {
+    [data-slot='menu-item']:where([data-esoboy-ui]):not(
+            [data-variant='destructive'],
+            [data-ui-color='menu']
+        ):focus
+        * {
         color: var(--color-accent-foreground);
     }
-    [data-slot='menu-item']:where([data-esoboy-ui])[data-variant='destructive'] > svg {
+    [data-slot='menu-item']:where([data-esoboy-ui])[data-variant='destructive']
+        > svg:not(:where([data-ui-color])) {
         color: var(--color-destructive);
     }
     [data-slot='menu-label']:where([data-esoboy-ui]) {
@@ -6571,3 +6587,236 @@ esoboy-editor {
         opacity: 0;
     }
 }
+@layer components {
+    [data-ui-color]:where([data-esoboy-ui]) {
+        --ui-color-soft: color-mix(in oklab, var(--ui-color) 14%, var(--color-background));
+        --ui-color-hover: color-mix(in oklab, var(--ui-color) 84%, var(--color-background));
+        --ui-on-color: oklch(from var(--ui-color) clamp(0, (0.62 - l) * 1000, 1) 0 0);
+    }
+    @supports (color: contrast-color(white)) {
+        [data-ui-color]:where([data-esoboy-ui]) {
+            --ui-on-color: contrast-color(var(--ui-color));
+        }
+    }
+
+    /* Apply the color to the painted part so actions and content in public slots keep their own theme. */
+    [data-ui-color='ink']:where([data-esoboy-ui]),
+    [data-ui-color='marker']:where([data-esoboy-ui]),
+    [data-ui-color='statistic'] > [data-slot='statistic-value']:where([data-esoboy-ui]),
+    [data-ui-color='signature'] > [data-ui-signature-surface] canvas {
+        color: var(--ui-color);
+    }
+    [data-ui-color='marker'][data-variant='border'] {
+        border-color: var(--ui-color);
+    }
+    [data-ui-color='marker'][data-variant='separator']::before,
+    [data-ui-color='marker'][data-variant='separator']::after {
+        background-color: var(--ui-color);
+    }
+    [data-ui-color='qr']:where([data-esoboy-ui]) > path {
+        fill: var(--ui-color);
+    }
+
+    [data-ui-color='button'].ui-button-variant-default,
+    [data-ui-color='badge'][data-variant='default'],
+    [data-ui-color='bubble'][data-variant='default']
+        > [data-slot='bubble-content']:where([data-esoboy-ui]),
+    [data-ui-color='avatar']:where([data-esoboy-ui]) {
+        background-color: var(--ui-color);
+        color: var(--ui-on-color);
+    }
+    [data-ui-color='button'].ui-button-variant-default:hover,
+    a[data-ui-color='badge'][data-variant='default']:hover,
+    [data-ui-color='bubble'][data-variant='default']
+        > :is(button, a)[data-slot='bubble-content']:where([data-esoboy-ui]):hover {
+        background-color: var(--ui-color-hover);
+    }
+    [data-ui-color='button']:is(.ui-button-variant-secondary, .ui-button-variant-destructive),
+    [data-ui-color='badge']:is([data-variant='secondary'], [data-variant='destructive']),
+    [data-ui-color='bubble']:is(
+            [data-variant='secondary'],
+            [data-variant='muted'],
+            [data-variant='tinted'],
+            [data-variant='destructive']
+        )
+        > [data-slot='bubble-content']:where([data-esoboy-ui]) {
+        background-color: var(--ui-color-soft);
+        color: var(--ui-color);
+    }
+    [data-ui-color='button']:is(
+        .ui-button-variant-outline,
+        .ui-button-variant-ghost,
+        .ui-button-variant-link
+    ),
+    [data-ui-color='badge']:is(
+        [data-variant='outline'],
+        [data-variant='ghost'],
+        [data-variant='link']
+    ),
+    [data-ui-color='bubble']:is([data-variant='outline'], [data-variant='ghost'])
+        > [data-slot='bubble-content']:where([data-esoboy-ui]) {
+        color: var(--ui-color);
+    }
+    [data-ui-color='button'].ui-button-variant-outline:not([aria-invalid='true']),
+    [data-ui-color='badge'][data-variant='outline'],
+    [data-ui-color='bubble'][data-variant='outline']
+        > [data-slot='bubble-content']:where([data-esoboy-ui]) {
+        border-color: var(--ui-color);
+    }
+    [data-ui-color='button']:is(
+            .ui-button-variant-outline,
+            .ui-button-variant-ghost,
+            .ui-button-variant-secondary,
+            .ui-button-variant-destructive
+        ):is(:hover, [aria-expanded='true']),
+    a[data-ui-color='badge']:not([data-variant='default'], [data-variant='link']):hover,
+    [data-ui-color='bubble']:not([data-variant='default'])
+        > :is(button, a)[data-slot='bubble-content']:where([data-esoboy-ui]):hover {
+        background-color: color-mix(in oklab, var(--ui-color) 23%, var(--color-background));
+        color: var(--ui-color);
+    }
+
+    [data-ui-color='alert'][data-variant],
+    [data-ui-color='toast'][data-variant] {
+        border-color: var(--ui-color);
+        color: var(--ui-color);
+    }
+    [data-ui-color='alert'][data-variant='destructive']
+        > [data-slot='alert-description']:where([data-esoboy-ui]) {
+        color: var(--ui-color);
+    }
+    [data-ui-color='menu'][data-variant] {
+        color: var(--ui-color);
+    }
+    [data-ui-color='menu'][data-variant]:is(:focus, :hover) {
+        background-color: var(--ui-color-soft);
+        color: var(--ui-color);
+    }
+    [data-ui-color='menu'][data-variant] > svg:where([data-esoboy-ui]):not([data-ui-color]) {
+        color: var(--ui-color);
+    }
+
+    [data-slot='radio-group']:where([data-esoboy-ui]):not([data-ui-color]) {
+        --ui-color: var(--color-primary);
+        --ui-on-color: var(--color-primary-foreground);
+    }
+    .ui-checkbox[data-ui-color='checkbox']:is(:checked, :indeterminate),
+    [data-ui-color='radio'].ui-radio:checked,
+    [data-ui-color='radio'] .ui-radio:checked {
+        background-color: var(--ui-color);
+        color: var(--ui-on-color);
+    }
+    .ui-checkbox[data-ui-color='checkbox']:is(:checked, :indeterminate):not([aria-invalid='true']),
+    [data-ui-color='radio'].ui-radio:checked:not([aria-invalid='true']),
+    [data-ui-color='radio'] .ui-radio:checked:not([aria-invalid='true']) {
+        border-color: var(--ui-color);
+    }
+    .ui-checkbox[data-ui-color='checkbox']:indeterminate::before {
+        width: 0.5rem;
+        height: 2px;
+        mask: none;
+    }
+    [data-ui-color='radio'].ui-radio:checked::before,
+    [data-ui-color='radio'] .ui-radio:checked::before,
+    [data-ui-color='switch']:has(> input:checked)
+        > [data-slot='switch-thumb']:where([data-esoboy-ui]) {
+        background-color: var(--ui-on-color);
+    }
+    [data-ui-color='switch']:has(> input:checked),
+    [data-ui-color='toggle']:has(> input:checked) > .ui-toggle,
+    [data-ui-color='toggle']
+        > [data-slot='toggle-group-item']:where([data-esoboy-ui]):has(> input:checked)
+        > .ui-toggle {
+        background-color: var(--ui-color);
+        color: var(--ui-on-color);
+    }
+    [data-ui-color='progress'] > [data-slot='progress-track']:where([data-esoboy-ui]),
+    [data-ui-color='slider'] > [data-slot='slider-track']:where([data-esoboy-ui]),
+    [data-ui-color='rating'] > label:is(:has(:checked), :has(~ label :checked)) .ui-rating-star {
+        --color-primary: var(--ui-color);
+    }
+    [data-ui-color='slider'] > [data-slot='slider-thumb']:where([data-esoboy-ui]) {
+        --color-ring: var(--ui-color);
+        background-color: var(--ui-color);
+    }
+
+    [data-ui-color='steps'] > [data-state='complete']:where([data-esoboy-ui])::after,
+    [data-ui-color='steps']
+        > :is([data-state='current'], [data-state='complete'])
+        > [data-slot='steps-indicator']:where([data-esoboy-ui]) {
+        --color-primary: var(--ui-color);
+        --color-primary-foreground: var(--ui-on-color);
+    }
+    [data-ui-color='timeline'] > [data-slot='timeline-item']:where([data-esoboy-ui])::before,
+    [data-ui-color='timeline'][data-slot='timeline-item']::before {
+        border-color: var(--ui-color);
+        --color-primary: var(--ui-color);
+    }
+    [data-ui-color='timeline'][data-slot='timeline-item']::before {
+        background-color: var(--ui-color);
+    }
+    [data-slot='tabs']:where([data-esoboy-ui]) {
+        --ui-tab-color: initial;
+    }
+    [data-ui-color='tabs'][data-slot='tabs'] {
+        --ui-tab-color: var(--ui-color);
+    }
+    [data-ui-color='pagination']
+        :is([data-slot='pagination-button'], [data-slot='pagination-link']):where(
+            [data-esoboy-ui]
+        )[aria-current='page'] {
+        border-color: var(--ui-color);
+        color: var(--ui-color);
+    }
+    [data-ui-color='carousel']
+        > [data-slot='carousel-controls']:where([data-esoboy-ui])
+        [aria-current='page']
+        > .ui-carousel-dot {
+        background-color: var(--ui-color);
+    }
+    [data-ui-color='carousel']
+        > [data-slot='carousel-controls']:where([data-esoboy-ui])
+        [data-mode='numbers']
+        > [aria-current='page'],
+    [data-ui-color='carousel']
+        > [data-slot='carousel-controls']:where([data-esoboy-ui])
+        [data-ui-carousel-current] {
+        color: var(--ui-color);
+    }
+
+    [data-ui-color='options']
+        :is([data-slot='select-option'], [data-slot='command-item']):where(
+            [data-esoboy-ui]
+        )[aria-selected='true'],
+    [data-ui-color='options'] [data-slot='combobox-chip']:where([data-esoboy-ui]),
+    [data-ui-color='tags'] .ui-tags > [data-slot='badge']:where([data-esoboy-ui]),
+    [data-ui-color='nodes'] [data-node-action]:where([data-esoboy-ui])[aria-pressed='true'],
+    [data-ui-color='nodes']
+        .ui-cascader-column
+        [data-node-action]:where([data-esoboy-ui])[aria-expanded='true'] {
+        background-color: var(--ui-color-soft);
+        color: var(--ui-color);
+    }
+    [data-ui-color='options']
+        [aria-selected='true']
+        :is([data-slot='option-indicator'], .ui-command-check):where([data-esoboy-ui]),
+    [data-ui-color='nodes']
+        [data-node-action]:is([aria-pressed='true'], [aria-expanded='true'])
+        > svg:where([data-esoboy-ui]) {
+        color: var(--ui-color);
+    }
+    [data-ui-color='nodes'] [data-slot='node-selector']:where([data-esoboy-ui]) > span,
+    [data-ui-color='questionnaire'] [data-slot='questionnaire-choice']:where([data-esoboy-ui]),
+    [data-ui-color='calendar'] [data-slot='calendar-grid']:where([data-esoboy-ui]),
+    [data-ui-color='time'] [data-time-grid]:where([data-esoboy-ui]) {
+        --color-primary: var(--ui-color);
+        --color-primary-foreground: var(--ui-on-color);
+    }
+    [data-ui-color='questionnaire']
+        [data-slot='questionnaire-choice']:where([data-esoboy-ui]):has(:checked),
+    [data-ui-color='calendar']
+        :is([data-range='start'], [data-range='middle'], [data-range='end']) {
+        --color-muted: var(--ui-color-soft);
+    }
+}
+@plugin './palette.cjs';

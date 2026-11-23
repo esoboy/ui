@@ -1,3 +1,6 @@
+@php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'options', $attributes);
+@endphp
 <div data-esoboy-ui data-slot="select" data-ui-overlay x-data="uiPopover"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'aria-label', 'aria-labelledby']) }}>
     <x-ui::select.trigger x-on:pointerdown.capture="$el.toggleAttribute('data-touch', $event.pointerType === 'touch')" x-on:keydown.capture="$el.removeAttribute('data-touch')">

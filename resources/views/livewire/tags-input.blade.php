@@ -1,3 +1,6 @@
+@php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'tags', $attributes);
+@endphp
 <div data-esoboy-ui data-slot="tags-input"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby']) }}>
     <div class="ui-tags">

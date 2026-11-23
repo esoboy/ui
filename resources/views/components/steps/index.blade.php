@@ -1,5 +1,6 @@
-@props(['items', 'current' => 1, 'orientation' => 'horizontal', 'status' => 'normal', 'emptyTitle' => null, 'emptyDescription' => null])
+@props(['color' => null, 'items', 'current' => 1, 'orientation' => 'horizontal', 'status' => 'normal', 'emptyTitle' => null, 'emptyDescription' => null])
 @php
+    $attributes = \Esoboy\Ui\Support\ComponentColor::attributes($color, 'steps', $attributes);
     $current = filter_var($current, FILTER_VALIDATE_INT);
     if (!is_array($items) || !array_is_list($items) || $current === false || $current < 1 || ($items !== [] && $current > count($items) + 1)
         || !in_array($orientation, ['horizontal', 'vertical'], true) || !in_array($status, ['normal', 'error'], true)) {

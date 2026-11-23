@@ -1,4 +1,5 @@
 @props([
+    'color' => null,
     'items' => [],
     'item' => null,
     'initialItem' => '',
@@ -18,6 +19,7 @@
         'ui::questionnaire',
         [
             ...$binding->parameters,
+            'color' => $color,
             'items' => $items,
             'item' => $item,
             'initialItem' => $initialItem,

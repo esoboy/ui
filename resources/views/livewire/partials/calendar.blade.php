@@ -1,5 +1,5 @@
 @php($monthYearFormat = __('ui::ui.month_year_format', [], \Esoboy\Ui\Support\Locale::normalize($locale ?? app()->getLocale())))
-<div {{ ($calendarAttributes ?? new \Illuminate\View\ComponentAttributeBag)->class(['group/calendar'])->merge(['data-esoboy-ui' => '', 'data-slot' => 'calendar']) }} x-data="uiOptions('[data-calendar-day]')" x-on:keydown="navigateGrid($event, 7, true)">
+<div {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'calendar', $calendarAttributes ?? null)->class(['group/calendar'])->merge(['data-esoboy-ui' => '', 'data-slot' => 'calendar']) }} x-data="uiOptions('[data-calendar-day]')" x-on:keydown="navigateGrid($event, 7, true)">
     <div data-esoboy-ui data-slot="calendar-header">
         <x-ui::button variant="ghost" size="icon-sm" wire:click="moveMonth(-1)" :disabled="$disabled || ($this->navigationStart !== null && $this->period->toDateString() <= $this->navigationStart)"
             :aria-label="__('ui::ui.previous_month')"><x-ui::icon name="chevron-left" /></x-ui::button>

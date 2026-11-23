@@ -47,6 +47,11 @@ class Combobox extends PopupOptionControl
     public function finishSearch(): void
     {
         $this->searching = false;
+        $this->syncQueryToSelection();
+    }
+
+    private function syncQueryToSelection(): void
+    {
         $this->query = $this->multiple || $this->searchInPopup ? '' : $this->label;
         unset($this->results);
     }
@@ -67,8 +72,10 @@ class Combobox extends PopupOptionControl
             ];
         }
         $this->rememberedChoices = $remembered;
-        if (! $this->searching || $previousKeys !== array_keys($remembered)) {
+        if ($previousKeys !== array_keys($remembered)) {
             $this->finishSearch();
+        } elseif (! $this->searching) {
+            $this->syncQueryToSelection();
         }
     }
 

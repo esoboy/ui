@@ -23,6 +23,8 @@ metadata:
 
 在公共布局的 `<head>` 放置 `@uiScript`，排在启动 Livewire 或 Alpine 的脚本前。Editor 首次渲染时会加载自己的脚本。在根元素上使用 `.dark` 切换暗色，用组件的 `class` 覆盖默认样式。
 
+按钮、徽标、选择控件和进度指示器等支持实例级 `color`。例如 `<x-ui::button color="blue-600">`、`<x-ui::badge color="emerald">`。颜色优先使用宿主的 Tailwind 调色板，也可用 `@theme` 中的自定义色名、十六进制值或 `var(--brand)`。
+
 ## 表单与状态
 
 ```blade

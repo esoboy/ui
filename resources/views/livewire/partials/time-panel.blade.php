@@ -3,7 +3,7 @@
     $parts = $time === null ? [] : explode(':', $time);
     $panelId = $this->getId().'-time';
 @endphp
-<div data-esoboy-ui data-slot="time-panel" wire:key="time-panel-{{ count($units) }}{{ $awaitingDate ? '-awaiting-date' : '' }}"
+<div data-esoboy-ui data-slot="time-panel" {{ \Esoboy\Ui\Support\ComponentColor::attributes($color, 'time') }} wire:key="time-panel-{{ count($units) }}{{ $awaitingDate ? '-awaiting-date' : '' }}"
     x-data="{
         active: null,
         tabStop(option) {
