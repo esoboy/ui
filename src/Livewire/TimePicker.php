@@ -9,6 +9,8 @@ use Livewire\Attributes\Reactive;
 
 class TimePicker extends ValueControl
 {
+    use HasControlSize;
+
     #[Reactive]
     public bool $seconds = false;
 

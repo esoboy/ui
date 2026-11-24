@@ -9,6 +9,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 final class RichContent
 {
+    private const MAX_RENDERED_HTML_BYTES = 8_000_000;
+
     public static function render(mixed $value, string $inputType = 'auto'): string
     {
         if (! is_string($value) && $value !== null) {
@@ -35,6 +37,10 @@ final class RichContent
             ]);
             $content = (string) $markdown->convert($content);
         }
+        // The sanitizer truncates oversized HTML, so reject it before parsing a partial document.
+        if (strlen($content) > self::MAX_RENDERED_HTML_BYTES) {
+            throw new InvalidArgumentException(__('ui::errors.rich_text_length'));
+        }
 
         return self::sanitizer()->sanitize($content);
     }
@@ -49,7 +55,7 @@ final class RichContent
         $config = new HtmlSanitizerConfig()
             ->allowRelativeLinks()->allowRelativeMedias()
             ->allowMediaSchemes(['https', 'http'])
-            ->withMaxInputLength($schema['maxLength'])
+            ->withMaxInputLength(self::MAX_RENDERED_HTML_BYTES)
             ->withAttributeSanitizer(new ContentAttributes);
         $tags = array_unique(array_merge(...array_values([...$schema['nodes'], ...$schema['marks']])));
         foreach ($tags as $tag) {

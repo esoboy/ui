@@ -1,4 +1,4 @@
-    <x-ui::input-group :data-ui-anchor-box="$searchInPopup ? null : true" class="ui-combobox-control {{ $multiple ? 'ui-combobox-multiple' : '' }}">
+    <x-ui::input-group :size="$size" :data-ui-anchor-box="$searchInPopup ? null : true" class="ui-combobox-control {{ $multiple ? 'ui-combobox-multiple' : '' }}">
         @if ($multiple)
             @foreach ($this->selectedChoices as $option)
                     <span class="ui-combobox-chip" tabindex="-1" data-value="{{ json_encode($option['value']) }}" wire:key="chip-{{ $option['value'] }}">{{ $option['label'] }}

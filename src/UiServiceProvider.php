@@ -3,10 +3,12 @@
 namespace Esoboy\Ui;
 
 use Esoboy\Ui\Support\Assets;
+use Esoboy\Ui\View\ButtonGroup;
 use Esoboy\Ui\View\Carousel;
 use Esoboy\Ui\View\DataTable;
 use Esoboy\Ui\View\DataTableCell;
 use Esoboy\Ui\View\DataTableSelectionToolbar;
+use Esoboy\Ui\View\Pagination;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -21,6 +23,8 @@ final class UiServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom($root.'/lang', 'ui');
         Blade::include('ui::assets', 'uiScript');
 
+        Blade::component(ButtonGroup::class, 'ui::button-group');
+        Blade::component(Pagination::class, 'ui::pagination');
         Blade::component(Carousel::class, 'ui::carousel');
         Blade::component(DataTable::class, 'ui::data-table');
         Blade::component(DataTableCell::class, 'ui::data-table.cell');

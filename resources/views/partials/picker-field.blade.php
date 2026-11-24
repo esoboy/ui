@@ -9,10 +9,10 @@
         'datetime-picker' => ['select_datetime', 'ui-list-popup ui-date-popup'],
     };
 @endphp
-<div class="ui-{{ $picker }} ui-{{ $picker }}-field {{ $attributes->get('class') }}">
+<div data-size="{{ $size }}" class="ui-{{ $picker }} ui-{{ $picker }}-field {{ $attributes->get('class') }}">
     <div class="ui-picker-overlay" data-ui-overlay x-data="uiPopover">
         {!! \Livewire\Livewire::mount($picker === 'time-picker' ? 'ui::time-picker' : 'ui::date-picker', [
-            ...$binding->parameters, ...$options, 'contentTarget' => $target,
+            ...$binding->parameters, ...$options, 'size' => $size, 'contentTarget' => $target,
         ], $binding->key) !!}
         <x-ui::popover.content align="start" class="ui-picker-popup ui-{{ $picker }}-panel {{ $popupClass }}" :aria-label="__('ui::ui.'.$prompt)">
             {{-- The control updates its panel here. The caller owns the adjacent slot. --}}

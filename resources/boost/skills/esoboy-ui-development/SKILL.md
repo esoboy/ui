@@ -25,7 +25,21 @@ metadata:
 
 在 `:root` 设置全站主题，或在带有 `data-ui-theme` 的容器上设置局部主题。`--radius` 决定基础圆角，也可以用 `--radius-sm` 等变量单独调整对应的 `rounded-sm` 等级。组件正文字号 `--text-body` 默认取 Tailwind 的 `--text-sm`，`--text-caption` 和 `--text-title` 随正文缩放。
 
-按钮、徽标、开关、提示和通知可组合 `variant` 与 `status`。五种状态为 `neutral`、`info`、`success`、`warning`、`error`。省略状态时使用变体自身的配色。在组件根 class 上用 Tailwind 任意属性调整部位，例如 `[--fill:var(--color-success)]`。
+按钮、徽标、开关、提示、通知、`text`、`icon`、`statistic`、`progress`、`timeline.item`、`avatar.badge` 和 `alert-dialog.content` 支持 `status`。五种状态为 `neutral`、`info`、`success`、`warning`、`error`。省略状态时使用变体自身的配色。在组件根 class 上用 Tailwind 任意属性调整部位，例如 `[--fill:var(--color-success)]`。
+
+`statistic` 为数值着色，`progress` 为进度条填充着色，`timeline.item` 为当前条目的节点着色。`alert-dialog.content` 为标题和图标区着色，操作按钮可单独设置 `status`。
+
+下列组件支持 `size="sm"`、`size="default"` 和 `size="lg"` 三档，省略时使用默认尺寸。
+
+| 用途 | 组件 |
+| --- | --- |
+| 输入和选择 | `input`、`textarea`、`input-group`、`password-input`、`number-input`、`tags-input`、`mentions`、`input-otp`、`color-picker`、`checkbox`、`radio-group` |
+| 选择器 | `combobox`、`icon-select`、`cascader`、`tree-select`、`date-picker`、`time-picker`、`datetime-picker` |
+| 指示和文字 | `badge`、`progress`、`slider`、`rating`、`heading`、`text`、`statistic` |
+| 列表和导航 | `table`、`data-table`、`pagination`、`button-group`、`tabs.list`、`calendar`、`steps`、`tree`、`transfer`、`command` |
+| 面板 | `dialog.content`、`sheet.content`、`drawer.content` |
+
+`input` 与 `password-input` 的数字 `size` 保留原生字符宽度。按钮组中的按钮和输入控件可覆盖组尺寸。`data-table` 将尺寸传给内部表格和自动分页。`heading` 的 `level` 决定 HTML 标题层级。左右面板调宽，上下面板调高，抽屉使用 `snap-points` 时按停靠点定位。
 
 ## 表单与状态
 

@@ -1,5 +1,5 @@
-@props(['title', 'value' => null, 'precision' => null, 'groupSeparator' => ',', 'decimalSeparator' => '.', 'prefix' => null, 'suffix' => null, 'description' => null, 'loading' => false, 'formatter' => null])
-<div {{ $attributes->merge(['class' => 'ui-statistic', 'aria-busy' => $loading ? 'true' : null]) }}>
+@props(['status' => null, 'size' => 'default', 'title', 'value' => null, 'precision' => null, 'groupSeparator' => ',', 'decimalSeparator' => '.', 'prefix' => null, 'suffix' => null, 'description' => null, 'loading' => false, 'formatter' => null])
+<div {{ $attributes->class(['ui-statistic', \Esoboy\Ui\Support\ComponentStatus::cssClass($status)])->merge(['data-size' => $size, 'aria-busy' => $loading ? 'true' : null]) }}>
     <x-ui::statistic.label>{{ $title }}</x-ui::statistic.label>
     @if ($loading)
         <x-ui::skeleton role="status" :aria-label="__('ui::ui.loading')" />

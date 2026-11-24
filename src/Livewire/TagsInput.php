@@ -10,6 +10,8 @@ use Livewire\Attributes\Reactive;
 /** @property-read list<string> $tags */
 class TagsInput extends ValueControl
 {
+    use HasControlSize;
+
     public string $draft = '';
 
     #[Reactive]

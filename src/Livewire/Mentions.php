@@ -14,6 +14,7 @@ use Livewire\Attributes\Reactive;
  */
 class Mentions extends ValueControl
 {
+    use HasControlSize;
     use HasEmptyState;
 
     /** @var array<array-key, mixed> */

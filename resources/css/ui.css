@@ -260,7 +260,19 @@
     }
 
     /* Status colors for each component variant. */
-    :where(.ui-button, .ui-badge, .ui-switch, .ui-alert, .ui-toast) {
+    :where(
+        .ui-button,
+        .ui-badge,
+        .ui-switch,
+        .ui-alert,
+        .ui-toast,
+        .ui-text,
+        .ui-statistic,
+        .ui-progress,
+        .ui-timeline-item,
+        .ui-avatar-badge,
+        .ui-alert-dialog-content
+    ) {
         --status-fill: initial;
         --status-on-fill: initial;
         --status-ink: initial;
@@ -1309,6 +1321,27 @@ dialog[data-ui-panel][open]::backdrop {
 dialog[data-ui-panel][data-ending]::backdrop {
     opacity: 0;
 }
+.ui-side-panel[data-size='sm'] {
+    --panel-extent: 20rem;
+    --panel-width-limit: 65vw;
+}
+.ui-side-panel[data-size='lg'] {
+    --panel-extent: 36rem;
+    --panel-width-limit: 90vw;
+}
+.ui-side-panel:is([data-size='sm'], [data-size='lg']):is([data-side='left'], [data-side='right']) {
+    width: min(
+        var(--drawer-content-width, min(var(--panel-extent), var(--panel-width-limit))),
+        100vw
+    );
+    max-width: 100vw;
+}
+.ui-side-panel:is([data-size='sm'], [data-size='lg']):is(
+        [data-side='top'],
+        [data-side='bottom']
+    ):not([data-snap-points]) {
+    height: min(var(--panel-extent), 90dvh);
+}
 }
 @layer components {
 .ui-popup {
@@ -1590,15 +1623,25 @@ dialog[data-ui-panel][data-ending]::backdrop {
 .ui-icon-size-explicit {
     @apply size-(--icon-size);
 }
+.ui-icon[class*='ui-status-'] {
+    color: var(--fg, var(--status-ink));
+}
 }
 @layer components {
 .ui-text {
     line-height: 1.65;
+    color: var(--fg, var(--status-ink, inherit));
 }
 .ui-text-link {
-    color: var(--link-fg, var(--color-primary));
+    color: var(--link-fg, var(--status-ink, var(--color-primary)));
     text-decoration: underline;
     text-underline-offset: 4px;
+}
+.ui-text[data-size='sm'] {
+    @apply text-caption;
+}
+.ui-text[data-size='lg'] {
+    @apply text-title-lg;
 }
 }
 @layer components {
@@ -1760,6 +1803,12 @@ a.ui-button[aria-disabled='true'] {
         color: var(--file-fg, var(--color-foreground));
     }
 }
+.ui-input[data-size='sm'] {
+    @apply h-7 px-2 md:text-compact file:h-5;
+}
+.ui-input[data-size='lg'] {
+    @apply h-9 px-3 md:text-title file:h-7;
+}
 }
 @layer components {
 :where(.ui-textarea) {
@@ -1768,6 +1817,12 @@ a.ui-button[aria-disabled='true'] {
 .ui-textarea {
     @apply focus-visible:ring-3 aria-invalid:ring-3 field-sizing-content flex min-h-16 w-full px-2.5 py-2
         text-control md:text-body;
+}
+.ui-textarea[data-size='sm'] {
+    @apply min-h-12 px-2 py-1.5 md:text-compact;
+}
+.ui-textarea[data-size='lg'] {
+    @apply min-h-20 px-3 py-2.5 md:text-title;
 }
 }
 @layer components {
@@ -1831,8 +1886,8 @@ a.ui-button[aria-disabled='true'] {
 }
 .ui-checkbox:is(:checked, :indeterminate)::before {
     content: '';
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 100%;
+    height: 100%;
     background: var(--indeterminate-bg, currentColor);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m20 6-11 11-5-5'/%3E%3C/svg%3E")
         center / contain no-repeat;
@@ -1845,6 +1900,12 @@ a.ui-button[aria-disabled='true'] {
 .ui-checkbox:disabled {
     opacity: 1;
     cursor: not-allowed;
+}
+.ui-checkbox[data-size='sm'] {
+    @apply size-3.5;
+}
+.ui-checkbox[data-size='lg'] {
+    @apply size-5;
 }
 }
 @layer components {
@@ -1987,6 +2048,12 @@ a.ui-button[aria-disabled='true'] {
     @variant hover {
         @apply underline;
     }
+}
+.ui-badge[data-size='sm'] {
+    @apply h-4 px-1.5 py-0 text-fine [&>svg]:size-2.5;
+}
+.ui-badge[data-size='lg'] {
+    @apply h-6 px-2.5 text-body [&>svg]:size-3.5;
 }
 }
 @layer components {
@@ -2150,6 +2217,12 @@ a.ui-button[aria-disabled='true'] {
 .ui-dialog-dismiss {
     @apply absolute top-2 right-2;
 }
+.ui-dialog-content[data-size='sm'] {
+    @apply w-full max-w-[min(20rem,calc(100%_-_3rem))];
+}
+.ui-dialog-content[data-size='lg'] {
+    @apply w-full max-w-[min(40rem,calc(100%_-_1rem))];
+}
 }
 @layer components {
 :where(.ui-alert-dialog-footer) {
@@ -2195,7 +2268,7 @@ a.ui-button[aria-disabled='true'] {
         group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end;
 }
 .ui-alert-dialog-title {
-    @apply font-medium text-title
+    @apply font-medium text-title text-[color:var(--title-fg,var(--status-ink,inherit))]
         sm:group-data-[size=default]/alert-dialog-content:group-has-[.ui-alert-dialog-media]/alert-dialog-content:col-start-2;
 }
 .ui-alert-dialog-description {
@@ -2209,9 +2282,12 @@ a.ui-button[aria-disabled='true'] {
     display: grid;
 }
 .ui-alert-dialog-media {
-    @apply bg-[color:var(--media-bg,var(--color-muted))] mb-2 inline-flex size-10 items-center
+    @apply bg-[color:var(--media-bg,var(--color-muted))] text-[color:var(--media-fg,var(--status-ink,inherit))] mb-2 inline-flex size-10 items-center
         justify-center rounded-md sm:group-data-[size=default]/alert-dialog-content:row-span-2
         *:[svg:not([class*='size-'])]:size-6;
+}
+.ui-alert-dialog-content[class*='ui-status-'] .ui-alert-dialog-media {
+    background-color: var(--media-bg, var(--status-soft-bg));
 }
 }
 @layer components {
@@ -2554,7 +2630,7 @@ svg.ui-select-chevron {
     @apply relative inline-flex items-center;
 }
 .ui-calendar-dropdowns select {
-    @apply bg-[color:var(--dropdowns-bg,transparent)] h-7 cursor-pointer appearance-none rounded-md
+    @apply bg-[color:var(--dropdowns-bg,transparent)] h-(--cell-size) cursor-pointer appearance-none rounded-md
         border-0 ps-1 pe-5 text-body font-medium outline-none focus-visible:ring-2
         disabled:cursor-default field-sizing-content;
     @variant hover {
@@ -2644,11 +2720,17 @@ svg.ui-select-chevron {
     @apply rounded-md;
 }
 .ui-calendar-week-number {
-    @apply flex size-7 shrink-0 items-center justify-center;
+    @apply flex size-(--cell-size) shrink-0 items-center justify-center;
 }
 .ui-calendar-grid :is(.ui-calendar-week-number, .ui-calendar-week-number-header) {
     flex: 0 0 var(--cell-size);
     width: var(--cell-size);
+}
+.ui-calendar-body[data-size='sm'] {
+    @apply [--cell-size:--spacing(6)];
+}
+.ui-calendar-body[data-size='lg'] {
+    @apply [--cell-size:--spacing(9)];
 }
 }
 @layer components {
@@ -2659,7 +2741,7 @@ svg.ui-select-chevron {
     width: 18rem;
 }
 .ui-time-panel {
-    @apply flex min-h-0 flex-col [--time-cell:2.25rem];
+    @apply flex min-h-0 flex-col [--time-cell-base:2.25rem] [--time-cell:var(--time-cell-base)];
 }
 .ui-time-segments {
     @apply flex shrink-0 items-center justify-center gap-1 px-3 py-2;
@@ -2696,16 +2778,25 @@ svg.ui-select-chevron {
 }
 @media (pointer: coarse) {
     .ui-time-panel {
-        --time-cell: 2.75rem;
+        --time-cell-base: 2.75rem;
     }
 }
 .ui-time-hint {
     @apply text-[color:var(--part-fg,var(--color-muted-foreground))] px-3 pb-2 text-caption;
 }
+.ui-time-panel[data-size='sm'] {
+    --time-cell: calc(var(--time-cell-base) - 0.25rem);
+}
+.ui-time-panel[data-size='lg'] {
+    --time-cell: calc(var(--time-cell-base) + 0.5rem);
+}
 }
 @layer components {
 :where(.ui-table) {
     --columns-fg: initial;
+    --table-head-height: --spacing(10);
+    --table-cell-py: --spacing(2);
+    --table-cell-px: --spacing(2);
     --header-border: initial;
     --row-border: initial;
 }
@@ -2746,11 +2837,11 @@ svg.ui-select-chevron {
     @apply font-medium bg-[color:var(--footer-bg,var(--muted-50))] border-t [&>tr]:last:border-b-0;
 }
 .ui-table-head {
-    @apply font-medium text-[color:var(--part-fg,var(--color-foreground))] h-10 px-2 text-left align-middle
+    @apply font-medium text-[color:var(--part-fg,var(--color-foreground))] h-(--table-head-height) px-(--table-cell-px) text-left align-middle
         whitespace-nowrap [&:has([role=checkbox])]:pr-0;
 }
 .ui-table-cell {
-    @apply p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0;
+    @apply px-(--table-cell-px) py-(--table-cell-py) align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0;
 }
 .ui-table-empty > .ui-table-cell {
     @apply whitespace-normal;
@@ -2760,6 +2851,12 @@ svg.ui-select-chevron {
 }
 .ui-table-caption {
     @apply text-body text-[color:var(--part-fg,var(--color-muted-foreground))] mt-4;
+}
+.ui-table[data-size='sm'] {
+    @apply [--table-head-height:--spacing(8)] [--table-cell-py:--spacing(1)] [--table-cell-px:--spacing(1.5)];
+}
+.ui-table[data-size='lg'] {
+    @apply [--table-head-height:--spacing(12)] [--table-cell-py:--spacing(3)] [--table-cell-px:--spacing(3)];
 }
 }
 @layer components {
@@ -2820,6 +2917,12 @@ svg.ui-select-chevron {
 }
 .ui-button.ui-pagination-next:has([data-icon]) {
     @apply pr-1.5;
+}
+.ui-pagination[data-size='sm'] {
+    @apply [&_.ui-pagination-ellipsis]:size-7;
+}
+.ui-pagination[data-size='lg'] {
+    @apply [&_.ui-pagination-ellipsis]:size-9;
 }
 }
 @layer components {
@@ -3062,8 +3165,8 @@ svg.ui-select-chevron {
     }
 }
 .ui-avatar-badge {
-    @apply bg-[color:var(--part-bg,var(--color-primary))]
-        text-[color:var(--part-fg,var(--color-primary-foreground))]
+    @apply bg-[color:var(--part-bg,var(--status-fill,var(--color-primary)))]
+        text-[color:var(--part-fg,var(--status-on-fill,var(--color-primary-foreground)))]
         ring-[color:var(--part-ring,var(--color-background))] absolute bottom-0 right-0 z-10 inline-flex
         size-2.5 items-center justify-center rounded-full ring-2 bg-blend-color select-none;
 }
@@ -3623,6 +3726,12 @@ svg.ui-select-chevron {
     @apply text-[color:var(--field-fg,var(--color-muted-foreground))] pointer-events-none absolute end-2
         top-1/2 -translate-y-1/2;
 }
+.ui-color-picker[data-size='sm'] {
+    @apply w-16 min-w-16 [&>input]:h-7 [&>input]:py-1 [&>svg]:size-3;
+}
+.ui-color-picker[data-size='lg'] {
+    @apply w-22 min-w-22 [&>input]:h-9 [&>input]:py-2 [&>svg]:size-4;
+}
 }
 @layer components {
 :where(.ui-combobox) {
@@ -3647,7 +3756,7 @@ svg.ui-select-chevron {
 }
 .ui-combobox-content > .ui-combobox-control {
     @apply border-[color:var(--control-border,var(--input-30))] bg-[color:var(--part-bg,var(--input-30))]
-        m-1 mb-0 h-8 shrink-0 shadow-none w-auto;
+        m-1 mb-0 h-(--group-control-height) shrink-0 shadow-none w-auto;
 }
 .ui-combobox-control [data-ui-trigger] > input {
     padding-right: 0.375rem;
@@ -3668,8 +3777,8 @@ svg.ui-select-chevron {
     width: 0.75rem;
     height: 0.75rem;
 }
-.ui-combobox-multiple {
-    @apply h-auto min-h-8 flex-wrap gap-1 px-2.5 py-1 has-[.ui-combobox-chip]:px-1 focus-within:ring-3;
+.ui-input-group.ui-combobox-multiple {
+    @apply h-auto min-h-(--group-control-height) flex-wrap gap-1 px-2.5 py-1 has-[.ui-combobox-chip]:px-1 focus-within:ring-3;
     @variant focus-within {
         border-color: var(--part-border, var(--color-ring));
         --tw-ring-color: var(--part-ring, var(--ring-50));
@@ -3694,6 +3803,12 @@ svg.ui-select-chevron {
 }
 .ui-combobox-trigger {
     @apply w-full justify-between font-normal;
+}
+.ui-combobox-multiple[data-size='sm'] .ui-combobox-chip {
+    @apply h-4 text-fine;
+}
+.ui-combobox-multiple[data-size='lg'] .ui-combobox-chip {
+    @apply h-6 text-body;
 }
 }
 @layer components {
@@ -3735,7 +3850,7 @@ svg.ui-select-chevron {
     @apply p-1 pb-0;
 }
 .ui-command-input-wrapper > .ui-input-group {
-    @apply bg-[color:var(--bg,var(--input-30))] border-[color:var(--border,var(--input-30))] h-8 rounded-lg
+    @apply bg-[color:var(--bg,var(--input-30))] border-[color:var(--border,var(--input-30))] h-(--group-control-height) rounded-lg
         shadow-none;
 }
 .ui-command-input-wrapper .ui-input-group-addon {
@@ -3749,6 +3864,12 @@ svg.ui-select-chevron {
 }
 [aria-selected='false'] > .ui-command-check {
     @apply opacity-0;
+}
+.ui-command-body[data-size='sm'] {
+    @apply [&_.ui-command-item]:py-1 [&_.ui-command-item]:text-compact;
+}
+.ui-command-body[data-size='lg'] {
+    @apply [&_.ui-command-item]:py-2 [&_.ui-command-item]:text-title;
 }
 }
 @layer components {
@@ -4153,18 +4274,27 @@ dialog.ui-drawer-content[data-ending]::backdrop {
 }
 @layer components {
 h1.ui-heading {
-    font-size: var(--text-title-4xl);
+    --heading-font-size: var(--text-title-4xl);
+    font-size: var(--heading-font-size);
     font-weight: 700;
     letter-spacing: -0.04em;
 }
 h2.ui-heading {
-    font-size: var(--text-title-2xl);
+    --heading-font-size: var(--text-title-2xl);
+    font-size: var(--heading-font-size);
     font-weight: 600;
     letter-spacing: -0.03em;
 }
 h3.ui-heading {
-    font-size: var(--text-title-lg);
+    --heading-font-size: var(--text-title-lg);
+    font-size: var(--heading-font-size);
     font-weight: 600;
+}
+.ui-heading[data-size='sm'] {
+    font-size: calc(var(--heading-font-size, 1em) * 0.85);
+}
+.ui-heading[data-size='lg'] {
+    font-size: calc(var(--heading-font-size, 1em) * 1.25);
 }
 }
 @layer components {
@@ -4293,6 +4423,12 @@ h3.ui-heading {
     50% {
         opacity: 0;
     }
+}
+.ui-input-otp[data-size='sm'] {
+    @apply [&_.ui-input-otp-slot]:size-7 [&_.ui-input-otp-slot]:text-compact;
+}
+.ui-input-otp[data-size='lg'] {
+    @apply [&_.ui-input-otp-slot]:size-10 [&_.ui-input-otp-slot]:text-title;
 }
 }
 @layer components {
@@ -4686,6 +4822,9 @@ a.ui-item:hover {
 .ui-native-select-control:disabled {
     opacity: 1;
 }
+.ui-native-select-control[data-size='lg']:not([multiple]) {
+    @apply h-9 px-3 pe-8 text-title;
+}
 }
 @layer components {
 .ui-navigation-menu-link {
@@ -4873,17 +5012,17 @@ a.ui-item:hover {
 }
 .ui-progress-track {
     @apply relative flex h-1 w-full items-center overflow-hidden appearance-none rounded-full [border:0]
-        bg-[color:var(--track,var(--color-muted))] text-[color:var(--fill,var(--color-primary))];
+        bg-[color:var(--track,var(--color-muted))] text-[color:var(--fill,var(--status-fill,var(--color-primary)))];
 }
 .ui-progress-track::-webkit-progress-bar {
     background: var(--track, var(--color-secondary));
 }
 .ui-progress-track::-webkit-progress-value {
-    background: var(--fill, var(--color-primary));
+    background: var(--fill, var(--status-fill, var(--color-primary)));
     border-radius: inherit;
 }
 .ui-progress-track::-moz-progress-bar {
-    background: var(--fill, var(--color-primary));
+    background: var(--fill, var(--status-fill, var(--color-primary)));
     border-radius: inherit;
 }
 .ui-progress {
@@ -4891,6 +5030,12 @@ a.ui-item:hover {
 }
 .ui-progress-value {
     @apply text-body text-[color:var(--value-fg,var(--color-muted-foreground))] ml-auto tabular-nums;
+}
+.ui-progress[data-size='sm'] {
+    @apply [&>.ui-progress-track]:h-0.5;
+}
+.ui-progress[data-size='lg'] {
+    @apply [&>.ui-progress-track]:h-2;
 }
 }
 @layer components {
@@ -4915,8 +5060,8 @@ a.ui-item:hover {
 }
 .ui-radio:checked::before {
     content: '';
-    width: 0.5rem;
-    height: 0.5rem;
+    width: calc(var(--radio-size, 1rem) / 2);
+    height: calc(var(--radio-size, 1rem) / 2);
     background: var(--part-bg, var(--color-primary-foreground));
     border-radius: 50%;
 }
@@ -4927,7 +5072,7 @@ a.ui-item:hover {
 }
 .ui-radio-group-item {
     @apply focus-visible:ring-3 aria-invalid:ring-3 group-has-[:focus-visible]/field-label:ring-0 flex
-        size-4 items-center justify-center border border-[color:var(--item-border,var(--color-input))]
+        size-[var(--radio-size,--spacing(4))] items-center justify-center border border-[color:var(--item-border,var(--color-input))]
         relative aspect-square shrink-0 outline-none disabled:cursor-not-allowed disabled:opacity-50
         rounded-full;
     @variant ui-dark {
@@ -4964,7 +5109,13 @@ a.ui-item:hover {
     }
 }
 .ui-radio-group {
-    @apply w-full grid gap-2;
+    @apply w-full grid gap-2 [--radio-size:--spacing(4)];
+}
+.ui-radio-group[data-size='sm'] {
+    @apply gap-1.5 [--radio-size:--spacing(3.5)];
+}
+.ui-radio-group[data-size='lg'] {
+    @apply gap-3 [--radio-size:--spacing(5)];
 }
 }
 @layer components {
@@ -4990,6 +5141,12 @@ a.ui-item:hover {
 }
 .ui-rating label:has(:focus-visible) {
     @apply ring-[color:var(--focus-ring,var(--ring-50))] outline-none ring-3;
+}
+.ui-rating[data-size='sm'] {
+    @apply gap-0.5 [&>label]:size-6 [&_.ui-rating-star>svg]:size-3.5;
+}
+.ui-rating[data-size='lg'] {
+    @apply gap-1.5 [&>label]:size-10 [&_.ui-rating-star>svg]:size-5;
 }
 }
 @layer components {
@@ -5386,6 +5543,8 @@ a.ui-item:hover {
 @layer components {
 :where(.ui-slider) {
     --accent: initial;
+    --slider-thumb-size: 0.75rem;
+    --slider-track-size: 0.25rem;
     --thumb-border: initial;
     --thumb-hover-shadow: initial;
     --thumb-ring: initial;
@@ -5400,7 +5559,7 @@ a.ui-item:hover {
     display: flex;
     align-items: center;
     width: 100%;
-    height: 0.25rem;
+    height: var(--slider-track-size);
     touch-action: none;
     user-select: none;
     @variant data-[orientation=vertical] {
@@ -5411,26 +5570,21 @@ a.ui-item:hover {
     background-color: var(--track, var(--color-muted));
     position: relative;
     width: 100%;
-    height: 0.25rem;
+    height: var(--slider-track-size);
     background: var(--track, var(--color-muted));
     border-radius: 999px;
     overflow: hidden;
-    @variant data-[orientation=horizontal] {
-        @apply h-1 w-full;
-    }
-    @variant data-[orientation=vertical] {
-        @apply h-full w-1;
-    }
 }
 .ui-slider-range {
     background-color: var(--fill, var(--color-primary));
     position: absolute;
     height: 100%;
+    width: calc(var(--ui-slider-end) - var(--ui-slider-position));
     background: var(--fill, var(--color-primary));
 }
 .ui-slider-thumb {
     @apply ring-[color:var(--thumb-ring,var(--ring-50))] transition-[color,box-shadow] appearance-none
-        absolute top-[calc(50%-6px)] size-[0.75rem] rounded-[50%]
+        absolute top-[calc(50%-var(--slider-thumb-size)/2)] size-(--slider-thumb-size) rounded-[50%]
         [border:1px_solid_var(--thumb-border,var(--color-ring))] [background:var(--thumb,white)] p-0 m-0
         cursor-grab [outline:none];
     @variant after {
@@ -5445,6 +5599,22 @@ a.ui-item:hover {
 }
 .ui-slider-field:has(> [data-orientation='horizontal']) {
     width: 100%;
+}
+.ui-slider-body[data-orientation='horizontal'][data-inverted='false']
+    :is(.ui-slider-range, .ui-slider-thumb) {
+    left: var(--ui-slider-position);
+}
+.ui-slider-body[data-orientation='horizontal'][data-inverted='true']
+    :is(.ui-slider-range, .ui-slider-thumb) {
+    right: var(--ui-slider-position);
+}
+.ui-slider-body[data-orientation='vertical'][data-inverted='false']
+    :is(.ui-slider-range, .ui-slider-thumb) {
+    bottom: var(--ui-slider-position);
+}
+.ui-slider-body[data-orientation='vertical'][data-inverted='true']
+    :is(.ui-slider-range, .ui-slider-thumb) {
+    top: var(--ui-slider-position);
 }
 .ui-slider-thumb::-webkit-slider-runnable-track {
     background: none;
@@ -5477,14 +5647,23 @@ a.ui-item:hover {
 }
 .ui-slider-body[data-orientation='vertical'] .ui-slider-track {
     height: 100%;
-    width: 0.25rem;
+    width: var(--slider-track-size);
 }
 .ui-slider-body[data-orientation='vertical'] .ui-slider-range {
     width: 100%;
+    height: calc(var(--ui-slider-end) - var(--ui-slider-position));
 }
 .ui-slider-body[data-orientation='vertical'] .ui-slider-thumb {
     top: auto;
-    left: calc(50% - 6px);
+    left: calc(50% - var(--slider-thumb-size) / 2);
+}
+.ui-slider[data-size='sm'] {
+    --slider-thumb-size: 0.625rem;
+    --slider-track-size: 0.125rem;
+}
+.ui-slider[data-size='lg'] {
+    --slider-thumb-size: 1rem;
+    --slider-track-size: 0.375rem;
 }
 }
 @layer components {
@@ -5515,7 +5694,7 @@ a.ui-item:hover {
 }
 .ui-statistic-value {
     @apply flex flex-wrap items-baseline gap-x-1.5 leading-tight
-        text-[color:var(--value-fg,var(--color-foreground))] [overflow-wrap:anywhere]
+        text-[color:var(--value-fg,var(--status-ink,var(--color-foreground)))] [overflow-wrap:anywhere]
         text-[length:var(--text-display)] [font-weight:600] [letter-spacing:-0.04em]
         [font-variant-numeric:tabular-nums];
 }
@@ -5528,6 +5707,12 @@ a.ui-item:hover {
 }
 .ui-statistic > .ui-skeleton {
     @apply my-1 h-7 w-24;
+}
+.ui-statistic[data-size='sm'] {
+    @apply [&>.ui-statistic-value]:text-title-2xl [&_.ui-statistic-prefix]:text-body [&_.ui-statistic-suffix]:text-body [&>.ui-skeleton]:h-5;
+}
+.ui-statistic[data-size='lg'] {
+    @apply [&>.ui-statistic-value]:text-title-4xl [&_.ui-statistic-prefix]:text-title-lg [&_.ui-statistic-suffix]:text-title-lg [&>.ui-skeleton]:h-9;
 }
 }
 @layer components {
@@ -5547,7 +5732,7 @@ a.ui-item:hover {
 }
 .ui-steps-indicator {
     @apply bg-[color:var(--indicator-bg,var(--color-background))]
-        text-[color:var(--indicator-fg,var(--color-muted-foreground))] inline-flex size-7 shrink-0
+        text-[color:var(--indicator-fg,var(--color-muted-foreground))] inline-flex size-[var(--step-size,--spacing(7))] shrink-0
         items-center justify-center rounded-full border text-caption font-medium tabular-nums;
 }
 [data-state='current'] > .ui-steps-indicator {
@@ -5566,7 +5751,7 @@ a.ui-item:hover {
     color: var(--part-fg, var(--color-destructive));
 }
 .ui-steps-item:not(:last-child)::after {
-    @apply [content:''] bg-[color:var(--item-after-bg,var(--color-border))] absolute top-3.5 end-0 start-9
+    @apply [content:''] bg-[color:var(--item-after-bg,var(--color-border))] absolute top-[calc(var(--step-size,--spacing(7))/2)] end-0 start-[calc(var(--step-size,--spacing(7))+--spacing(2))]
         h-px;
 }
 .ui-steps-item[data-state='complete']::after {
@@ -5594,10 +5779,16 @@ a.ui-item:hover {
     @apply pb-5;
 }
 [data-orientation='vertical'] > .ui-steps-item:not(:last-child)::after {
-    @apply top-8 bottom-1 start-3.5 h-auto w-px;
+    @apply top-[calc(var(--step-size,--spacing(7))+--spacing(1))] bottom-1 start-[calc(var(--step-size,--spacing(7))/2)] h-auto w-px;
 }
 .ui-steps > li[role='presentation'] {
     @apply w-full;
+}
+.ui-steps[data-size='sm'] {
+    @apply [--step-size:--spacing(6)] [&_.ui-steps-title]:text-compact;
+}
+.ui-steps[data-size='lg'] {
+    @apply [--step-size:--spacing(9)] [&_.ui-steps-title]:text-title;
 }
 }
 @layer components {
@@ -5664,7 +5855,7 @@ a.ui-item:hover {
     @apply text-[color:var(--list-fg,var(--color-muted-foreground))]
         group-data-[orientation=vertical]/tabs:flex-col group-data-[orientation=vertical]/tabs:h-fit
         inline-flex items-center justify-center w-fit rounded-lg p-[3px]
-        group-data-[orientation=horizontal]/tabs:h-8 [&.ui-tabs-list-variant-line]:rounded-none;
+        group-data-[orientation=horizontal]/tabs:h-[var(--tab-list-height,--spacing(8))] [&.ui-tabs-list-variant-line]:rounded-none;
 }
 .ui-tabs-list.ui-tabs-list-variant-default {
     background-color: var(--list-bg, var(--color-muted));
@@ -5690,6 +5881,12 @@ a.ui-item:hover {
 }
 .ui-tabs[data-orientation='vertical'] {
     flex-direction: row;
+}
+.ui-tabs-list[data-size='sm'] {
+    @apply [--tab-list-height:--spacing(7)] [&>.ui-tabs-tab]:text-compact [&>.ui-tabs-tab]:py-0;
+}
+.ui-tabs-list[data-size='lg'] {
+    @apply [--tab-list-height:--spacing(10)] [&>.ui-tabs-tab]:text-title [&>.ui-tabs-tab]:px-3 [&>.ui-tabs-tab]:py-1;
 }
 }
 @layer components {
@@ -5723,6 +5920,12 @@ a.ui-item:hover {
     --bg: var(--field-bg);
     --fg: var(--field-fg);
     --border: var(--field-border);
+}
+.ui-tags > .ui-badge[data-size='sm'] .ui-button {
+    @apply size-3 [&>svg]:size-2.5;
+}
+.ui-tags > .ui-badge[data-size='lg'] .ui-button {
+    @apply size-5 [&>svg]:size-3.5;
 }
 }
 @layer components {
@@ -5759,8 +5962,8 @@ a.ui-item:hover {
     @apply pb-6;
 }
 .ui-timeline-item::before {
-    @apply [content:''] border-[color:var(--item-before-border,var(--color-muted-foreground))]
-        bg-[color:var(--item-before-bg,var(--color-background))] absolute start-0 top-1.5 size-2.5
+    @apply [content:''] border-[color:var(--item-before-border,var(--status-ink,var(--color-muted-foreground)))]
+        bg-[color:var(--item-before-bg,var(--status-fill,var(--color-background)))] absolute start-0 top-1.5 size-2.5
         rounded-full border-2;
 }
 .ui-timeline-item:not(:last-child)::after {
@@ -5768,9 +5971,9 @@ a.ui-item:hover {
         -bottom-1.5 w-px;
 }
 .ui-timeline-item[aria-current]::before {
-    @apply border-[color:var(--item-before-border,var(--color-primary))]
-        bg-[color:var(--item-before-bg,var(--color-primary))]
-        ring-[color:var(--part-ring,color-mix(in_oklab,var(--color-primary)_10%,transparent))] ring-3;
+    @apply border-[color:var(--item-before-border,var(--status-ink,var(--color-primary)))]
+        bg-[color:var(--item-before-bg,var(--status-fill,var(--color-primary)))]
+        ring-[color:var(--part-ring,color-mix(in_oklab,var(--status-fill,var(--color-primary))_10%,transparent))] ring-3;
 }
 .ui-timeline-time {
     @apply text-[color:var(--part-fg,var(--color-muted-foreground))] text-caption/5 tabular-nums;
@@ -6075,7 +6278,7 @@ a.ui-item:hover {
 }
 [data-select-parents] > .ui-tree-row {
     display: grid;
-    grid-template-columns: calc(var(--spacing) * 8) minmax(0, 1fr);
+    grid-template-columns: var(--tree-selector-width, --spacing(8)) minmax(0, 1fr);
 }
 [data-select-parents] > .ui-tree-row > .ui-tree-action {
     grid-column: 2;
@@ -6090,6 +6293,12 @@ a.ui-item:hover {
     background-color: var(--part-bg, var(--color-accent));
     color: var(--part-fg, var(--color-accent-foreground));
 }
+.ui-tree-body[data-size='sm'] {
+    @apply [--tree-selector-width:--spacing(7)];
+}
+.ui-tree-body[data-size='lg'] {
+    @apply [--tree-selector-width:--spacing(9)];
+}
 }
 @layer components {
 .ui-tree-select-body > .ui-list-popup {
@@ -6099,6 +6308,11 @@ a.ui-item:hover {
 @layer components {
 :where(.ui-input-group) {
     --textarea-bg: initial;
+    --group-control-height: --spacing(8);
+    --group-button-height: --spacing(6);
+    --group-icon-size: --spacing(4);
+    --group-font-size: var(--text-body);
+    --group-textarea-height: --spacing(16);
 }
 .ui-input-group-text {
     @apply text-body [&_svg:not([class*='size-'])]:size-4 flex items-center [&_svg]:pointer-events-none
@@ -6106,7 +6320,7 @@ a.ui-item:hover {
 }
 .ui-input-group {
     @apply transition-colors relative flex w-full min-w-0 items-center outline-none has-[>textarea]:h-auto
-        border-[color:var(--border,var(--color-input))] h-8 rounded-lg border
+        border-[color:var(--border,var(--color-input))] h-(--group-control-height) rounded-lg border
         in-[.ui-combobox-content]:focus-within:ring-0 has-disabled:opacity-50
         has-[.ui-input-group-control:focus-visible]:ring-3 has-[[aria-invalid=true]]:ring-3
         has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col
@@ -6167,13 +6381,13 @@ a.ui-item:hover {
     @apply text-body flex items-center shadow-none gap-2;
 }
 .ui-input-group-button[data-size='xs'] {
-    @apply h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5;
+    @apply h-[var(--group-button-height,--spacing(6))] gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5;
 }
 .ui-input-group-button[data-size='icon-xs'] {
-    @apply size-6 rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0;
+    @apply size-[var(--group-button-height,--spacing(6))] rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0;
 }
 .ui-input-group-button[data-size='icon-sm'] {
-    @apply size-8 p-0 has-[>svg]:p-0;
+    @apply size-[var(--group-control-height,--spacing(8))] p-0 has-[>svg]:p-0;
 }
 .ui-input-group-input {
     @apply bg-[color:var(--input-bg,transparent)] flex-1 rounded-none border-0 shadow-none ring-0
@@ -6210,6 +6424,41 @@ a.ui-item:hover {
         > [data-ui-overlay] > [data-ui-trigger] > button
     ) {
     margin-right: -0.3rem;
+}
+.ui-input-group[data-size='sm'] {
+    --group-control-height: --spacing(7);
+    --group-button-height: --spacing(5);
+    --group-icon-size: --spacing(3.5);
+    --group-font-size: var(--text-compact);
+    --group-textarea-height: --spacing(12);
+}
+.ui-input-group[data-size='lg'] {
+    --group-control-height: --spacing(9);
+    --group-button-height: --spacing(7);
+    --group-icon-size: --spacing(4.5);
+    --group-font-size: var(--text-title);
+    --group-textarea-height: --spacing(20);
+}
+.ui-input-group:is([data-size='sm'], [data-size='lg'])
+    :is(.ui-input-group-addon, .ui-input-group-text, .ui-input-group-button) {
+    font-size: var(--group-font-size);
+}
+.ui-input-group:is([data-size='sm'], [data-size='lg'])
+    :is(.ui-input-group-addon, .ui-input-group-text, .ui-input-group-button)
+    > .ui-icon:not(.ui-icon-size-explicit) {
+    width: var(--group-icon-size);
+    height: var(--group-icon-size);
+}
+.ui-input-group-input[data-size='default'] {
+    height: var(--group-control-height, --spacing(8));
+}
+.ui-input-group-textarea[data-size='default'] {
+    min-height: var(--group-textarea-height, --spacing(16));
+}
+@media (width >= 48rem) {
+    .ui-input-group-control[data-size='default'] {
+        font-size: var(--group-font-size, var(--text-body));
+    }
 }
 }
 @layer components {
@@ -6317,6 +6566,12 @@ a.ui-item:hover {
     @variant data-[orientation=vertical] {
         @apply h-auto my-px;
     }
+}
+.ui-button-group[data-size='sm'] {
+    @apply [&>.ui-button-group-text]:px-2 [&>.ui-button-group-text]:text-compact;
+}
+.ui-button-group[data-size='lg'] {
+    @apply [&>.ui-button-group-text]:px-3 [&>.ui-button-group-text]:text-title;
 }
 }
 @layer components {

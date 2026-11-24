@@ -1,7 +1,7 @@
 <div data-mention-query="{{ json_encode($this->queryToken, JSON_THROW_ON_ERROR) }}"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby'])->class('ui-mentions-body') }}
     x-data="uiMentions(@js($mode))" x-on:keydown="navigate($event)">
-    <x-ui::textarea :value="$this->current ?? ''" x-ref="input" x-on:input="input($event)" :disabled="$disabled"
+    <x-ui::textarea :size="$size" :value="$this->current ?? ''" x-ref="input" x-on:input="input($event)" :disabled="$disabled"
         :readonly="$readonly"
         {{ $attributes->only(['id', 'name', 'form'])->merge($attributes->whereStartsWith('aria-')->all()) }} />
     @if ($this->queryToken !== null && ! $disabled && ! $readonly)

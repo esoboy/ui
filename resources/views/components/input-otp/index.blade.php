@@ -1,4 +1,4 @@
-@props(['length' => 6, 'pattern' => 'numeric', 'separatorAfter' => 0, 'cellClass' => '', 'groupClass' => '', 'value', 'initialValue'])
+@props(['size' => 'default', 'length' => 6, 'pattern' => 'numeric', 'separatorAfter' => 0, 'cellClass' => '', 'groupClass' => '', 'value', 'initialValue'])
 @php
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'input-otp', get_defined_vars(), ['length' => $length, 'pattern' => $pattern, 'separatorAfter' => $separatorAfter]);
     $disabled = $binding->config['disabled'];
@@ -12,7 +12,7 @@
         $start = $end;
     }
 @endphp
-<div {{ $attributes->only('class')->class('ui-input-otp ui-input-otp-field') }}>
+<div {{ $attributes->only('class')->class('ui-input-otp ui-input-otp-field')->merge(['data-size' => $size]) }}>
     <div x-data="uiOtp()"
         data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
         @if($binding->key) wire:key="{{ $binding->key }}" @endif

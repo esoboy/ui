@@ -1,4 +1,4 @@
-@props(['max' => 5, 'value', 'initialValue'])
+@props(['size' => 'default', 'max' => 5, 'value', 'initialValue'])
 @php
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'rating', get_defined_vars(), ['max' => $max]);
     $score = $binding->config['value'];
@@ -8,7 +8,7 @@
 <div role="radiogroup" x-data="uiRating" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
     @if($binding->key) wire:key="{{ $binding->key }}" @endif
     x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
-    {{ $attributes->except(['name', 'wire:key', 'readonly', 'disabled', 'required'])->merge(['id' => $binding->id, 'aria-readonly' => $binding->config['readonly'] ? 'true' : null, 'aria-disabled' => $binding->config['disabled'] ? 'true' : null])->class('ui-rating') }}>
+    {{ $attributes->except(['name', 'wire:key', 'readonly', 'disabled', 'required'])->merge(['data-size' => $size, 'id' => $binding->id, 'aria-readonly' => $binding->config['readonly'] ? 'true' : null, 'aria-disabled' => $binding->config['disabled'] ? 'true' : null])->class('ui-rating') }}>
     @for ($rating = 1; $rating <= $max; $rating++)
         <label>
             <input type="radio" name="{{ $name }}" {{ $attributes->only('form') }} value="{{ $rating }}"

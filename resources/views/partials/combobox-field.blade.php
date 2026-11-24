@@ -1,5 +1,6 @@
 @props([
     'comboboxField',
+    'size' => 'default',
     'value',
     'initialValue',
     'options' => [],
@@ -22,11 +23,12 @@
     'emptyDescription' => null,
 ])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), $comboboxField, get_defined_vars()))
-<div {{ $attributes->only('class')->class(['ui-'.$comboboxField, 'ui-'.$comboboxField.'-field']) }}>
+<div {{ $attributes->only('class')->class(['ui-'.$comboboxField, 'ui-'.$comboboxField.'-field'])->merge(['data-size' => $size]) }}>
     {!! \Livewire\Livewire::mount(
         'ui::'.$comboboxField,
         [
             ...$binding->parameters,
+            'size' => $size,
             'options' => $options,
             'side' => $side,
             'align' => $align,

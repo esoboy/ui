@@ -386,7 +386,7 @@
 ## progress
 
 ```blade
-<x-ui::progress :value="65" aria-label="完成度" class="[--fill:var(--color-success)]" />
+<x-ui::progress :value="65" aria-label="完成度" status="success" />
 ```
 
 ## qr-code
@@ -489,7 +489,7 @@
 ## statistic
 
 ```blade
-<x-ui::statistic title="本月收入" value="128430.50" :precision="2" prefix="¥" />
+<x-ui::statistic size="lg" title="本月收入" value="128430.50" :precision="2" prefix="¥" />
 ```
 
 ## steps

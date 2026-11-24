@@ -15,6 +15,7 @@ use Livewire\Attributes\Computed;
  */
 abstract class ChoiceControl extends ValueControl
 {
+    use HasControlSize;
     use HasEmptyState;
 
     abstract protected function multipleSelection(): bool;

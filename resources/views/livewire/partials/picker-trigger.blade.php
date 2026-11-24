@@ -1,7 +1,7 @@
 @php($showClear = $clearable && $label !== '' && ! $disabled && ! $readonly)
 <div class="ui-picker-control" @if ($showClear) data-clearable @endif>
     <x-ui::popover.trigger>
-        <x-ui::button variant="outline" data-picker-trigger :disabled="$disabled"
+        <x-ui::button variant="outline" :size="$size" data-picker-trigger :disabled="$disabled"
             :id="$attributes->get('id')" class="ui-picker-trigger ui-{{ $picker }}-trigger" {{ $attributes->whereStartsWith('aria-') }}
             :aria-invalid="$attributes->get('aria-invalid', $attributes->get('invalid') ? 'true' : null)"
             :data-placeholder="$label === '' ? true : null" aria-haspopup="dialog">

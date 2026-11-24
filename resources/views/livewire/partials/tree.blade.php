@@ -1,4 +1,4 @@
-<div class="ui-tree-body" role="tree" aria-multiselectable="{{ $multiple ? 'true' : 'false' }}" @if ($selectParents) data-select-parents @endif
+<div class="ui-tree-body" data-size="{{ $size }}" role="tree" aria-multiselectable="{{ $multiple ? 'true' : 'false' }}" @if ($selectParents) data-select-parents @endif
     x-data="uiOptions('[data-node-action]')" x-on:keydown.stop="navigate($event)">
     @foreach ($this->visibleRows as $row)
         @php($active = $row['branch'] && in_array($row['value'], $expanded, true))

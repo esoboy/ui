@@ -1,4 +1,4 @@
-@props(['value', 'initialValue', 'min' => 0, 'max' => 100, 'step' => 1, 'orientation' => 'horizontal', 'inverted' => false])
+@props(['size' => 'default', 'value', 'initialValue', 'min' => 0, 'max' => 100, 'step' => 1, 'orientation' => 'horizontal', 'inverted' => false])
 @php
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'slider', get_defined_vars(), ['min' => $min, 'max' => $max, 'step' => $step, 'orientation' => $orientation, 'inverted' => $inverted]);
     $disabled = $binding->config['disabled'];
@@ -13,19 +13,24 @@
     $values = is_array($binding->config['value']) ? $binding->config['value'] : [$binding->config['value'] ?? $min];
     sort($values);
 @endphp
-<div {{ $attributes->only('class')->class('ui-slider ui-slider-field') }}>
+<div {{ $attributes->only('class')->class('ui-slider ui-slider-field')->merge(['data-size' => $size]) }}>
     <div x-data="uiSlider()"
         data-ui-control="{{ json_encode($config, JSON_THROW_ON_ERROR) }}" @if ($internal) wire:ignore.children @endif
         @if($binding->key) wire:key="{{ $binding->key }}" @endif
         x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)" data-orientation="{{ $orientation }}" data-inverted="{{ $inverted ? 'true' : 'false' }}"
         x-on:pointerdown="start($event)" x-on:pointermove="move($event)" x-on:pointerup="finish($event)" x-on:pointercancel="finish($event)"
         {{ $attributes->except(['class', 'wire:key', 'id', 'name', ...array_keys($fieldAttributes->all())])->class('ui-slider-body') }}>
-        <div class="ui-slider-track"><div class="ui-slider-range" x-bind:style="rangeStyle()"></div></div>
+        <div class="ui-slider-track">
+            <div class="ui-slider-range" x-bind:style="{
+                '--ui-slider-position': positions.length > 1 ? offset(0, true) : '0%',
+                '--ui-slider-end': offset(positions.length - 1, true)
+            }"></div>
+        </div>
         @foreach ($values as $index => $number)
             <input class="ui-slider-thumb" type="range" data-slider-index="{{ $index }}"
                 value="{{ $number }}" {{ $thumb->merge(['id' => $binding->inputId($index), 'aria-label' => __('ui::ui.slider_value', ['number' => $index + 1])]) }}
                 @if ($internal) x-effect="syncThumb($el, {{ $index }})" x-bind:disabled="config.disabled || config.readonly" @endif
-                x-bind:value="positions[{{ $index }}]" x-bind:style="thumbStyle({{ $index }})" x-on:input.stop="change({{ $index }}, $event.target.value)"
+                x-bind:value="positions[{{ $index }}]" x-bind:style="{ '--ui-slider-position': offset({{ $index }}) }" x-on:input.stop="change({{ $index }}, $event.target.value)"
                 x-on:keydown="key($event, {{ $index }})" @disabled($disabled || $readonly)>
         @endforeach
         @if ($internal || $attributes->get('name'))

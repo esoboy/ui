@@ -3,7 +3,7 @@
     $parts = $time === null ? [] : explode(':', $time);
     $panelId = $this->getId().'-time';
 @endphp
-<div class="ui-time-panel" wire:key="time-panel-{{ count($units) }}{{ $awaitingDate ? '-awaiting-date' : '' }}"
+<div class="ui-time-panel" data-size="{{ $size }}" wire:key="time-panel-{{ count($units) }}{{ $awaitingDate ? '-awaiting-date' : '' }}"
     x-data="uiTimePanel"
     x-on:keydown.stop x-effect="syncUnit(opened)">
     <div class="ui-time-segments" role="group" aria-label="{{ __('ui::ui.select_time') }}"

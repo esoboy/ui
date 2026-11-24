@@ -18,6 +18,8 @@ use Livewire\Attributes\Reactive;
  */
 class Calendar extends ValueControl
 {
+    use HasControlSize;
+
     #[Reactive]
     public ?string $min = null;
 

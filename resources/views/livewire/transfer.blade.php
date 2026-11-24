@@ -1,5 +1,5 @@
 <div {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->class('ui-transfer-body') }}>
-    <x-ui::input :id="$this->getId() . '-query'" wire:model.live.debounce.200ms="query" type="search" :placeholder="__('ui::ui.search')" :aria-label="__('ui::ui.search')"
+    <x-ui::input :size="$size" :id="$this->getId() . '-query'" wire:model.live.debounce.200ms="query" type="search" :placeholder="__('ui::ui.search')" :aria-label="__('ui::ui.search')"
         :disabled="$disabled" />
     <div class="ui-transfer-columns">
         @foreach ($this->panels as $side => $panel)
@@ -9,7 +9,7 @@
                 <x-ui::card.content>
                     <x-ui::scroll-area class="ui-list-scroll ui-transfer-list" tabindex="-1">
                         @forelse ($panel['items'] as $option)
-                            <x-ui::button variant="ghost" class="ui-transfer-item"
+                            <x-ui::button :size="$size" variant="ghost" class="ui-transfer-item"
                                 :wire:click="'choose('.\Illuminate\Support\Js::from($option['value']).')'"
                                 :disabled="$disabled || $readonly || $option['disabled']"
                                 wire:key="transfer-{{ $side }}-{{ $option['value'] }}"><span>{{ $option['label'] }}</span><x-ui::icon
@@ -19,7 +19,7 @@
                         @endforelse
                     </x-ui::scroll-area>
                 </x-ui::card.content>
-                <x-ui::card.footer><x-ui::button variant="outline"
+                <x-ui::card.footer><x-ui::button :size="$size" variant="outline"
                         wire:click="moveAll({{ $selectedSide ? 'false' : 'true' }})"
                         :disabled="$disabled || $readonly">{{ __('ui::ui.' . ($selectedSide ? 'remove' : 'add')) }}</x-ui::button></x-ui::card.footer>
             </x-ui::card>

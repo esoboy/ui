@@ -45,6 +45,7 @@ final class DataTable extends Component
         public readonly ?string $layoutModel = null,
         private readonly ?string $rowKey = null,
         ?callable $rowSelectable = null,
+        public readonly string $size = 'default',
     ) {
         $this->dataTable = $this;
         $this->paginator = $rows instanceof Paginator || $rows instanceof CursorPaginator ? $rows : null;

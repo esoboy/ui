@@ -1,10 +1,10 @@
-<x-ui::table :aria-label="$attributes->get('aria-label')" :aria-labelledby="$attributes->get('aria-labelledby')">
+<x-ui::table :size="$size" :aria-label="$attributes->get('aria-label')" :aria-labelledby="$attributes->get('aria-labelledby')">
     <x-ui::table.header>
         <x-ui::table.row>
             @if ($selectionModel)
                 @php($allSelected = $selectableKeys && count($currentSelection) === count($selectableKeys))
                 <x-ui::table.head class="ui-table-selection-cell">
-                    <x-ui::checkbox :aria-label="__('ui::ui.table_select_page')"
+                    <x-ui::checkbox :size="$size" :aria-label="__('ui::ui.table_select_page')"
                         :checked="$allSelected" :x-bind:checked="$allSelected ? 'true' : 'false'"
                         :indeterminate="count($currentSelection) > 0 && count($currentSelection) < count($selectableKeys)"
                         :disabled="! $selectableKeys" :data-page-keys="json_encode(array_values($selectableKeys), JSON_THROW_ON_ERROR)"
@@ -53,7 +53,7 @@
             <x-ui::table.row wire:key="{{ $scope }}-row-{{ $id }}" :data-state="isset($selectedKeys[$id]) ? 'selected' : null">
                 @if ($selectionModel)
                     <x-ui::table.cell class="ui-table-selection-cell">
-                        <x-ui::checkbox :id="$scope.'-select-'.$id" wire:model.live="{{ $selectionModel }}" :value="(string) $id"
+                        <x-ui::checkbox :size="$size" :id="$scope.'-select-'.$id" wire:model.live="{{ $selectionModel }}" :value="(string) $id"
                             :checked="isset($selectedKeys[$id])" :disabled="! isset($selectableKeys[$id])"
                             :aria-label="__('ui::ui.select_node', ['label' => $dataTable->rowLabel($record, $id)])" />
                     </x-ui::table.cell>

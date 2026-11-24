@@ -6,7 +6,9 @@
     @php($previousGroup = $option['group'] ?? null)
     <button class="ui-{{ $optionSlot ?? 'select-option' }}" type="button" role="option" tabindex="-1"
         id="{{ $this->getId() }}-option-{{ md5(serialize($option['value'])) }}"
-        wire:click="choose(@js($option['value']))" @disabled($disabled || $readonly || $option['disabled'])
+        @if ($clientSelect ?? false) x-on:click="chooseOption(@js($option['value']))"
+        @else wire:click="choose(@js($option['value']))" @endif
+        @disabled($disabled || $readonly || $option['disabled'])
         @if ($retainInputFocus ?? false) x-on:mousedown.prevent @endif
         aria-selected="{{ $this->isSelected($option['value']) ? 'true' : 'false' }}"
         @if (!$multiple && ($popup ?? false)) x-on:click="close(true)" @endif wire:key="option-{{ get_debug_type($option['value']).'-'.$option['value'] }}">

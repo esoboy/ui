@@ -1,8 +1,8 @@
 <div data-ui-overlay x-data="uiPopover"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby'])->class('ui-cascader-body') }}>
-    <x-ui::select.trigger><x-ui::button variant="outline" :disabled="$disabled" :id="$attributes->get('id')"
+    <x-ui::select.trigger><x-ui::button variant="outline" :size="$size" :disabled="$disabled" :id="$attributes->get('id')"
             {{ $attributes->whereStartsWith('aria-')->class('ui-select-control') }} aria-haspopup="dialog"
-            data-size="default" :data-placeholder="$this->label === '' ? true : null"><span class="ui-select-value">{{ $this->label !== '' ? $this->label : ($placeholder !== '' ? $placeholder : __('ui::ui.select')) }}</span><x-ui::icon
+            :data-size="$size" :data-placeholder="$this->label === '' ? true : null"><span class="ui-select-value">{{ $this->label !== '' ? $this->label : ($placeholder !== '' ? $placeholder : __('ui::ui.select')) }}</span><x-ui::icon
                 name="chevron-down" class="ui-select-chevron" /></x-ui::button></x-ui::select.trigger>
     <x-ui::popover.content id="{{ $this->getId() }}-popup" align="start" data-match-trigger class="ui-list-popup">
         <x-ui::scroll-area orientation="horizontal" class="ui-cascader-scroll" tabindex="-1">

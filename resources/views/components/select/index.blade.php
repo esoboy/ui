@@ -3,8 +3,9 @@
     'initialValue',
     'options' => [],
     'multiple' => false,
+    'required' => false,
     'placeholder' => '',
-    'size' => 'default',
+    'size' => null,
     'displayValue' => null,
     'side' => 'bottom',
     'align' => 'start',
@@ -15,6 +16,7 @@
     'emptyTitle' => null,
     'emptyDescription' => null,
 ])
+@php($size ??= \Esoboy\Ui\View\ButtonGroup::defaultSize())
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'select', get_defined_vars()))
 <div {{ $attributes->only('class')->class('ui-select ui-select-field') }}>
     {!! \Livewire\Livewire::mount(
@@ -29,6 +31,7 @@
             'alignItemWithTrigger' => $alignItemWithTrigger,
             'popupClass' => $popupClass,
             'multiple' => $multiple,
+            'required' => $required,
             'placeholder' => $placeholder,
             'size' => $size,
             'displayValue' => $displayValue,

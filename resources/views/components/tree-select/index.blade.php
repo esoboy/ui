@@ -1,10 +1,11 @@
-@props(['value', 'initialValue', 'nodes' => [], 'multiple' => false, 'selectParents' => false, 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
+@props(['size' => 'default', 'value', 'initialValue', 'nodes' => [], 'multiple' => false, 'selectParents' => false, 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'tree-select', get_defined_vars()))
-<div {{ $attributes->only('class')->class('ui-tree-select ui-tree-select-field') }}>
+<div {{ $attributes->only('class')->class('ui-tree-select ui-tree-select-field')->merge(['data-size' => $size]) }}>
     {!! \Livewire\Livewire::mount(
         'ui::tree-select',
         [
             ...$binding->parameters,
+            'size' => $size,
             'emptyTitle' => $emptyTitle,
             'emptyDescription' => $emptyDescription,
             'nodes' => $nodes,

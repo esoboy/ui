@@ -1,4 +1,4 @@
-@props(['items', 'current' => 1, 'orientation' => 'horizontal', 'status' => 'normal', 'emptyTitle' => null, 'emptyDescription' => null])
+@props(['size' => 'default', 'items', 'current' => 1, 'orientation' => 'horizontal', 'status' => 'normal', 'emptyTitle' => null, 'emptyDescription' => null])
 @php
     $current = filter_var($current, FILTER_VALIDATE_INT);
     if (!is_array($items) || !array_is_list($items) || $current === false || $current < 1 || ($items !== [] && $current > count($items) + 1)
@@ -6,7 +6,7 @@
         throw new \InvalidArgumentException(__('ui::errors.steps'));
     }
 @endphp
-<ol {{ $attributes->merge(['class' => 'ui-steps', 'data-orientation' => $orientation]) }}>
+<ol {{ $attributes->merge(['data-size' => $size, 'class' => 'ui-steps', 'data-orientation' => $orientation]) }}>
     @forelse ($items as $item)
         @php
             $number = $loop->iteration;

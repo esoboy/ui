@@ -8,7 +8,7 @@
     @endif
     <div class="ui-select-group" role="group" @isset($group->first()['group']) aria-label="{{ $group->first()['group'] }}" @endisset>
         @isset($group->first()['group'])<div class="ui-option-group-label" role="presentation">{{ $group->first()['group'] }}</div>@endisset
-        @include('ui::livewire.partials.options', ['choices' => $group, 'popup' => true, 'showGroupLabels' => false])
+        @include('ui::livewire.partials.options', ['choices' => $group, 'clientSelect' => true, 'showGroupLabels' => false])
     </div>
 @empty
     @include('ui::partials.empty-state', ['emptyMessage' => 'options'])

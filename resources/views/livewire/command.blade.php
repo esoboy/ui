@@ -1,7 +1,7 @@
 <div x-data="uiOptions" x-on:keydown="navigate($event)"
-    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except('name')->class('ui-command-body') }}>
+    {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except('name')->class('ui-command-body')->merge(['data-size' => $size]) }}>
     <div class="ui-command-input-wrapper">
-        <x-ui::input-group>
+        <x-ui::input-group :size="$size">
             <input id="{{ $this->getId() }}-query" wire:model.live.debounce.200ms="query" type="search" placeholder="{{ $placeholder !== '' ? $placeholder : __('ui::ui.search') }}"
                 {{ $attributes->whereStartsWith('aria-')->merge(['aria-label' => __('ui::ui.search')])->class('ui-command-input') }} @disabled($disabled) />
             <x-ui::input-group.addon><x-ui::icon name="search" /></x-ui::input-group.addon>

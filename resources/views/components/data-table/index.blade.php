@@ -5,7 +5,7 @@
     $sort = $dataTable->boundValue($sortModel);
     $scope = $attributes->get('id') ?? $selectionModel ?? $layoutModel ?? $sortModel ?? 'table';
 @endphp
-<div {{ $attributes->whereDoesntStartWith('wire:model')->class('ui-data-table') }}
+<div {{ $attributes->whereDoesntStartWith('wire:model')->class('ui-data-table')->merge(['data-size' => $size]) }}
     x-data="uiDataTable" x-bind:style="widths" data-selection-model="{{ $selectionModel }}">
     <div class="ui-data-table-container">
         @isset($toolbar)
@@ -22,7 +22,7 @@
                     {{ $footer }}
                 @else
                     <x-ui::data-table.total />
-                    <x-ui::pagination :paginator="$paginator" :max-pages="5" />
+                    <x-ui::pagination :size="$size" :paginator="$paginator" :max-pages="5" />
                 @endisset
             </div>
         @endif

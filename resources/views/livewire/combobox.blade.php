@@ -7,7 +7,7 @@
     @if($searchInPopup)
         @php($emptyLabel = $placeholder !== '' ? $placeholder : __('ui::ui.select'))
         @php($triggerLabel = $this->label !== '' ? $this->label : $emptyLabel)
-        <x-ui::popover.trigger><x-ui::button variant="outline" class="ui-combobox-trigger" data-ui-anchor-box :disabled="$disabled" :id="$attributes->get('id')" {{ $attributes->whereStartsWith('aria-') }}>
+        <x-ui::popover.trigger><x-ui::button variant="outline" class="ui-combobox-trigger" :size="$size" data-ui-anchor-box :disabled="$disabled" :id="$attributes->get('id')" {{ $attributes->whereStartsWith('aria-') }}>
             @if ($paginated ?? false)
                 <output role="presentation" x-ref="iconCaption" data-placeholder="{{ $emptyLabel }}">{{ $triggerLabel }}</output>
             @else

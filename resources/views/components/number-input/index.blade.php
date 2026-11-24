@@ -1,4 +1,4 @@
-@props(['value', 'initialValue', 'min' => null, 'max' => null, 'step' => 1])
+@props(['size' => 'default', 'value', 'initialValue', 'min' => null, 'max' => null, 'step' => 1])
 @php
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'number-input', get_defined_vars(), ['min' => $min, 'max' => $max, 'step' => $step]);
     $disabled = $binding->config['disabled'];
@@ -14,7 +14,7 @@
         @if($binding->key) wire:key="{{ $binding->key }}" @endif
         x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
         {{ $attributes->except(['class', 'wire:key', 'id', ...array_keys($fieldAttributes->all())])->class('ui-number-input-body') }}>
-        <x-ui::input-group>
+        <x-ui::input-group :size="$size">
         <x-ui::input-group.addon>
         <x-ui::input-group.button size="icon-xs" x-on:click="adjust(-1)" x-bind:disabled="config.disabled || config.readonly || (config.min !== null && value !== null && value <= config.min)" :disabled="$disabled || $readonly || ($min !== null && $binding->config['value'] !== null && $binding->config['value'] <= $min)"
             :aria-label="__('ui::ui.decrease')"><x-ui::icon name="minus" /></x-ui::input-group.button>

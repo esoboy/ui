@@ -1,10 +1,11 @@
-@props(['value', 'initialValue', 'multiple' => false, 'selectParents' => false, 'nodes' => [], 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
+@props(['size' => 'default', 'value', 'initialValue', 'multiple' => false, 'selectParents' => false, 'nodes' => [], 'placeholder' => '', 'emptyTitle' => null, 'emptyDescription' => null])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'cascader', get_defined_vars()))
-<div {{ $attributes->only('class')->class('ui-cascader ui-cascader-field') }}>
+<div {{ $attributes->only('class')->class('ui-cascader ui-cascader-field')->merge(['data-size' => $size]) }}>
     {!! \Livewire\Livewire::mount(
         'ui::cascader',
         [
             ...$binding->parameters,
+            'size' => $size,
             'emptyTitle' => $emptyTitle,
             'emptyDescription' => $emptyDescription,
             'multiple' => $multiple,

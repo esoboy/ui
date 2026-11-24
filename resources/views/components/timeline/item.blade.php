@@ -1,2 +1,3 @@
 @blaze
-<li {{ $attributes->class('ui-timeline-item') }}>{{ $slot }}</li>
+@props(['status' => null])
+<li {{ $attributes->class(['ui-timeline-item', \Esoboy\Ui\Support\ComponentStatus::cssClass($status)]) }}>{{ $slot }}</li>
