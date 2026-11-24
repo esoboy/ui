@@ -11,6 +11,7 @@
         <div class="ui-editor-external-toolbar">{{ $toolbar }}</div>
     @endisset
     @assets
+        <link rel="stylesheet" href="{{ \Esoboy\Ui\Support\Assets::url('editor.css') }}" data-navigate-once>
         <script src="{{ \Esoboy\Ui\Support\Assets::url('editor.js') }}" data-navigate-once></script>
     @endassets
     <div x-data="uiEditor()"

@@ -6,10 +6,7 @@
     $scope = $attributes->get('id') ?? $selectionModel ?? $layoutModel ?? $sortModel ?? 'table';
 @endphp
 <div {{ $attributes->whereDoesntStartWith('wire:model')->class('ui-data-table') }}
-    x-data="{
-        widths: {},
-        measure(head) { this.widths[head.dataset.widthVar] = head.getBoundingClientRect().width + 'px' }
-    }" x-bind:style="widths" data-selection-model="{{ $selectionModel }}">
+    x-data="uiDataTable" x-bind:style="widths" data-selection-model="{{ $selectionModel }}">
     <div class="ui-data-table-container">
         @isset($toolbar)
             <div class="ui-data-table-toolbar">{{ $toolbar }}</div>

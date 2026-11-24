@@ -4,37 +4,16 @@
     $panelId = $this->getId().'-time';
 @endphp
 <div class="ui-time-panel" wire:key="time-panel-{{ count($units) }}{{ $awaitingDate ? '-awaiting-date' : '' }}"
-    x-data="{
-        active: null,
-        tabStop(option) {
-            const previous = option.parentElement.querySelector('[tabindex=&quot;0&quot;]')
-            if (previous) previous.tabIndex = -1
-            option.tabIndex = 0
-        },
-        revealTime(focus = false) {
-            const unit = this.active
-            this.$nextTick(() => {
-                const panel = this.$refs[unit]
-                if (!panel?.getClientRects().length) return
-                const option = panel.querySelector('[aria-selected=true]') ?? panel.querySelector('button')
-                const viewport = option.closest('.ui-scroll-area-viewport')
-                viewport.scrollTop += option.getBoundingClientRect().top - viewport.getBoundingClientRect().top
-                    - (viewport.clientHeight - option.offsetHeight) / 2
-                this.tabStop(option)
-                option.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-                if (focus) option.focus({ preventScroll: true })
-            })
-        },
-    }"
-    x-on:keydown.stop x-effect="if (!opened) active = null; else if (active) revealTime()">
+    x-data="uiTimePanel"
+    x-on:keydown.stop x-effect="syncUnit(opened)">
     <div class="ui-time-segments" role="group" aria-label="{{ __('ui::ui.select_time') }}"
-        x-on:keydown.arrow-down.prevent="active = $event.target.dataset.value; revealTime(true)">
+        x-on:keydown.arrow-down.prevent="openUnit($event.target.dataset.value)">
         @foreach ($units as $index => $unit)
             @unless ($loop->first)<span class="ui-time-colon" aria-hidden="true">:</span>@endunless
             <button class="ui-time-segment" type="button" data-value="{{ $unit }}" id="{{ $panelId }}-{{ $unit }}"
                 aria-controls="{{ $panelId }}-{{ $unit }}-options" @disabled($awaitingDate)
                 x-ref="{{ $unit }}Trigger" x-bind:aria-expanded="active === '{{ $unit }}'"
-                x-on:click="active = active === '{{ $unit }}' ? null : '{{ $unit }}'; if (active && $event.detail === 0) revealTime(true)">
+                x-on:click="toggleUnit($el.dataset.value, $event.detail === 0)">
                 <span class="ui-time-digits">{{ $parts[$index] ?? '––' }}</span>
                 <span>{{ __('ui::ui.'.$unit) }}</span>
             </button>
@@ -47,7 +26,7 @@
                 <div role="listbox" aria-label="{{ __('ui::ui.'.$unit) }}" class="ui-time-picker-grid" data-time-grid="{{ $unit }}"
                     x-data="uiOptions('button')" x-on:keydown="navigateGrid($event, 5)"
                     x-on:focusin="tabStop($event.target)"
-                    x-on:click="if ($event.target.matches('button:enabled')) { active = null; $nextTick(() => $refs.{{ $unit }}Trigger.focus()) }">
+                    x-on:click="finishUnit($event.target, $el.dataset.timeGrid)">
                     @foreach (range(0, $unit === 'hour' ? 23 : 59) as $number)
                         @php($digits = sprintf('%02d', $number))
                         <button type="button" role="option" aria-selected="{{ ($parts[$index] ?? null) === $digits ? 'true' : 'false' }}"

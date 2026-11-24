@@ -5,7 +5,7 @@
         <div class="ui-tree-row" role="treeitem" aria-level="{{ $row['level'] }}"
             @if (! $row['branch'] || $selectParents) aria-selected="{{ $this->isSelected($row['value']) ? 'true' : 'false' }}" @endif
             @if ($row['branch']) aria-expanded="{{ $active ? 'true' : 'false' }}" @endif
-            data-node-row style="--ui-level: {{ $row['level'] }}" wire:key="node-{{ $row['value'] }}">
+            data-node-row style="--level: {{ $row['level'] }}" wire:key="node-{{ $row['value'] }}">
             @include('ui::livewire.partials.tree-node', ['browseDisabled' => $disabled, 'collapsible' => true])
         </div>
     @endforeach

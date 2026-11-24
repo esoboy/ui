@@ -1,1 +1,1 @@
-<span {{ $attributes->class('ui-context-menu-shortcut') }}>{{ $slot }}</span>
+<span {{ $attributes->class('ui-context-menu-shortcut ui-menu-shortcut') }}>{{ $slot }}</span>

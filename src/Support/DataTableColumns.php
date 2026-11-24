@@ -59,7 +59,7 @@ final class DataTableColumns
             $keys = array_keys($groups[$side]);
             $widths = [];
             foreach ($side === 'end' ? array_reverse($keys) : $keys as $key) {
-                $variable = '--ui-dt-width-'.bin2hex($key);
+                $variable = '--dt-width-'.bin2hex($key);
                 $this->ordered[$key]['widthVariable'] = $variable;
                 $this->ordered[$key]['inset'] = $widths ? 'calc('.implode(' + ', $widths).')' : '0px';
                 $widths[] = 'var('.$variable.', 0px)';

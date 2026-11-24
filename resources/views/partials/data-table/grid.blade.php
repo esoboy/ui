@@ -2,9 +2,10 @@
     <x-ui::table.header>
         <x-ui::table.row>
             @if ($selectionModel)
+                @php($allSelected = $selectableKeys && count($currentSelection) === count($selectableKeys))
                 <x-ui::table.head class="ui-table-selection-cell">
                     <x-ui::checkbox :aria-label="__('ui::ui.table_select_page')"
-                        :checked="$selectableKeys && count($currentSelection) === count($selectableKeys)"
+                        :checked="$allSelected" :x-bind:checked="$allSelected ? 'true' : 'false'"
                         :indeterminate="count($currentSelection) > 0 && count($currentSelection) < count($selectableKeys)"
                         :disabled="! $selectableKeys" :data-page-keys="json_encode(array_values($selectableKeys), JSON_THROW_ON_ERROR)"
                         x-on:change="

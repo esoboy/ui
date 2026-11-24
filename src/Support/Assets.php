@@ -14,6 +14,7 @@ final class Assets
     private const TYPES = [
         'ui.js' => 'text/javascript; charset=utf-8',
         'editor.js' => 'text/javascript; charset=utf-8',
+        'editor.css' => 'text/css; charset=utf-8',
     ];
 
     public static function url(string $file): string

@@ -1,1 +1,1 @@
-<div {{ $attributes->class('ui-collapsible-content') }} data-ui-panel x-bind:id="$id('ui-collapsible')" x-bind:data-panel-open="opened ? '' : null" x-show="opened" x-cloak>{{ $slot }}</div>
+<div {{ $attributes->class('ui-collapsible-content') }} data-ui-panel data-ui-disclosure-panel x-bind:id="$id('ui-collapsible')" x-bind:data-panel-open="opened ? '' : null" x-show="opened" x-cloak>{{ $slot }}</div>

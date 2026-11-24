@@ -1,4 +1,4 @@
-<div data-disabled="{{ $disabled ? 'true' : 'false' }}" data-ui-overlay x-data="uiCombobox" x-on:keydown="navigate($event)"
+<div data-disabled="{{ $disabled ? 'true' : 'false' }}" data-ui-overlay x-data="{{ ($paginated ?? false) ? 'uiIconSelect' : 'uiCombobox' }}" x-on:keydown="navigate($event)"
     @if ($paginated ?? false) data-confirmed-icon="{{ $this->current }}" x-on:input="editIconQuery($event.target.value)" x-on:click="chooseIcon($event)" @endif
     x-on:pointerdown.capture="if (!opened) $el.toggleAttribute('data-touch', $event.pointerType === 'touch')"
     x-on:keydown.capture="if (!opened) $el.removeAttribute('data-touch')"
@@ -18,7 +18,7 @@
     @else
         @include('ui::livewire.partials.combobox-input')
     @endif
-    <div id="{{ $this->getId() }}-popup" data-match-trigger data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-align-offset="{{ $alignOffset }}" data-side-offset="{{ $sideOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" class="ui-combobox-content ui-popup ui-list-popup {{ $popupClass }}"
+    <div id="{{ $this->getId() }}-popup" data-match-trigger="0" data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-align-offset="{{ $alignOffset }}" data-side-offset="{{ $sideOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" class="ui-combobox-content ui-popup ui-list-popup {{ $popupClass }}"
         x-on:toggle="toggled($event); if ($event.target === $el && $event.newState === 'closed') {{ ($paginated ?? false) ? 'finishBrowsing()' : '$wire.finishSearch()' }}"
         x-on:pointermove="highlightOption($event.target.closest('[role=option]'), true)" x-on:pointerleave="if (pointingToOption) highlightOption(null)">
         @if($searchInPopup)@include('ui::livewire.partials.combobox-input')@endif

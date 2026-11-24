@@ -13,19 +13,7 @@
 
     @if ($jumpable && $paginator instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
         <div class="ui-pagination-jump" data-page-name="{{ $paginator->getPageName() }}"
-            data-page-url="{{ $paginator->url(1) }}" x-data="{
-                jump() {
-                    const input = this.$refs.number
-                    if (!input.reportValidity()) return
-                    @if ($live)
-                        this.$wire.gotoPage(input.valueAsNumber, this.$root.dataset.pageName)
-                    @else
-                        const url = new URL(this.$root.dataset.pageUrl, location.href)
-                        url.searchParams.set(this.$root.dataset.pageName, input.value)
-                        location.assign(url)
-                    @endif
-                }
-            }">
+            data-page-url="{{ $paginator->url(1) }}" x-data="uiPagination(@js($live))">
             <span aria-hidden="true">{{ __('ui::ui.pagination_jump_to') }}</span>
             <x-ui::input-group>
                 <x-ui::input-group.input type="number" x-ref="number" x-on:keydown.enter.stop.prevent="jump()" form="" name="pageNumber"

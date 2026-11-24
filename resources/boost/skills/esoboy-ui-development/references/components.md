@@ -386,7 +386,7 @@
 ## progress
 
 ```blade
-<x-ui::progress :value="65" aria-label="完成度" class="[--ui-progress-fill:var(--color-success)]" />
+<x-ui::progress :value="65" aria-label="完成度" class="[--fill:var(--color-success)]" />
 ```
 
 ## qr-code
