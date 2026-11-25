@@ -40,7 +40,7 @@ final class DataTable extends Component
      */
     public function __construct(
         iterable $rows,
-        array $columns,
+        public readonly array $columns,
         public readonly ?string $sortModel = null,
         public readonly ?string $layoutModel = null,
         private readonly ?string $rowKey = null,

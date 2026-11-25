@@ -41,18 +41,6 @@ class IconSelect extends Combobox
         $this->browsePage = max(1, min($page, $this->lastResultPage));
     }
 
-    public function commitIcon(?string $name): void
-    {
-        // A live parent can normalize or reject the proposed value in this same request.
-        if ($this->mode === 'bound' && $this->value !== $name) {
-            $this->finishSearch();
-        } elseif ($name === null) {
-            $this->clearSelection();
-        } else {
-            $this->choose($name);
-        }
-    }
-
     #[Computed]
     public function lastResultPage(): int
     {
@@ -64,6 +52,15 @@ class IconSelect extends Combobox
     public function pageResults(): array
     {
         return array_slice($this->results, ($this->resultPage - 1) * self::PAGE_SIZE, self::PAGE_SIZE);
+    }
+
+    public function confirmIcon(string $name): void
+    {
+        if ($this->value === $name) {
+            $this->choose($name);
+        } else {
+            $this->finishSearch();
+        }
     }
 
     public function finishSearch(): void

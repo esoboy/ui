@@ -4,7 +4,7 @@
             {{ $attributes->whereStartsWith('aria-')->class('ui-select-control') }} aria-haspopup="dialog"
             :data-size="$size" :data-placeholder="$this->label === '' ? true : null"><span class="ui-select-value">{{ $this->label !== '' ? $this->label : ($placeholder !== '' ? $placeholder : __('ui::ui.select')) }}</span><x-ui::icon
                 name="chevron-down" class="ui-select-chevron" /></x-ui::button></x-ui::select.trigger>
-    <x-ui::popover.content id="{{ $this->getId() }}-popup" align="start" data-match-trigger class="ui-list-popup">
+    <x-ui::popover.content id="{{ $this->getId() }}-popup" align="start" data-match-trigger class="ui-list-popup ui-popup-centered">
         <x-ui::scroll-area orientation="horizontal" class="ui-cascader-scroll" tabindex="-1">
             <div class="ui-cascader-columns">
                 @forelse ($this->columns as $column)

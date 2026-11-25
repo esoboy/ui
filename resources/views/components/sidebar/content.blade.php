@@ -1,4 +1,4 @@
 <div class="ui-sidebar-gap" aria-hidden="true"></div>
-<dialog {{ $attributes->class('ui-sidebar-content group peer') }} data-ui-panel x-bind:id="$id('ui-sidebar')" x-bind:role="mobile ? 'dialog' : 'complementary'"
+<dialog {{ $attributes->class('ui-sidebar-content group peer') }} data-ui-panel @unless($attributes->has('id')) x-bind:id="$id('ui-sidebar')" @endunless x-bind:role="mobile ? 'dialog' : 'complementary'"
     x-bind:data-collapsible="!mobile && !opened ? $root.dataset.collapsible : null"
     x-bind:aria-modal="mobile && opened ? 'true' : null" x-on:click="backdrop($event)" x-on:close="closed()" x-on:cancel.prevent="close()"><div class="ui-sidebar-inner">{{ $slot }}</div></dialog>

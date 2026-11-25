@@ -1,2 +1,2 @@
-@aware(['value' => null, 'max' => 100])
-<span {{ $attributes->class('ui-progress-value') }}>{{ $value === null ? '' : round($value / $max * 100).'%' }}</span>
+@aware(['progress' => null])
+<span {{ $attributes->class('ui-progress-value') }}>{{ $progress?->value === null ? '' : round($progress->value / $progress->max * 100).'%' }}</span>

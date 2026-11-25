@@ -1,5 +1,5 @@
-<form novalidate wire:submit="submit" x-data="uiQuestionnaire"
-    x-on:keydown="navigate($event)" x-on:reset.prevent="$wire.resetAnswers()"
+<div role="group" x-data="uiQuestionnaire"
+    x-on:keydown="navigate($event)" x-on:reset.window="if ($event.target === ($el.querySelector('input[form]')?.form ?? $el.closest('form'))) $nextTick(() => { if (!$event.defaultPrevented) $wire.resetAnswers() })"
     x-on:questionnaire-focus.stop="focusItem($event.detail.invalid)"
     {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->class('ui-questionnaire-body') }}>
     @php
@@ -44,10 +44,10 @@
         @foreach ($answers as $name => $previous)
             @continue((! $readonly && $name === $question['name']) || $previous['status'] !== 'answered')
             @foreach ([...$previous['choices'], ...($previous['text'] !== '' ? [$previous['text']] : [])] as $value)
-                <input type="hidden" name="{{ $name }}" value="{{ $value }}" @disabled($disabled)>
+                <input type="hidden" wire:key="answer-{{ $uid }}-{{ $name }}-{{ $loop->index }}" {{ $attributes->only('form') }} name="{{ $name }}" value="{{ $value }}" @disabled($disabled)>
             @endforeach
         @endforeach
     @else
         @include('ui::partials.empty-state', ['emptyMessage' => 'questions', 'emptySize' => 'default', 'emptyIcon' => 'list-checks'])
     @endif
-</form>
+</div>

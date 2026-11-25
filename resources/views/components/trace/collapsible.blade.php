@@ -1,2 +1,2 @@
 @props(['initialOpen' => false])
-<div {{ $attributes->class('ui-trace-collapsible') }} data-ui-disclosure x-data="uiTraceDisclosure(@js($initialOpen))" x-modelable="opened" x-id="['ui-trace']">{{ $slot }}</div>
+@includeIsolated('ui::partials.panel-state', ['kind' => 'trace', 'initial' => $initialOpen, 'settings' => [], 'attributes' => $attributes, 'slot' => $slot])

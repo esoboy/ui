@@ -11,15 +11,15 @@
     'align' => 'start',
     'sideOffset' => 4,
     'alignOffset' => 0,
-    'alignItemWithTrigger' => false,
+    'classic' => false,
     'popupClass' => '',
     'emptyTitle' => null,
     'emptyDescription' => null,
 ])
 @php($size ??= \Esoboy\Ui\View\ButtonGroup::defaultSize())
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'select', get_defined_vars()))
-<div {{ $attributes->only('class')->class('ui-select ui-select-field') }}>
-    {!! \Livewire\Livewire::mount(
+<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class('ui-select ui-select-field') }}>
+    @livewire(
         'ui::select',
         [
             ...$binding->parameters,
@@ -28,7 +28,7 @@
             'align' => $align,
             'sideOffset' => $sideOffset,
             'alignOffset' => $alignOffset,
-            'alignItemWithTrigger' => $alignItemWithTrigger,
+            'classic' => $classic,
             'popupClass' => $popupClass,
             'multiple' => $multiple,
             'required' => $required,
@@ -38,10 +38,9 @@
             'emptyTitle' => $emptyTitle,
             'emptyDescription' => $emptyDescription,
         ],
-        $binding->key,
-    ) !!}
+        key($binding->key))
     {{ $slot }}
     @isset($footer)
         <div class="ui-select-footer">{{ $footer }}</div>
     @endisset
-</div>
+</{{ $binding->containerTag }}>

@@ -20,17 +20,17 @@
             @elseif ($pagination === 'fraction')
                 <div class="ui-carousel-fraction" aria-live="polite" aria-atomic="true" aria-label="{{ __('ui::ui.pagination') }}">
                     @for ($page = 1; $page <= $count; $page++)
-                        <span x-show="current === {{ $page }}">{{ $page }}</span>
+                        <span wire:key="current-{{ $page }}" x-show="current === {{ $page }}">{{ $page }}</span>
                     @endfor
                     <span aria-hidden="true">/</span>
                     @for ($page = 1; $page <= $count; $page++)
-                        <span x-show="pages === {{ $page }}">{{ $page }}</span>
+                        <span wire:key="total-{{ $page }}" x-show="pages === {{ $page }}">{{ $page }}</span>
                     @endfor
                 </div>
             @elseif ($pagination !== 'none')
                 <div class="ui-carousel-pagination" data-mode="{{ $pagination }}" role="group" aria-label="{{ __('ui::ui.pagination') }}">
                     @for ($page = 1; $page <= $count; $page++)
-                        <x-ui::carousel.page :page="$page">
+                        <x-ui::carousel.page wire:key="indicator-{{ $page }}" :page="$page">
                             @if ($pagination === 'dots')<span class="ui-carousel-dot" aria-hidden="true"></span>@else{{ $page }}@endif
                         </x-ui::carousel.page>
                     @endfor

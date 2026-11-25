@@ -1,0 +1,1 @@
+<div {{ $attributes->whereDoesntStartWith('wire:model')->class('ui-collapsible') }} data-ui-disclosure x-data="uiDisclosure" x-id="['ui-collapsible']" x-bind:data-panel-open="opened ? '' : null">{{ $slot }}</div>

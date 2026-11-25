@@ -13,8 +13,8 @@
     'emptyDescription' => null,
 ])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'questionnaire', get_defined_vars()))
-<div {{ $attributes->only('class')->class('ui-questionnaire ui-questionnaire-field') }}>
-    {!! \Livewire\Livewire::mount(
+<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class('ui-questionnaire ui-questionnaire-field') }}>
+    @livewire(
         'ui::questionnaire',
         [
             ...$binding->parameters,
@@ -29,7 +29,6 @@
             'emptyTitle' => $emptyTitle,
             'emptyDescription' => $emptyDescription,
         ],
-        $binding->key,
-    ) !!}
+        key($binding->key))
     {{ $slot }}
-</div>
+</{{ $binding->containerTag }}>

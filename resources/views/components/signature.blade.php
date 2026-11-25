@@ -1,28 +1,16 @@
-@props(['value', 'initialValue'])
-@php
-    $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'signature', get_defined_vars(), [
-        'maxStrokes' => \Esoboy\Ui\Support\DrawingValue::MAX_STROKES,
-        'maxPoints' => \Esoboy\Ui\Support\DrawingValue::MAX_POINTS,
-    ]);
-    $strokes = \Esoboy\Ui\Support\DrawingValue::signature($binding->config['value']);
-@endphp
-<div {{ $attributes->only('class')->class('ui-signature ui-signature-field') }}>
-    <div x-data="uiSignature" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
-        @if($binding->key) wire:key="{{ $binding->key }}" @endif
-        x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)"
-        {{ $attributes->except(['class', 'wire:key', 'name'])->merge(['id' => $binding->id])->class('ui-signature-body') }}>
-        <div class="ui-signature-surface" data-ui-signature-surface>
+@props(['initialValue' => null, 'disabled' => false, 'readonly' => false])
+@php($strokes = \Esoboy\Ui\Support\DrawingValue::signature($initialValue))
+<div {{ $attributes->whereDoesntStartWith(['wire:model', 'x-model'])->except(['name', 'value'])->class('ui-signature ui-signature-field') }}
+    @disabled($disabled) @readonly($readonly)>
+    <fieldset class="ui-signature-body" x-data="uiSignature(@js($strokes), {{ \Esoboy\Ui\Support\DrawingValue::MAX_STROKES }}, {{ \Esoboy\Ui\Support\DrawingValue::MAX_POINTS }})"
+        x-on:reset.window.capture="if ($event.target === $el.form) $nextTick(() => { if (!$event.defaultPrevented) reset() })"
+        {{ $attributes->only('form') }} @disabled($disabled || $readonly)>
+        <div class="ui-signature-surface" data-ui-signature-surface aria-disabled="{{ $disabled || $readonly ? 'true' : 'false' }}">
             <canvas wire:ignore aria-label="{{ $attributes->get('aria-label', __('ui::ui.signature')) }}"
-                x-on:pointerdown.prevent="start($event)" x-on:pointermove.prevent="move($event)"
-                x-on:pointerup="finish($event)" x-on:pointercancel="cancel($event)" x-on:lostpointercapture="cancel($event)"
-                x-bind:aria-disabled="config.disabled || config.readonly"></canvas>
+                x-on:pointerdown.prevent="start($event)" x-on:pointermove.prevent="$root.disabled ? cancel($event) : move($event)"
+                x-on:pointerup="$root.disabled ? cancel($event) : finish($event)" x-on:pointercancel="cancel($event)" x-on:lostpointercapture="cancel($event)"></canvas>
         </div>
-        <x-ui::button variant="outline" x-on:click="clear()" :disabled="$binding->config['disabled'] || $binding->config['readonly']"
-            x-bind:disabled="config.disabled || config.readonly">{{ __('ui::ui.clear') }}</x-ui::button>
-        @if ($attributes->hasAny(['name', 'form']))
-            <input type="hidden" {{ $attributes->only(['name', 'form']) }} value="{{ json_encode($strokes) }}"
-                x-bind:value="JSON.stringify(value ?? [])" @disabled($binding->config['disabled'])>
-        @endif
-    </div>
+        <x-ui::button variant="outline" x-on:click="reset([])">{{ __('ui::ui.clear') }}</x-ui::button>
+    </fieldset>
     {{ $slot }}
 </div>

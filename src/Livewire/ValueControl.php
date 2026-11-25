@@ -12,6 +12,8 @@ use Livewire\Component;
 /** @property-read mixed $current */
 abstract class ValueControl extends Component
 {
+    use ForwardsControlAttributes;
+
     #[Modelable]
     public mixed $value = null;
 

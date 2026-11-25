@@ -48,9 +48,15 @@ class TagsInput extends ValueControl
         unset($this->tags);
     }
 
-    public function remove(string $tag): void
+    public function remove(string $tag, ?int $index = null): void
     {
-        $this->changeValue(array_values(array_filter($this->tags, fn (string $item): bool => $item !== $tag)));
+        $tags = $this->tags;
+        $index ??= array_search($tag, $tags, true);
+        if ($index === false || ($tags[$index] ?? null) !== $tag) {
+            return;
+        }
+        array_splice($tags, $index, 1);
+        $this->changeValue($tags);
         unset($this->tags);
     }
 

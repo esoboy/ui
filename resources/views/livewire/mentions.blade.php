@@ -1,13 +1,12 @@
-<div data-mention-query="{{ json_encode($this->queryToken, JSON_THROW_ON_ERROR) }}"
+<div
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby'])->class('ui-mentions-body') }}
-    x-data="uiMentions(@js($mode))" x-on:keydown="navigate($event)">
-    <x-ui::textarea :size="$size" :value="$this->current ?? ''" x-ref="input" x-on:input="input($event)" :disabled="$disabled"
+    x-data="uiOptions" x-on:keydown="navigate($event)">
+    <x-ui::textarea :size="$size" :value="$this->current ?? ''" wire:model.live.debounce.200ms="value" :disabled="$disabled"
         :readonly="$readonly"
         {{ $attributes->only(['id', 'name', 'form'])->merge($attributes->whereStartsWith('aria-')->all()) }} />
     @if ($this->queryToken !== null && ! $disabled && ! $readonly)
         <div class="ui-mentions-suggestions"
-            wire:key="mentions-{{ $this->getId() }}-{{ md5($this->queryToken) }}"
-            x-show="query === @js($this->queryToken) && !$wire.disabled && !$wire.readonly" x-cloak>
+            wire:key="mentions-{{ $this->getId() }}-{{ md5($this->queryToken) }}">
             @if ($this->suggestions === [])
                 @include('ui::partials.empty-state', ['emptyMessage' => $this->queryToken === '' ? 'members' : 'member_matches'])
             @else

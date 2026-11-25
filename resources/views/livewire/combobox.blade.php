@@ -1,5 +1,4 @@
-<div data-disabled="{{ $disabled ? 'true' : 'false' }}" data-ui-overlay x-data="{{ ($paginated ?? false) ? 'uiIconSelect' : 'uiCombobox' }}" x-on:keydown="navigate($event)"
-    @if ($paginated ?? false) data-confirmed-icon="{{ $this->current }}" x-on:input="editIconQuery($event.target.value)" x-on:click="chooseIcon($event)" @endif
+<div data-disabled="{{ $disabled ? 'true' : 'false' }}" @if($paginated ?? false) data-confirmed-icon="{{ $this->current }}" @endif data-ui-overlay x-data="uiCombobox" x-on:keydown="navigate($event)"
     x-on:pointerdown.capture="if (!opened) $el.toggleAttribute('data-touch', $event.pointerType === 'touch')"
     x-on:keydown.capture="if (!opened) $el.removeAttribute('data-touch')"
     x-on:focusout="if (!$root.contains($event.relatedTarget)) close()"
@@ -9,7 +8,7 @@
         @php($triggerLabel = $this->label !== '' ? $this->label : $emptyLabel)
         <x-ui::popover.trigger><x-ui::button variant="outline" class="ui-combobox-trigger" :size="$size" data-ui-anchor-box :disabled="$disabled" :id="$attributes->get('id')" {{ $attributes->whereStartsWith('aria-') }}>
             @if ($paginated ?? false)
-                <output role="presentation" x-ref="iconCaption" data-placeholder="{{ $emptyLabel }}">{{ $triggerLabel }}</output>
+                <output role="presentation" wire:text="{{ $mode === 'controlled' ? 'externalValue' : 'value' }} ?? @js($emptyLabel)">{{ $triggerLabel }}</output>
             @else
                 {{ $triggerLabel }}
             @endif
@@ -18,8 +17,10 @@
     @else
         @include('ui::livewire.partials.combobox-input')
     @endif
-    <div id="{{ $this->getId() }}-popup" data-match-trigger="0" data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-align-offset="{{ $alignOffset }}" data-side-offset="{{ $sideOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto" class="ui-combobox-content ui-popup ui-list-popup {{ $popupClass }}"
-        x-on:toggle="toggled($event); if ($event.target === $el && $event.newState === 'closed') {{ ($paginated ?? false) ? 'finishBrowsing()' : '$wire.finishSearch()' }}"
+    <div id="{{ $this->getId() }}-popup" @if ($paginated ?? false) data-match-trigger="0" @endif
+        data-side="{{ $side }}" data-preferred-side="{{ $side }}" data-align="{{ $align }}" data-align-offset="{{ $alignOffset }}" data-side-offset="{{ $sideOffset }}" data-align-trigger="{{ $alignItemWithTrigger ? 'true' : 'false' }}" data-ui-panel popover="auto"
+        @class(['ui-combobox-content ui-popup ui-list-popup', 'ui-icon-select-content ui-popup-centered' => $paginated ?? false, $popupClass])
+        x-on:toggle="finishBrowsing($event, @js($paginated ?? false))"
         x-on:pointermove="highlightOption($event.target.closest('[role=option]'), true)" x-on:pointerleave="if (pointingToOption) highlightOption(null)">
         @if($searchInPopup)@include('ui::livewire.partials.combobox-input')@endif
         @php($resultPage = ($paginated ?? false) ? $this->resultPage : null)
@@ -45,9 +46,31 @@
         @endif
     </div>
     @if (($paginated ?? false) && $attributes->get('name'))
-        <input type="hidden" x-ref="iconField" name="{{ $attributes->get('name') }}" value="{{ $this->current }}"
-            {{ $attributes->only('form') }} @disabled($disabled || $this->current === null)>
+        <input type="hidden"  name="{{ $attributes->get('name') }}" value="{{ $this->current }}" wire:bind:value="{{ $mode === 'controlled' ? 'externalValue' : 'value' }}"
+            {{ $attributes->only('form') }} @disabled($disabled || $this->current === null) wire:bind:disabled="disabled || {{ $mode === 'controlled' ? 'externalValue' : 'value' }} == null">
     @else
         @include('ui::livewire.partials.selection-input')
     @endif
 </div>
+
+@if ($paginated ?? false)
+    @script
+    <script>
+        $wire.$js('pick', async (name) => {
+            if ($wire.disabled || $wire.readonly) return
+            if ($wire.mode === 'controlled') return $wire.choose(name)
+            const confirmed = $wire.$el.dataset.confirmedIcon || null
+            $wire.query = $wire.searchInPopup ? '' : name
+            $wire.value = name
+            try {
+                await $wire.confirmIcon(name)
+            } catch {
+                if ($wire.$el.isConnected && $wire.value === name) {
+                    $wire.value = confirmed
+                    $wire.query = $wire.searchInPopup ? '' : (confirmed ?? '')
+                }
+            }
+        })
+    </script>
+    @endscript
+@endif

@@ -3,12 +3,19 @@
 namespace Esoboy\Ui;
 
 use Esoboy\Ui\Support\Assets;
+use Esoboy\Ui\View\Accordion;
+use Esoboy\Ui\View\AccordionItem;
 use Esoboy\Ui\View\ButtonGroup;
 use Esoboy\Ui\View\Carousel;
 use Esoboy\Ui\View\DataTable;
 use Esoboy\Ui\View\DataTableCell;
 use Esoboy\Ui\View\DataTableSelectionToolbar;
 use Esoboy\Ui\View\Pagination;
+use Esoboy\Ui\View\Progress;
+use Esoboy\Ui\View\RadioGroup;
+use Esoboy\Ui\View\Tabs;
+use Esoboy\Ui\View\ToggleGroup;
+use Esoboy\Ui\View\Tour;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -23,7 +30,14 @@ final class UiServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom($root.'/lang', 'ui');
         Blade::include('ui::assets', 'uiScript');
 
+        Blade::component(RadioGroup::class, 'ui::radio-group');
+        Blade::component(ToggleGroup::class, 'ui::toggle-group');
+        Blade::component(Accordion::class, 'ui::accordion');
+        Blade::component(AccordionItem::class, 'ui::accordion.item');
+        Blade::component(Progress::class, 'ui::progress');
         Blade::component(ButtonGroup::class, 'ui::button-group');
+        Blade::component(Tour::class, 'ui::tour');
+        Blade::component(Tabs::class, 'ui::tabs');
         Blade::component(Pagination::class, 'ui::pagination');
         Blade::component(Carousel::class, 'ui::carousel');
         Blade::component(DataTable::class, 'ui::data-table');

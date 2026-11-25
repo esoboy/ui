@@ -12,6 +12,9 @@ class Combobox extends PopupOptionControl
     use SearchesChoices;
 
     #[Reactive]
+    public bool $alignItemWithTrigger = false;
+
+    #[Reactive]
     public bool $clearable = false;
 
     #[Reactive]

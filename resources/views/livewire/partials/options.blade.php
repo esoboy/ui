@@ -6,12 +6,15 @@
     @php($previousGroup = $option['group'] ?? null)
     <button class="ui-{{ $optionSlot ?? 'select-option' }}" type="button" role="option" tabindex="-1"
         id="{{ $this->getId() }}-option-{{ md5(serialize($option['value'])) }}"
-        @if ($clientSelect ?? false) x-on:click="chooseOption(@js($option['value']))"
+        @if (($clientSelect ?? false) && !$multiple)
+            @if ($mode === 'controlled') wire:click="$dispatch('value-changed', { value: @js($option['value']) })"
+            @else wire:click="$set('value', @js($option['value']))" @endif
         @else wire:click="choose(@js($option['value']))" @endif
         @disabled($disabled || $readonly || $option['disabled'])
+        @if (($optionSlot ?? '') === 'command-item') x-on:pointerenter="if ($event.pointerType === 'mouse' && !$el.disabled) highlight($el)" @endif
         @if ($retainInputFocus ?? false) x-on:mousedown.prevent @endif
         aria-selected="{{ $this->isSelected($option['value']) ? 'true' : 'false' }}"
-        @if (!$multiple && ($popup ?? false)) x-on:click="close(true)" @endif wire:key="option-{{ get_debug_type($option['value']).'-'.$option['value'] }}">
+        @if (!$multiple && (($popup ?? false) || ($clientSelect ?? false))) x-on:click="@if($popup ?? false) choosing = true; @endif close(true)" @endif wire:key="option-{{ get_debug_type($option['value']).'-'.$option['value'] }}">
         @if (($optionSlot ?? 'select-option') === 'select-option')
             <span class="ui-option-text">@include('ui::livewire.partials.option-label', ['option' => $option])</span>
         @else

@@ -24,7 +24,7 @@
         </x-ui::pagination.button>
     </x-ui::pagination.item>
     @foreach ($pages as $number)
-        <x-ui::pagination.item>
+        <x-ui::pagination.item wire:key="page-{{ $paginator->getPageName() }}-{{ $number ?? 'gap-'.$loop->index }}">
             @if ($number === null)
                 <x-ui::pagination.ellipsis />
             @else

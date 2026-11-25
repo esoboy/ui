@@ -39,6 +39,13 @@ class Mentions extends ValueControl
         return array_values(array_filter(Options::validate($this->options), fn (array $option): bool => Str::contains(Str::lower($option['label']), $query) || Str::contains(Str::lower((string) $option['value']), $query)));
     }
 
+    public function updatedValue(mixed $value): void
+    {
+        if (! $this->disabled && ! $this->readonly) {
+            $this->dispatch('value-changed', value: $value);
+        }
+    }
+
     public function choose(string|int $value, string $query): void
     {
         if ($query !== $this->queryToken) {
@@ -57,6 +64,10 @@ class Mentions extends ValueControl
 
     public function render(): View
     {
+        if ($this->mode === 'controlled') {
+            $this->value = $this->externalValue;
+        }
+
         return view('ui::livewire.mentions');
     }
 }

@@ -4,7 +4,7 @@
             {{ $attributes->whereStartsWith('aria-')->class('ui-select-control') }} aria-haspopup="tree" :data-size="$size"
            ><span>{{ $this->label !== '' ? $this->label : ($placeholder !== '' ? $placeholder : __('ui::ui.select')) }}</span><x-ui::icon
                 name="chevron-down" /></x-ui::button></x-ui::select.trigger>
-    <x-ui::popover.content id="{{ $this->getId() }}-popup" align="start" data-match-trigger class="ui-list-popup">
+    <x-ui::popover.content id="{{ $this->getId() }}-popup" align="start" data-match-trigger class="ui-list-popup ui-popup-centered">
         <x-ui::scroll-area class="ui-list-scroll" tabindex="-1">
             @if ($this->visibleRows === [])
                 @include('ui::partials.empty-state', ['emptyMessage' => 'select_nodes'])

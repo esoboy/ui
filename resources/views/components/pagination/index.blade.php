@@ -11,15 +11,26 @@
     @endif
 
     @if ($jumpable && $paginator instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
-        <div class="ui-pagination-jump" data-page-name="{{ $paginator->getPageName() }}"
-            data-page-url="{{ $paginator->url(1) }}" x-data="uiPagination(@js($live))">
+        @php
+            $pageName = $paginator->getPageName();
+            $url = $paginator->url(1);
+            $jumpId = \Esoboy\Ui\Support\ControlAttributes::instanceName('jump');
+            $action = $paginator->path().(parse_url($url, PHP_URL_FRAGMENT) !== null ? '#'.parse_url($url, PHP_URL_FRAGMENT) : '');
+            parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+            unset($query[$pageName]);
+        @endphp
+        <div @unless($owner) x-data @endunless class="ui-pagination-jump" data-page-name="{{ $pageName }}" data-page-url="{{ $url }}">
             <span aria-hidden="true">{{ __('ui::ui.pagination_jump_to') }}</span>
+            @teleport('body')
+                @include('ui::partials.pagination-jump-form')
+            @endteleport
             <x-ui::input-group :size="$paginationSize">
-                <x-ui::input-group.input type="number" x-ref="number" x-on:keydown.enter.stop.prevent="jump()" form="" name="pageNumber"
+                <x-ui::input-group.input type="number" :id="$jumpId" :form="$jumpId.'-form'" :name="$pageName"
                     min="1" :max="$paginator->lastPage()" step="1" required :placeholder="$paginator->currentPage()"
                     :aria-label="__('ui::ui.pagination_page_number')" />
                 <x-ui::input-group.addon align="inline-end">
-                    <x-ui::input-group.button size="icon-xs" x-on:click="jump()" :aria-label="__('ui::ui.pagination_jump')" :title="__('ui::ui.pagination_jump')">
+                    <x-ui::input-group.button size="icon-xs" type="submit" :form="$jumpId.'-form'"
+                        :aria-label="__('ui::ui.pagination_jump')" :title="__('ui::ui.pagination_jump')">
                         <x-ui::icon name="corner-down-left" />
                     </x-ui::input-group.button>
                 </x-ui::input-group.addon>

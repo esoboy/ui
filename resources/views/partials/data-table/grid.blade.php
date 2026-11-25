@@ -5,15 +5,10 @@
                 @php($allSelected = $selectableKeys && count($currentSelection) === count($selectableKeys))
                 <x-ui::table.head class="ui-table-selection-cell">
                     <x-ui::checkbox :size="$size" :aria-label="__('ui::ui.table_select_page')"
-                        :checked="$allSelected" :x-bind:checked="$allSelected ? 'true' : 'false'"
-                        :indeterminate="count($currentSelection) > 0 && count($currentSelection) < count($selectableKeys)"
-                        :disabled="! $selectableKeys" :data-page-keys="json_encode(array_values($selectableKeys), JSON_THROW_ON_ERROR)"
-                        x-on:change="
-                            const model = $root.dataset.selectionModel
-                            const page = new Set(JSON.parse($el.dataset.pageKeys))
-                            const otherPages = $wire.$get(model).filter(id => !page.has(String(id)))
-                            $wire.$set(model, $el.checked ? [...otherPages, ...page] : otherPages)
-                        " />
+                        :checked="$allSelected" :disabled="! $selectableKeys"
+                        :data-page-keys="json_encode(array_values($selectableKeys), JSON_THROW_ON_ERROR)"
+                        x-effect="reflectSelection($el, $wire.$get($root.dataset.selectionModel))"
+                        x-on:change="selectPage($el)" x-on:blur="commitPage('blur')" x-on:keydown.enter="commitPage('keydown')" />
                 </x-ui::table.head>
             @endif
             @foreach ($layout->visible as $key => $column)
@@ -31,7 +26,7 @@
                                     <x-ui::icon :name="match ($direction) { 'asc' => 'arrow-up', 'desc' => 'arrow-down', default => 'chevrons-up-down' }" />
                                 </x-ui::button>
                             </x-ui::dropdown-menu.trigger>
-                            <x-ui::dropdown-menu.content align="start" :aria-label="$column['label']">
+                            <x-ui::dropdown-menu.content align="start" class="ui-popup-centered" :aria-label="$column['label']">
                                 @foreach (['default' => 'list', 'asc' => 'arrow-up-narrow-wide', 'desc' => 'arrow-down-wide-narrow'] as $option => $icon)
                                     <x-ui::dropdown-menu.item :aria-current="($direction ?? 'default') === $option ? 'true' : null"
                                         :wire:click="$dataTable->setValue($sortModel, $option === 'default' ? null : ['column' => $key, 'direction' => $option])">
@@ -53,7 +48,7 @@
             <x-ui::table.row wire:key="{{ $scope }}-row-{{ $id }}" :data-state="isset($selectedKeys[$id]) ? 'selected' : null">
                 @if ($selectionModel)
                     <x-ui::table.cell class="ui-table-selection-cell">
-                        <x-ui::checkbox :size="$size" :id="$scope.'-select-'.$id" wire:model.live="{{ $selectionModel }}" :value="(string) $id"
+                        <x-ui::checkbox :size="$size" :id="$scope.'-select-'.$id" data-ui-select-row {{ $attributes->whereStartsWith('wire:model') }} x-on:click.capture="prepareSelection()" :value="(string) $id"
                             :checked="isset($selectedKeys[$id])" :disabled="! isset($selectableKeys[$id])"
                             :aria-label="__('ui::ui.select_node', ['label' => $dataTable->rowLabel($record, $id)])" />
                     </x-ui::table.cell>

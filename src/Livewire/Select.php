@@ -3,11 +3,18 @@
 namespace Esoboy\Ui\Livewire;
 
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
 
+/**
+ * @property-read list<array{value: string|int|null, label: string, disabled: bool}> $formDefaults
+ */
 class Select extends PopupOptionControl
 {
+    #[Reactive]
+    public bool $classic = false;
+
     #[Reactive]
     public ?string $displayValue = null;
 
@@ -21,6 +28,40 @@ class Select extends PopupOptionControl
     {
         parent::mount($initialValue);
         $this->initialSelection = $this->current;
+    }
+
+    /** @return list<array{value: string|int|null, label: string, disabled: bool}> */
+    #[Computed]
+    public function formDefaults(): array
+    {
+        $defaults = [];
+        foreach ($this->selectionValues($this->initialSelection) as $id) {
+            if ($option = $this->optionFor($id)) {
+                $defaults[] = $option;
+            }
+        }
+
+        return $defaults;
+    }
+
+    /** @return list<array{value: string|int|null, label: string, disabled: bool}> */
+    #[Computed]
+    public function formChoices(): array
+    {
+        return [...$this->selectedChoices, ...array_filter($this->choices, fn ($option) => $option['value'] !== null && ! $this->isSelected($option['value']))];
+    }
+
+    public function resetSelection(): void
+    {
+        $valid = array_column($this->formDefaults, 'value');
+        $this->changeValue($this->multiple ? $valid : ($valid[0] ?? null));
+    }
+
+    public function updatedValue(mixed $value): void
+    {
+        if ($this->mode !== 'controlled') {
+            $this->dispatch('value-changed', value: $value);
+        }
     }
 
     public function updatedOptions(): void

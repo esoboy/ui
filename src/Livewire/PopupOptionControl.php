@@ -20,9 +20,6 @@ abstract class PopupOptionControl extends OptionControl
     public float $alignOffset = 0;
 
     #[Reactive]
-    public bool $alignItemWithTrigger = false;
-
-    #[Reactive]
     public string $popupClass = '';
 
     public function rendering(): void

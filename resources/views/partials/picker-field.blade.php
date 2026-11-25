@@ -5,15 +5,15 @@
     $target = 'ui-picker-'.hash('xxh128', ($owner ? $owner->getId() : '').'|'.$identity);
     [$prompt, $popupClass] = match ($picker) {
         'date-picker' => ['select_date', 'ui-date-popup'],
-        'time-picker' => ['select_time', 'ui-list-popup ui-time-popup'],
-        'datetime-picker' => ['select_datetime', 'ui-list-popup ui-date-popup'],
+        'time-picker' => ['select_time', 'ui-list-popup ui-time-popup ui-popup-centered'],
+        'datetime-picker' => ['select_datetime', 'ui-list-popup ui-date-popup ui-popup-centered'],
     };
 @endphp
-<div data-size="{{ $size }}" class="ui-{{ $picker }} ui-{{ $picker }}-field {{ $attributes->get('class') }}">
+<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only('wire:key') }} data-size="{{ $size }}" class="ui-{{ $picker }} ui-{{ $picker }}-field {{ $attributes->get('class') }}">
     <div class="ui-picker-overlay" data-ui-overlay x-data="uiPopover">
-        {!! \Livewire\Livewire::mount($picker === 'time-picker' ? 'ui::time-picker' : 'ui::date-picker', [
+        @livewire($picker === 'time-picker' ? 'ui::time-picker' : 'ui::date-picker', [
             ...$binding->parameters, ...$options, 'size' => $size, 'contentTarget' => $target,
-        ], $binding->key) !!}
+        ], key($binding->key))
         <x-ui::popover.content align="start" class="ui-picker-popup ui-{{ $picker }}-panel {{ $popupClass }}" :aria-label="__('ui::ui.'.$prompt)">
             {{-- The control updates its panel here. The caller owns the adjacent slot. --}}
             @if ($picker === 'datetime-picker')
@@ -32,4 +32,4 @@
     @if ($picker !== 'time-picker' && isset($footer))
         <div class="ui-{{ $picker }}-footer">{{ $footer }}</div>
     @endif
-</div>
+</{{ $binding->containerTag }}>

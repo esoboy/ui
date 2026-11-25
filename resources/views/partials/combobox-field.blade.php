@@ -23,8 +23,8 @@
     'emptyDescription' => null,
 ])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), $comboboxField, get_defined_vars()))
-<div {{ $attributes->only('class')->class(['ui-'.$comboboxField, 'ui-'.$comboboxField.'-field'])->merge(['data-size' => $size]) }}>
-    {!! \Livewire\Livewire::mount(
+<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class(['ui-'.$comboboxField, 'ui-'.$comboboxField.'-field'])->merge(['data-size' => $size]) }}>
+    @livewire(
         'ui::'.$comboboxField,
         [
             ...$binding->parameters,
@@ -48,10 +48,9 @@
             'emptyTitle' => $emptyTitle,
             'emptyDescription' => $emptyDescription,
         ],
-        $binding->key,
-    ) !!}
+        key($binding->key))
     {{ $slot }}
     @isset($footer)
         <div class="ui-{{ $comboboxField }}-footer">{{ $footer }}</div>
     @endisset
-</div>
+</{{ $binding->containerTag }}>

@@ -147,8 +147,10 @@
 ## cropper
 
 ```blade
-<x-ui::cropper id="example-cropper" name="crop" src="/demo-landscape.svg" alt="灰色山景" />
+<x-ui::cropper id="example-cropper" src="/demo-landscape.svg" alt="灰色山景" />
 ```
+
+保存时用 `await document.getElementById('example-cropper').getResult()` 取得所选区域的 PNG `Blob`。裁切按原图像素计算。跨域原图需要图片服务器允许当前页面通过 CORS 读取。
 
 ## data-table
 
@@ -441,6 +443,8 @@
 <x-ui::select id="example-select" :options="[['value' => 'reader', 'label' => '阅读者'], ['value' => 'editor', 'label' => '编辑者']]" aria-label="选择角色" />
 ```
 
+Select 默认将选中项与触发按钮对齐。添加布尔属性 `classic` 可让列表像下拉菜单一样从按钮边缘展开，例如 `<x-ui::select classic :options="$roles" />`。
+
 ## separator
 
 ```blade
@@ -465,7 +469,15 @@
 ## signature
 
 ```blade
-<x-ui::signature id="example-signature" name="signature" aria-label="signature" />
+<x-ui::signature id="example-signature" aria-label="签名" />
+```
+
+上传时主动读取已完成的笔迹，得到透明背景的 PNG。空白或清空后的签名返回 `null`。
+
+```js
+const signature = await document.getElementById('example-signature').getResult()
+const data = new FormData()
+if (signature) data.append('signature', signature, 'signature.png')
 ```
 
 ## skeleton

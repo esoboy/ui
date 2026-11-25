@@ -9,8 +9,13 @@ use Livewire\Livewire;
 /** Render-time contract for controls that do not need a Livewire child. */
 final readonly class NativeControl
 {
+    public string $containerTag;
+
     /** @param array<string, mixed> $config */
-    private function __construct(public ?string $key, public ?string $id, public array $config) {}
+    private function __construct(public string $key, public ?string $id, public array $config, public ComponentAttributeBag $loading)
+    {
+        $this->containerTag = $loading->isEmpty() ? 'div' : 'fieldset';
+    }
 
     /**
      * @param  array<string, mixed>  $props
@@ -29,7 +34,7 @@ final readonly class NativeControl
             'disabled' => (bool) $parameters['disabled'], 'readonly' => (bool) $parameters['readonly']];
         self::validate($component, $config);
 
-        return new self($binding->key, $parameters['id'], $config);
+        return new self($binding->key, $parameters['id'], $config, $binding->loading);
     }
 
     public function inputId(int $index): ?string
@@ -45,12 +50,7 @@ final readonly class NativeControl
     private static function validate(string $component, array $config): void
     {
         $value = $config['value'];
-        if ($component === 'rating') {
-            $max = filter_var($config['max'], FILTER_VALIDATE_INT);
-            if ($max === false || $max < 1 || ($value !== null && (filter_var($value, FILTER_VALIDATE_INT) === false || $value < 1 || $value > $max))) {
-                throw new InvalidArgumentException(__('ui::errors.rating'));
-            }
-        } elseif (in_array($component, ['number-input', 'slider'], true)) {
+        if (in_array($component, ['number-input', 'slider'], true)) {
             foreach (['min', 'max', 'step'] as $option) {
                 if ($config[$option] !== null && (! is_numeric($config[$option]) || ! is_finite((float) $config[$option]))) {
                     throw new InvalidArgumentException(__('ui::errors.numeric_bounds'));

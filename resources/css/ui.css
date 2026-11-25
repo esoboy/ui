@@ -1365,8 +1365,11 @@ dialog[data-ui-panel][data-ending]::backdrop {
     --enter-x: 0px;
     --enter-y: 0px;
     opacity: 0;
-    transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
+    transform-origin: var(--transform-origin, var(--origin-x, 50%) var(--origin-y, 50%));
     transition: outline-width var(--motion-duration) ease;
+}
+.ui-popup-centered {
+    transform-origin: var(--transform-origin, center);
 }
 .ui-list-popup {
     overflow: clip;
@@ -1827,6 +1830,7 @@ a.ui-button[aria-disabled='true'] {
 }
 @layer components {
 :where(.ui-checkbox) {
+    --checkbox-surface: var(--bg, transparent);
     --checked-border: initial;
     --indeterminate-bg: initial;
     --indeterminate-border: initial;
@@ -1835,8 +1839,16 @@ a.ui-button[aria-disabled='true'] {
 .ui-checkbox {
     @apply outline-none relative shrink-0 transition-colors flex size-4 items-center justify-center border
         rounded-[4px] appearance-none place-content-center
-        [background:var(--bg,transparent)]
+        [background:var(--checkbox-surface)]
         cursor-pointer border-[color:var(--border,var(--color-input))];
+    @variant ui-dark {
+        --checkbox-surface: var(--bg, var(--input-30));
+    }
+    @variant indeterminate {
+        background: var(--indeterminate-bg, var(--checkbox-surface));
+        border-color: var(--indeterminate-border, var(--border, var(--color-input)));
+        color: var(--indeterminate-fg, inherit);
+    }
     @variant aria-invalid {
         @apply ring-3 border-[color:var(--invalid-border,var(--color-destructive))]
             ring-[color:var(--invalid-ring,var(--destructive-20))];
@@ -1849,17 +1861,6 @@ a.ui-button[aria-disabled='true'] {
     }
     @variant group-has-disabled/field {
         @apply opacity-50;
-    }
-    @variant ui-dark {
-        background-color: var(--bg, var(--input-30));
-    }
-    @variant checked {
-        background-color: var(--checked-bg, var(--color-primary));
-        color: var(--checked-fg, var(--color-primary-foreground));
-        border-color: var(--checked-border, var(--color-primary));
-    }
-    @variant ui-dark:checked {
-        background-color: var(--checked-bg, var(--color-primary));
     }
     @variant aria-invalid:aria-checked {
         border-color: var(--invalid-border, var(--color-primary));
@@ -1880,15 +1881,15 @@ a.ui-button[aria-disabled='true'] {
     }
 }
 .ui-checkbox:checked:not(:indeterminate) {
-    background: var(--indeterminate-bg, var(--color-primary));
-    border-color: var(--indeterminate-border, var(--color-primary));
-    color: var(--indeterminate-fg, var(--color-primary-foreground));
+    background: var(--checked-bg, var(--color-primary));
+    border-color: var(--checked-border, var(--color-primary));
+    color: var(--checked-fg, var(--color-primary-foreground));
 }
 .ui-checkbox:is(:checked, :indeterminate)::before {
     content: '';
     width: 100%;
     height: 100%;
-    background: var(--indeterminate-bg, currentColor);
+    background: currentColor;
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m20 6-11 11-5-5'/%3E%3C/svg%3E")
         center / contain no-repeat;
 }
@@ -2112,7 +2113,7 @@ a.ui-button[aria-disabled='true'] {
 }
 @layer components {
 .ui-popover-content {
-    @apply text-body p-2.5 duration-100 origin-(--transform-origin) z-50 w-72 font-normal overflow-visible
+    @apply text-body p-2.5 duration-100 z-50 w-72 font-normal overflow-visible
         flex flex-col gap-2.5;
 }
 .ui-popover-header {
@@ -2132,7 +2133,7 @@ a.ui-button[aria-disabled='true'] {
 @layer components {
 .ui-tooltip-content {
     @apply text-caption min-w-0 [background:var(--panel-bg,var(--color-foreground))]
-        text-[color:var(--panel-fg,var(--color-background))] origin-(--transform-origin) z-50 max-w-xs
+        text-[color:var(--panel-fg,var(--color-background))] z-50 max-w-xs
         w-fit font-normal [border-width:0] overflow-visible [box-shadow:none] [outline:none] inline-flex
         items-center gap-1.5 rounded-md px-3 py-1.5 [--motion-duration:150ms];
     @variant has-[.ui-kbd] {
@@ -2396,7 +2397,7 @@ dialog:is(.ui-sheet-content, .ui-sidebar-content)::backdrop {
         [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0;
 }
 .ui-dropdown-menu-content {
-    @apply origin-(--transform-origin) z-50 min-w-32 w-(--anchor-width);
+    @apply z-50 min-w-32 w-(--anchor-width);
 }
 .ui-dropdown-menu-sub-content {
     @apply w-auto min-w-[96px];
@@ -2477,8 +2478,13 @@ dialog:is(.ui-sheet-content, .ui-sidebar-content)::backdrop {
     color: var(--option-focus-fg, var(--color-accent-foreground));
 }
 .ui-select-content {
-    @apply origin-(--transform-origin) w-(--anchor-width) data-[align-trigger=true]:animate-none isolate
-        z-50 max-w-none min-w-36 p-0;
+    --select-max-width: var(--available-width, calc(100vw - 1rem));
+    width: var(--anchor-width);
+    min-width: min(max(9rem, var(--anchor-width)), var(--select-max-width));
+    max-width: var(--select-max-width);
+    isolation: isolate;
+    z-index: 50;
+    padding: 0;
 }
 .ui-select-option {
     @apply [&_svg]:pointer-events-none [&_svg]:shrink-0 outline-hidden cursor-default
@@ -2933,14 +2939,13 @@ svg.ui-select-chevron {
     border-color: var(--item-border, var(--color-border));
 }
 .ui-accordion-item:not(:last-child) {
-    border-bottom: 1px solid var(--item-border, var(--color-border));
+    border-bottom-width: 1px;
 }
 .ui-accordion-summary {
     @apply font-medium text-body focus-visible:ring-3 px-0 [list-style:none] transition-all
         border-[color:var(--part-border,transparent)] aria-disabled:opacity-50
         aria-disabled:pointer-events-none border flex flex-1 items-start justify-between outline-none
-        relative rounded-lg py-2.5 text-left hover:underline **:[.ui-accordion-trigger-icon]:ml-auto
-        **:[.ui-accordion-trigger-icon]:size-4 cursor-pointer;
+        relative rounded-lg py-2.5 text-left hover:underline cursor-pointer;
     @variant focus-visible {
         --tw-ring-color: var(--part-ring, var(--ring-50));
         border-color: var(--summary-focus-border, var(--color-ring));
@@ -2948,12 +2953,9 @@ svg.ui-select-chevron {
     @variant focus-visible:after {
         border-color: var(--summary-focus-border, var(--color-ring));
     }
-    @variant **:[.ui-accordion-trigger-icon] {
-        color: var(--part-fg, var(--color-muted-foreground));
-    }
 }
-.ui-accordion-item[open] > summary > [data-state='closed'],
-.ui-accordion-item:not([open]) > summary > [data-state='open'] {
+.ui-accordion-item[open] > summary > .ui-accordion-trigger-icon[data-state='closed'],
+.ui-accordion-item:not([open]) > summary > .ui-accordion-trigger-icon[data-state='open'] {
     display: none;
 }
 .ui-accordion-content {
@@ -2966,17 +2968,8 @@ svg.ui-select-chevron {
 .ui-accordion {
     @apply flex flex-col w-full;
 }
-.ui-accordion-item {
-    @apply not-last:border-b;
-}
 .ui-accordion-trigger-icon {
-    flex-shrink: 0;
-}
-.ui-accordion-item[data-disabled='true'] {
-    opacity: 1;
-}
-.ui-accordion-item[data-disabled='true'] > .ui-accordion-summary {
-    opacity: 0.5;
+    @apply ms-auto size-4 shrink-0 text-[color:var(--part-fg,var(--color-muted-foreground))];
 }
 .ui-accordion-item::details-content {
     interpolate-size: allow-keywords;
@@ -3137,7 +3130,7 @@ svg.ui-select-chevron {
     --avatar-shadow: initial;
     border-color: var(--border, var(--color-border));
 }
-.ui-avatar-pending {
+.ui-avatar-image:not([data-loaded]) {
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -3157,6 +3150,9 @@ svg.ui-select-chevron {
     @apply flex group-data-[size=sm]/avatar:text-caption items-center justify-center size-full text-body
         bg-[color:var(--part-bg,var(--color-muted))]
         text-[color:var(--part-fg,var(--color-muted-foreground))] rounded-full;
+}
+.ui-avatar:has(.ui-avatar-image[data-loaded]) .ui-avatar-fallback {
+    display: none;
 }
 .ui-avatar-group {
     @apply *:[.ui-avatar]:ring-2 -space-x-2 flex;
@@ -3738,8 +3734,12 @@ svg.ui-select-chevron {
     --multiple-disabled-bg: initial;
 }
 .ui-combobox-content {
-    @apply origin-(--transform-origin) w-(--anchor-width) max-w-(--available-width) min-w-36 p-0
-        [--list-max-height:15.75rem];
+    --list-max-height: 15.75rem;
+    --combobox-max-width: var(--available-width, calc(100vw - 1rem));
+    width: var(--anchor-width);
+    min-width: min(var(--anchor-width), var(--combobox-max-width));
+    max-width: var(--combobox-max-width);
+    padding: 0;
 }
 .ui-combobox-chip {
     @apply has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:pointer-events-none
@@ -3825,17 +3825,9 @@ svg.ui-select-chevron {
 .ui-command-input {
     @apply text-body w-full outline-hidden disabled:cursor-not-allowed disabled:opacity-50;
 }
-.ui-command-item:is(:hover, :focus, [aria-selected='true']),
-.ui-command-list:not(:has(:focus, [aria-selected='true']))
-    > .ui-command-item:not(:disabled):first-of-type,
-.ui-command-list:not(:has(:focus, [aria-selected='true']))
-    .ui-command-group:first-child
-    .ui-command-item:not(:disabled):first-of-type {
+.ui-command-item:is([data-highlighted], :focus-visible) {
     background-color: var(--item-focus-bg, var(--color-muted));
     color: var(--item-focus-fg, var(--color-foreground));
-}
-.ui-command-list:has(.ui-command-item:hover) .ui-command-item:not(:hover):not(:focus) {
-    background: var(--item-focus-bg, transparent);
 }
 .ui-command-group {
     @apply overflow-hidden p-1 text-[color:var(--part-fg,var(--color-foreground))];
@@ -3874,7 +3866,7 @@ svg.ui-select-chevron {
 }
 @layer components {
 .ui-context-menu-content {
-    @apply origin-(--transform-origin) z-50 min-w-36;
+    @apply z-50 min-w-36;
 }
 .ui-context-menu-sub-content {
     @apply min-w-36;
@@ -4304,13 +4296,16 @@ h3.ui-heading {
     --panel-hover-ring: initial;
 }
 .ui-hover-card-content {
-    @apply text-body p-2.5 duration-100 origin-(--transform-origin) z-50 font-normal
+    @apply text-body p-2.5 duration-100 z-50 font-normal
         ring-[color:var(--panel-hover-ring,var(--foreground-10))]
         bg-[color:var(--panel-hover-bg,var(--color-popover))]
         text-[color:var(--panel-hover-fg,var(--color-popover-foreground))] w-64;
 }
 }
 @layer components {
+.ui-icon-select-content {
+    max-width: var(--available-width, none);
+}
 .ui-icon-select-pagination {
     @apply border-[color:var(--part-border,var(--color-border))]
         text-[color:var(--part-fg,var(--color-muted-foreground))] flex shrink-0 items-center
@@ -4966,6 +4961,9 @@ a.ui-item:hover {
 .ui-navigation-menu-positioner[data-ending] .ui-navigation-menu-content {
     opacity: 0;
 }
+.ui-navigation-menu-popup[data-instant] {
+    @apply transition-[opacity,scale,translate,transform];
+}
 }
 @layer components {
 .ui-number-input-body .ui-input-group:has(input:enabled):has(button:disabled) {
@@ -5062,7 +5060,7 @@ a.ui-item:hover {
     content: '';
     width: calc(var(--radio-size, 1rem) / 2);
     height: calc(var(--radio-size, 1rem) / 2);
-    background: var(--part-bg, var(--color-primary-foreground));
+    background: currentColor;
     border-radius: 50%;
 }
 @media (forced-colors: active) {
@@ -5808,19 +5806,12 @@ a.ui-item:hover {
     @apply transition-all [&_svg]:pointer-events-none [&_svg]:shrink-0
         text-[color:var(--tab-fg,color-mix(in_oklab,var(--color-foreground)_60%,transparent))]
         aria-disabled:opacity-50 aria-disabled:pointer-events-none flex-1
-        group-data-[orientation=vertical]/tabs:justify-start
-        group-data-[orientation=vertical]/tabs:w-full h-[calc(100%-1px)] relative whitespace-nowrap
+        h-[calc(100%-1px)] relative whitespace-nowrap
         after:absolute after:opacity-0 after:transition-opacity
-        group-data-[orientation=horizontal]/tabs:after:inset-x-0
-        group-data-[orientation=horizontal]/tabs:after:bottom-[-5px]
-        group-data-[orientation=horizontal]/tabs:after:h-0.5
-        group-data-[orientation=vertical]/tabs:after:inset-y-0
-        group-data-[orientation=vertical]/tabs:after:-right-1
-        group-data-[orientation=vertical]/tabs:after:w-0.5
-        group-[.ui-tabs-list-variant-line]/tabs-list:aria-selected:after:opacity-100
         border-[color:var(--part-border,transparent)] inline-flex items-center justify-center gap-1.5
         rounded-md border px-1.5 py-0.5 text-body font-medium disabled:opacity-50
-        disabled:pointer-events-none focus-visible:ring-3 focus-visible:outline-1;
+        disabled:pointer-events-none focus-visible:ring-3 focus-visible:outline-1
+        [&_svg:not([class*='size-'])]:size-4 has-data-[icon=inline-end]:pe-1 has-data-[icon=inline-start]:ps-1;
     @variant ui-dark:hover {
         color: var(--tab-hover-fg, var(--color-foreground));
     }
@@ -5853,15 +5844,28 @@ a.ui-item:hover {
 }
 .ui-tabs-list {
     @apply text-[color:var(--list-fg,var(--color-muted-foreground))]
-        group-data-[orientation=vertical]/tabs:flex-col group-data-[orientation=vertical]/tabs:h-fit
-        inline-flex items-center justify-center w-fit rounded-lg p-[3px]
-        group-data-[orientation=horizontal]/tabs:h-[var(--tab-list-height,--spacing(8))] [&.ui-tabs-list-variant-line]:rounded-none;
+        inline-flex items-center justify-center w-fit rounded-lg p-[3px];
+}
+.ui-tabs-list[aria-orientation='horizontal'] {
+    @apply h-[var(--tab-list-height,--spacing(8))];
+}
+.ui-tabs-list[aria-orientation='horizontal'] .ui-tabs-tab::after {
+    @apply inset-x-0 bottom-[-5px] h-0.5;
+}
+.ui-tabs-list[aria-orientation='vertical'] {
+    @apply h-fit flex-col;
+}
+.ui-tabs-list[aria-orientation='vertical'] .ui-tabs-tab {
+    @apply w-full justify-start;
+}
+.ui-tabs-list[aria-orientation='vertical'] .ui-tabs-tab::after {
+    @apply inset-y-0 -end-1 w-0.5;
 }
 .ui-tabs-list.ui-tabs-list-variant-default {
     background-color: var(--list-bg, var(--color-muted));
 }
 .ui-tabs-list.ui-tabs-list-variant-line {
-    @apply gap-1 bg-[color:var(--list-bg,transparent)];
+    @apply gap-1 rounded-none bg-[color:var(--list-bg,transparent)];
 }
 .ui-tabs-content {
     @apply text-body flex-1 outline-none pt-0 min-w-0;
@@ -5873,6 +5877,9 @@ a.ui-item:hover {
     @apply bg-[color:var(--tab-bg,transparent)] shadow-none;
     @variant aria-selected {
         background-color: var(--tab-selected-bg, transparent);
+    }
+    @variant aria-selected:after {
+        @apply opacity-100;
     }
     @variant ui-dark:aria-selected {
         border-color: var(--tab-selected-border, transparent);
@@ -6149,53 +6156,41 @@ a.ui-item:hover {
     display: inline-flex;
     cursor: pointer;
 }
-.ui-toggle:has(:disabled) {
+:is(.ui-toggle, .ui-toggle-group-item):has(> input:disabled) {
     opacity: 0.5;
     pointer-events: none;
 }
 .ui-toggle-control {
-    @apply disabled:opacity-50 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0
-        focus-visible:ring-[3px] outline-none border-[color:var(--control-border,transparent)]
+    @apply [&_svg]:pointer-events-none [&_svg]:shrink-0 outline-none
+        bg-[color:var(--bg,transparent)] border-[color:var(--control-border,transparent)]
         inline-flex items-center justify-center whitespace-nowrap gap-1 rounded-lg border text-body
         font-medium transition-all;
     @variant hover {
-        background-color: var(--control-hover-bg, var(--color-muted));
+        background-color: var(--hover-bg, var(--color-muted));
         color: var(--part-fg, var(--color-foreground));
     }
 }
-.ui-toggle.ui-toggle-variant-default > span {
-    background-color: var(--bg, transparent);
-    @variant hover {
-        background-color: var(--hover-bg, var(--color-muted));
-    }
-}
-.ui-toggle.ui-toggle-variant-outline > span {
+.ui-toggle-control-variant-outline {
     border-color: var(--border, var(--color-input));
-    background-color: var(--bg, transparent);
-    @variant hover {
-        background-color: var(--hover-bg, var(--color-muted));
-    }
 }
-.ui-toggle:has(:checked) > span {
+input:checked + .ui-toggle-control {
     background: var(--checked-bg, var(--color-muted));
 }
-.ui-toggle:has(:focus-visible) > span {
-    outline-offset: 2px;
-    outline: 0;
+input:focus-visible + .ui-toggle-control {
     border-color: var(--focus-border, var(--color-ring));
     box-shadow: var(
         --focus-shadow,
         0 0 0 3px color-mix(in oklch, var(--color-ring) 50%, transparent)
     );
 }
-:is(.ui-toggle, .ui-toggle-group-item)[data-size='default'] > span {
+.ui-toggle-control[data-size='default'] {
     @apply h-8 min-w-8 px-2.5;
 }
-:is(.ui-toggle, .ui-toggle-group-item)[data-size='sm'] > span {
+.ui-toggle-control[data-size='sm'] {
     @apply h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-2.5 text-(length:--text-compact)
         [&_svg:not([class*='size-'])]:size-3.5 [line-height:1.5];
 }
-:is(.ui-toggle, .ui-toggle-group-item)[data-size='lg'] > span {
+.ui-toggle-control[data-size='lg'] {
     @apply h-9 min-w-9 px-2.5;
 }
 }
@@ -6223,6 +6218,12 @@ a.ui-item:hover {
     justify-content: flex-end;
     gap: 0.5rem;
     margin-top: 1rem;
+}
+.ui-tour-content[data-target-positioned] {
+    @apply m-0;
+}
+.ui-tour-highlight {
+    @apply outline-2 outline-solid outline-ring;
 }
 }
 @layer components {
@@ -6578,41 +6579,20 @@ a.ui-item:hover {
 :where(.ui-toggle-group-item) {
     border-color: var(--item-border, var(--color-border));
 }
-.ui-toggle-group-item:has(:disabled) {
-    opacity: 0.5;
-    pointer-events: none;
-}
 .ui-toggle-group {
     @apply flex flex-row items-center w-fit rounded-lg data-[size=sm]:rounded-[min(var(--radius-md),10px)]
         [gap:var(--toggle-spacing,0)];
 }
 .ui-toggle-group-item {
-    @apply focus-visible:z-10 focus:z-10 shrink-0;
+    @apply focus-within:z-10 shrink-0;
 }
-.ui-toggle-group-item.ui-toggle-group-item-variant-default > span {
-    background-color: var(--item-bg, transparent);
-    @variant hover {
-        background-color: var(--item-hover-bg, var(--color-muted));
-    }
-}
-.ui-toggle-group-item.ui-toggle-group-item-variant-outline > span {
-    border-color: var(--item-border, var(--color-input));
-    background-color: var(--item-bg, transparent);
-    @variant hover {
-        background-color: var(--item-hover-bg, var(--color-muted));
-    }
-}
-.ui-toggle-group-item:has(:checked) > span {
-    background: var(--item-checked-bg, var(--color-muted));
-}
-.ui-toggle-group-item:has(:focus-visible) > span {
-    outline-offset: 2px;
-    outline: 0;
-    border-color: var(--item-focus-border, var(--color-ring));
-    box-shadow: var(
-        --part-shadow,
-        0 0 0 3px color-mix(in oklch, var(--color-ring) 50%, transparent)
-    );
+.ui-toggle-group-item > .ui-toggle-control {
+    --bg: var(--item-bg);
+    --border: var(--item-border);
+    --hover-bg: var(--item-hover-bg);
+    --checked-bg: var(--item-checked-bg);
+    --focus-border: var(--item-focus-border);
+    --focus-shadow: var(--part-shadow);
 }
 .ui-toggle-group[data-orientation='vertical'] {
     flex-direction: column;
@@ -7583,21 +7563,28 @@ a.ui-item:hover {
     @apply rotate-90;
 }
 .ui-trace-collapsible-content {
-    @apply min-w-0 overflow-hidden [--panel-height:auto] [interpolate-size:allow-keywords] [height:0]
-        [transition:height_200ms_cubic-bezier(0.4,0,0.2,1),display_200ms_allow-discrete];
+    display: grid;
+    min-width: 0;
+    overflow: hidden;
+    grid-template-rows: 0fr;
+    transition:
+        grid-template-rows 200ms cubic-bezier(0.4, 0, 0.2, 1),
+        display 200ms allow-discrete;
+}
+.ui-trace-collapsible-clip {
+    min-height: 0;
+    overflow: hidden;
 }
 .ui-trace-collapsible-content-inner {
     @apply text-[color:var(--part-fg,var(--color-muted-foreground))] mt-2 mb-1 ml-[calc(--spacing(2)-1px)]
         min-w-0 border-l pr-1 pl-4 leading-relaxed wrap-break-word;
 }
 .ui-trace-collapsible-content[data-open='true'] {
-    height: var(--panel-height, auto);
+    grid-template-rows: 1fr;
 }
-.ui-trace-collapsible-content[data-open='true'][data-settled] {
-    height: auto;
-    transition: none;
-}
-.ui-trace-collapsible-content[data-open='true'][data-starting-style] {
-    height: 0;
+@starting-style {
+    .ui-trace-collapsible-content[data-open='true'] {
+        grid-template-rows: 0fr;
+    }
 }
 }

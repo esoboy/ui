@@ -21,7 +21,7 @@ metadata:
 @import '../../vendor/esoboy/ui/resources/css/ui.css';
 ```
 
-在公共布局的 `<head>` 放置 `@uiScript`，排在启动 Livewire 或 Alpine 的脚本前。Editor 首次渲染时加载自己的脚本和样式。只读 RichText 的样式随组件库提供。在根元素上使用 `.dark` 切换暗色，用组件的 `class` 覆盖默认样式。
+在公共布局的 `<head>` 放置 `@uiScript`，排在启动 Livewire 或 Alpine 的脚本前。Editor 首次渲染时加载独立的 Tiptap 脚本和样式。Blade 将属性透传到 `<esoboy-editor>`。页面加载这两份资源后也可以直接使用该自定义元素。只读 RichText 的样式随组件库提供。在根元素上使用 `.dark` 切换暗色，用组件的 `class` 覆盖默认样式。
 
 在 `:root` 设置全站主题，或在带有 `data-ui-theme` 的容器上设置局部主题。`--radius` 决定基础圆角，也可以用 `--radius-sm` 等变量单独调整对应的 `rounded-sm` 等级。组件正文字号 `--text-body` 默认取 Tailwind 的 `--text-sm`，`--text-caption` 和 `--text-title` 随正文缩放。
 
@@ -54,12 +54,15 @@ metadata:
 
 - 将 `wire:model` 放在公开控件上。Input、Textarea、Checkbox 和 Native Select 遵循原生表单的 `value` 或 `checked` 语义。
 - Select、Combobox、Date Picker、Editor 等支持三种互斥的值来源。`wire:model` 绑定父级属性，`:initial-value` 只在首次挂载时初始化，`:value` 由父级控制。使用 `:value` 时，父级处理 `value-changed` 事件，从 `$event.detail.value` 读取新值并决定是否回填。
+- Cropper 和 Signature 在浏览器中编辑。给组件设置 `x-ref` 或 `id`，保存时在根元素上调用 `await element.getResult()` 获取 PNG `Blob`。空签名返回 `null`。可用 `:initial-value` 预设裁切框或笔迹，表单重置时会恢复这份初值。
+- Questionnaire 参与外层表单。需要提交或重置答案时，把组件和对应的按钮放在同一个 `<form>` 中。
 - 在循环中为有状态控件提供稳定的 `wire:key`。同一页面有多个同类控件绑定同一属性时，为每个实例指定不同的 `id`。
 - Select 和 Combobox 使用 `:options`。Tree、Tree Select 和 Cascader 使用 `:nodes`，节点用 `value`、`label` 和可选的 `children` 表示层级。
 
 ## 组合组件
 
+- Tabs 的方向键默认移动焦点，按 Enter 或空格激活标签并更新 `wire:model`。需要用方向键直接切换面板时，使用 `<x-ui::tabs.list activate-on-focus>`。Accordion 使用 Tab 或 Shift+Tab 移动焦点，Enter 或空格展开和收起。
 - Dialog 的 `trigger` 和 `close` 各包一个实际可交互的控件，例如 `<x-ui::dialog.trigger><x-ui::button>编辑</x-ui::button></x-ui::dialog.trigger>`。在 `dialog.content` 上提供可访问名称。公开 slot 中的 `wire:click` 业务操作由调用方的 Livewire 组件处理。
 - 使用 `<x-ui::data-table :rows="$orders" :columns="$columns" />` 展示宿主查询的记录。列按键定义，例如 `['status' => ['label' => '状态']]`。使用唯一行键，数组默认取 `id`，Eloquent 模型默认取主键。传入分页器可生成分页导航。
-- 编辑 Markdown 时使用 `<x-ui::editor wire:model="body" input-type="markdown" output-type="markdown" />`。展示已保存的 Markdown 用 `<x-ui::rich-text :value="$body" input-type="markdown" />`，由服务端解析和清理内容。
+- 编辑 Markdown 时使用 `<x-ui::editor wire:model="body" input-type="markdown" output-type="markdown" />`。展示已保存的 Markdown 用 `<x-ui::rich-text :value="$body" input-type="markdown" />`，已有的富文本 HTML 可使用 `input-type="html"`。Rich Text 在服务端转换 Markdown、清理不安全的 HTML 并应用展示样式，保留原文中的附件标题与链接内容。
 - 图标使用包内 Lucide 清单中的正式名称，例如 `<x-ui::icon name="circle-question-mark" />`。可在已安装包的 `resources/icons/catalog.php` 中查找名称。

@@ -12,7 +12,7 @@
             $number = $loop->iteration;
             $state = $number < $current ? 'complete' : ($number === $current ? ($status === 'error' ? 'error' : 'current') : 'upcoming');
         @endphp
-        <x-ui::steps.item :number="$number" :state="$state">
+        <x-ui::steps.item wire:key="step-{{ $item['key'] ?? $number }}" :number="$number" :state="$state">
             <x-ui::steps.title>{{ $item['title'] }}</x-ui::steps.title>
             @isset ($item['description'])<x-ui::steps.description>{{ $item['description'] }}</x-ui::steps.description>@endisset
         </x-ui::steps.item>
