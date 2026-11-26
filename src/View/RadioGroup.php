@@ -12,14 +12,16 @@ final class RadioGroup extends Component
 
     public readonly string $groupName;
 
-    public function __construct(public readonly string $size = 'default')
+    public function __construct(public readonly string $size = 'default', ?string $uiSite = null)
     {
         $this->radioGroup = $this;
-        $this->groupName = ControlAttributes::instanceName('radio-group');
+        $this->groupName = ControlAttributes::instanceName('radio-group', $uiSite);
     }
 
     public function render(): View
     {
-        return view('ui::components.radio-group.index');
+        $menu = str_contains($this->componentName, '.') ? str_replace(['ui::', '.radio-group'], '', $this->componentName) : null;
+
+        return view('ui::components.radio-group.index', compact('menu'));
     }
 }

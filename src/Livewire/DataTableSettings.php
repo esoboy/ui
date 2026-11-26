@@ -4,16 +4,10 @@ namespace Esoboy\Ui\Livewire;
 
 use Esoboy\Ui\Support\DataTableColumns;
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Modelable;
 use Livewire\Attributes\Reactive;
-use Livewire\Component;
 
-class DataTableSettings extends Component
+class DataTableSettings extends ValueControl
 {
-    /** @var array<string, mixed>|null */
-    #[Modelable]
-    public ?array $value = null;
-
     /** @var array<array-key, mixed> */
     #[Reactive]
     public array $columns = [];
@@ -54,16 +48,30 @@ class DataTableSettings extends Component
         }
     }
 
-    public function reorder(string $key, int $position): void
+    /** @return list<string> */
+    public function orderAfter(string $key, int $position): array
     {
         $order = $this->movable();
         $index = array_search($key, $order, true);
         if ($index === false || ! isset($order[$position])) {
-            return;
+            return $order;
         }
         array_splice($order, $index, 1);
         array_splice($order, $position, 0, [$key]);
-        $this->value['order'] = $order;
+
+        return $order;
+    }
+
+    public function reorder(string $key, int $position): void
+    {
+        $this->value['order'] = $this->orderAfter($key, $position);
+    }
+
+    public function afterEdit(?string $focusColumn): void
+    {
+        if ($focusColumn !== null && isset($this->layout()->ordered[$focusColumn])) {
+            $this->dispatch('ui-column-focus', key: $focusColumn)->self();
+        }
     }
 
     public function resetLayout(): void
@@ -73,6 +81,6 @@ class DataTableSettings extends Component
 
     public function render(): View
     {
-        return view('ui::livewire.data-table-settings', ['layout' => $this->layout()]);
+        return view('ui::livewire.data-table-settings', ['layout' => $this->layout(), 'movable' => $this->movable()]);
     }
 }

@@ -1,4 +1,4 @@
-<div data-ui-overlay x-data="uiPopover"
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes) }} data-ui-overlay x-data="uiPopover"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby'])->class('ui-cascader-body') }}>
     <x-ui::select.trigger><x-ui::button variant="outline" :size="$size" :disabled="$disabled" :id="$attributes->get('id')"
             {{ $attributes->whereStartsWith('aria-')->class('ui-select-control') }} aria-haspopup="dialog"
@@ -8,13 +8,13 @@
         <x-ui::scroll-area orientation="horizontal" class="ui-cascader-scroll" tabindex="-1">
             <div class="ui-cascader-columns">
                 @forelse ($this->columns as $column)
-                    <x-ui::scroll-area class="ui-list-scroll ui-cascader-column" tabindex="-1" wire:key="cascade-level-{{ $loop->index }}-{{ $column[0]['parent'] }}"
+                    <x-ui::scroll-area class="ui-list-scroll ui-cascader-column" tabindex="-1" wire:key="cascade-level-{{ $loop->index }}-{{ serialize($column[0]['parent']) }}"
                         x-on:focusin="$el.scrollIntoView({ block: 'nearest', inline: 'nearest', container: 'nearest' })">
                         <div role="group" aria-label="{{ __('ui::ui.node_level', ['level' => $loop->iteration]) }}"
                             x-data="uiOptions('[data-node-action]')" x-on:keydown.stop="navigate($event)">
                             @foreach ($column as $row)
                                 @php($active = $row['branch'] && in_array($row['value'], $path, true))
-                                <div class="ui-cascader-row" data-node-row wire:key="cascade-{{ $row['value'] }}">
+                                <div class="ui-cascader-row" data-node-row wire:key="cascade-{{ serialize($row['value']) }}">
                                     @include('ui::livewire.partials.tree-node', [
                                         'browseDisabled' => $disabled || $readonly || $row['disabled'], 'collapsible' => false,
                                     ])

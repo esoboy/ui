@@ -12,10 +12,10 @@ final class Accordion extends Component
 
     public readonly string $groupName;
 
-    public function __construct(public readonly bool $multiple = false, public readonly bool $collapsible = true)
+    public function __construct(public readonly bool $multiple = false, public readonly bool $collapsible = true, ?string $uiSite = null)
     {
         $this->accordion = $this;
-        $this->groupName = ControlAttributes::instanceName('accordion');
+        $this->groupName = ControlAttributes::instanceName('accordion', $uiSite);
     }
 
     public function render(): View

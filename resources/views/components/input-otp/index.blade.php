@@ -14,9 +14,9 @@
 @endphp
 <{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class('ui-input-otp ui-input-otp-field')->merge(['data-size' => $size]) }}>
     <div x-data="uiOtp()"
-        x-effect="$nextTick(() => configure(@js($binding->config)))" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
+        x-effect="@if($binding->config['mode'] === 'bound') $wire.$get(@js($binding->config['model'])); @endif $nextTick(() => refresh(@js([$length, $pattern, $binding->config['mode'] === 'controlled' ? $binding->config['value'] : null])))" data-ui-control="{{ json_encode($binding->config, JSON_THROW_ON_ERROR) }}"
         @if($binding->key) wire:key="{{ $binding->key }}" @endif
-        x-on:change="changed($event)" x-on:focusout="blurred($event)" x-on:keydown.enter="entered($event)" role="group" {{ $attributes->except(['class', 'wire:key', 'id', 'name', 'placeholder', 'invalid', ...array_keys($fieldAttributes->all())])->class('ui-input-otp-body') }}>
+        x-on:focusout="if (!$el.contains($event.relatedTarget)) { finishEdit(); signal('blur') }" x-on:keydown.enter="if ($event.target !== $refs.field) { finishEdit(); signal('keydown') }" role="group" {{ $attributes->whereDoesntStartWith('wire:model')->except(['class', 'wire:key', 'id', 'name', 'placeholder', 'invalid', ...array_keys($fieldAttributes->all())])->class('ui-input-otp-body') }}>
         @foreach ($groups as $group)
             @if (! $loop->first)
                 <span wire:key="separator-{{ $group[0] }}" class="ui-input-otp-separator" aria-hidden="true"><x-ui::icon name="minus" /></span>
@@ -30,16 +30,15 @@
                 value="{{ ($binding->config['value'] ?? '')[$index] ?? '' }}"
                 aria-label="{{ __('ui::ui.code_position', ['label' => $attributes->get('aria-label', __('ui::ui.code')), 'current' => $index + 1, 'total' => $length]) }}"
                 {{ $fieldAttributes->except('aria-label')->merge(['id' => $binding->inputId($index), 'aria-invalid' => $attributes->get('invalid') ? 'true' : null]) }}
-                x-bind:value="code[{{ $index }}] ?? ''" x-on:input.stop="input($event, {{ $index }})" x-on:paste.prevent="insert($event.clipboardData.getData('text'), {{ $index }})"
+                x-on:input.stop="input($event, {{ $index }})" x-on:paste.prevent="insert($event.clipboardData.getData('text'), {{ $index }})"
                 x-on:keydown="key($event, {{ $index }})" x-on:focus="$el.select()" @disabled($disabled) @readonly($readonly)>
             <span class="ui-input-otp-caret" aria-hidden="true"></span>
             </span>
             @endforeach
             </div>
         @endforeach
-        @if ($attributes->get('name'))
-            <input type="hidden" name="{{ $attributes->get('name') }}" {{ $attributes->only('form') }} value="{{ $binding->config['value'] }}" x-bind:value="code" @disabled($disabled)>
-        @endif
+        <input type="text" hidden tabindex="-1" aria-hidden="true" autocomplete="off" x-ref="field" wire:key="otp-value-{{ $binding->key }}" {{ $attributes->only(['name', 'form'])->merge($attributes->whereStartsWith('wire:model')->all()) }}
+            value="{{ $binding->config['value'] }}" @disabled($disabled)>
     </div>
     {{ $slot }}
 </{{ $binding->containerTag }}>

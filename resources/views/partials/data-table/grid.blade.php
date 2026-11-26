@@ -6,9 +6,9 @@
                 <x-ui::table.head class="ui-table-selection-cell">
                     <x-ui::checkbox :size="$size" :aria-label="__('ui::ui.table_select_page')"
                         :checked="$allSelected" :disabled="! $selectableKeys"
-                        :data-page-keys="json_encode(array_values($selectableKeys), JSON_THROW_ON_ERROR)"
+                        :data-page-keys="json_encode($dataTable->pageValues(), JSON_THROW_ON_ERROR)"
                         x-effect="reflectSelection($el, $wire.$get($root.dataset.selectionModel))"
-                        x-on:change="selectPage($el)" x-on:blur="commitPage('blur')" x-on:keydown.enter="commitPage('keydown')" />
+                        x-on:change="selectRows($el)" x-on:blur="forward('blur')" x-on:keydown.enter="forward('keydown')" />
                 </x-ui::table.head>
             @endif
             @foreach ($layout->visible as $key => $column)
@@ -45,10 +45,14 @@
     </x-ui::table.header>
     <x-ui::table.body>
         @forelse ($records as $id => $record)
-            <x-ui::table.row wire:key="{{ $scope }}-row-{{ $id }}" :data-state="isset($selectedKeys[$id]) ? 'selected' : null">
+            @php($selectedExpression = $selectionModel ? '($get('.\Illuminate\Support\Js::from($selectionModel).') ?? []).includes('.\Illuminate\Support\Js::from($pageValues[$id] ?? (string) $id).')' : null)
+            <x-ui::table.row wire:key="{{ $scope }}-row-{{ $id }}" :data-state="isset($selectedKeys[$id]) ? 'selected' : null"
+                :wire:bind:data-state="$selectedExpression ? $selectedExpression.' ? \'selected\' : null' : null">
                 @if ($selectionModel)
                     <x-ui::table.cell class="ui-table-selection-cell">
-                        <x-ui::checkbox :size="$size" :id="$scope.'-select-'.$id" data-ui-select-row {{ $attributes->whereStartsWith('wire:model') }} x-on:click.capture="prepareSelection()" :value="(string) $id"
+                        <x-ui::checkbox :size="$size" :id="$scope.'-select-'.$id" data-ui-select-row :value="(string) $id"
+                            :data-row-value="is_bool($pageValues[$id] ?? null) ? ($pageValues[$id] ? 'true' : 'false') : (string) ($pageValues[$id] ?? $id)"
+                            :wire:bind:checked="$selectedExpression" x-on:change="selectRows($el)" x-on:blur="forward('blur')" x-on:keydown.enter="forward('keydown')"
                             :checked="isset($selectedKeys[$id])" :disabled="! isset($selectableKeys[$id])"
                             :aria-label="__('ui::ui.select_node', ['label' => $dataTable->rowLabel($record, $id)])" />
                     </x-ui::table.cell>

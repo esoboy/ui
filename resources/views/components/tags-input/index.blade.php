@@ -1,6 +1,6 @@
 @props(['size' => 'default', 'value', 'initialValue', 'max' => null, 'maxLength' => 100])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'tags-input', get_defined_vars()))
-<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class('ui-tags-input ui-tags-input-field')->merge(['data-size' => $size]) }}>
+<{{ $binding->containerTag }} {{ $binding->directives }} {{ $attributes->only(['class', 'wire:key'])->class('ui-tags-input ui-tags-input-field')->merge(['data-size' => $size]) }}>
     @livewire(
         'ui::tags-input',
         [...$binding->parameters, 'size' => $size, 'max' => $max, 'maxLength' => $maxLength],

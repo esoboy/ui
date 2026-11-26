@@ -37,7 +37,12 @@ class Cascader extends TreeControl
     #[Computed]
     public function pathRows(): array
     {
-        return array_column($this->rows, null, 'value');
+        $rows = [];
+        foreach ($this->rows as $row) {
+            $rows[self::choiceKey($row['value'])] = $row;
+        }
+
+        return $rows;
     }
 
     /** @return list<list<array{value: string|int, label: string, disabled: bool, level: int, parent: string|int|null, branch: bool}>> */
@@ -46,13 +51,14 @@ class Cascader extends TreeControl
     {
         $groups = [];
         foreach ($this->rows as $row) {
-            $key = $row['parent'] === null ? 'root' : 'node:'.$row['parent'];
+            $key = self::choiceKey($row['parent']);
             $groups[$key][] = $row;
         }
-        $columns = isset($groups['root']) ? [$groups['root']] : [];
+        $root = self::choiceKey(null);
+        $columns = isset($groups[$root]) ? [$groups[$root]] : [];
         foreach ($this->path as $parent) {
-            if (isset($groups['node:'.$parent])) {
-                $columns[] = $groups['node:'.$parent];
+            if (isset($groups[self::choiceKey($parent)])) {
+                $columns[] = $groups[self::choiceKey($parent)];
             }
         }
 
@@ -65,7 +71,7 @@ class Cascader extends TreeControl
         if ($path === [] || $this->disabled || $this->readonly) {
             return;
         }
-        if (! $this->pathRows[$value]['branch']) {
+        if (! $this->pathRows[self::choiceKey($value)]['branch']) {
             $this->path = $path;
         }
         parent::choose($value);
@@ -85,7 +91,7 @@ class Cascader extends TreeControl
     public function expand(string|int $value): void
     {
         $path = $this->pathTo($value);
-        if (! $this->disabled && ! $this->readonly && $path !== [] && $this->pathRows[$value]['branch']) {
+        if (! $this->disabled && ! $this->readonly && $path !== [] && $this->pathRows[self::choiceKey($value)]['branch']) {
             $this->path = $path;
             $this->requestedSelection = null;
             unset($this->columns);
@@ -105,7 +111,7 @@ class Cascader extends TreeControl
         $byValue = $this->pathRows;
         $path = [];
         while ($value !== null) {
-            $row = $byValue[$value] ?? null;
+            $row = $byValue[self::choiceKey($value)] ?? null;
             if ($row === null || $row['value'] !== $value || $row['disabled']) {
                 return [];
             }
@@ -129,7 +135,7 @@ class Cascader extends TreeControl
         } elseif ($this->path === [] && $selectedPath !== []) {
             // Late-loaded nodes must be visible without opening a locally checked branch.
             $last = $selectedPath[array_key_last($selectedPath)];
-            $this->path = $this->pathRows[$last]['branch'] ? array_slice($selectedPath, 0, -1) : $selectedPath;
+            $this->path = $this->pathRows[self::choiceKey($last)]['branch'] ? array_slice($selectedPath, 0, -1) : $selectedPath;
         }
         $valid = [];
         foreach ($this->path as $value) {

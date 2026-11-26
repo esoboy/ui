@@ -42,7 +42,7 @@ final class TreeNodes
                 throw new InvalidArgumentException(__('ui::errors.tree_node'));
             }
             $option = Options::validate([$node])[0];
-            $key = (string) $option['value'];
+            $key = Options::key($option['value']);
             if (isset($seen[$key])) {
                 throw new InvalidArgumentException(__('ui::errors.duplicate_tree_value', ['key' => $key]));
             }

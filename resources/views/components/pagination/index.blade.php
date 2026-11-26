@@ -19,11 +19,17 @@
             parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
             unset($query[$pageName]);
         @endphp
-        <div @unless($owner) x-data @endunless class="ui-pagination-jump" data-page-name="{{ $pageName }}" data-page-url="{{ $url }}">
+        <div class="ui-pagination-jump" data-page-name="{{ $pageName }}" data-page-url="{{ $url }}">
             <span aria-hidden="true">{{ __('ui::ui.pagination_jump_to') }}</span>
-            @teleport('body')
-                @include('ui::partials.pagination-jump-form')
-            @endteleport
+            @if ($owner)
+                @teleport('body')
+                    @include('ui::partials.pagination-jump-form')
+                @endteleport
+            @else
+                @push('ui-forms')
+                    @include('ui::partials.pagination-jump-form')
+                @endpush
+            @endif
             <x-ui::input-group :size="$paginationSize">
                 <x-ui::input-group.input type="number" :id="$jumpId" :form="$jumpId.'-form'" :name="$pageName"
                     min="1" :max="$paginator->lastPage()" step="1" required :placeholder="$paginator->currentPage()"

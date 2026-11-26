@@ -1,4 +1,4 @@
-<div {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->class('ui-transfer-body') }}>
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes) }} {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->class('ui-transfer-body') }}>
     <x-ui::input :size="$size" :id="$this->getId() . '-query'" wire:model.live.debounce.200ms="query" type="search" :placeholder="__('ui::ui.search')" :aria-label="__('ui::ui.search')"
         :disabled="$disabled" />
     <div class="ui-transfer-columns">
@@ -10,9 +10,9 @@
                     <x-ui::scroll-area class="ui-list-scroll ui-transfer-list" tabindex="-1">
                         @forelse ($panel['items'] as $option)
                             <x-ui::button :size="$size" variant="ghost" class="ui-transfer-item"
-                                :wire:click="'choose('.\Illuminate\Support\Js::from($option['value']).')'"
+                                :attributes="$this->choiceAttributes($option['value'])"
                                 :disabled="$disabled || $readonly || $option['disabled']"
-                                wire:key="transfer-{{ $side }}-{{ $option['value'] }}"><span>{{ $option['label'] }}</span><x-ui::icon
+                                wire:key="transfer-{{ $side }}-{{ serialize($option['value']) }}"><span>{{ $option['label'] }}</span><x-ui::icon
                                     :name="$selectedSide ? 'arrow-left' : 'arrow-right'" /></x-ui::button>
                         @empty
                             @include('ui::partials.empty-state', ['emptyMessage' => $panel['emptyMessage']])
@@ -20,7 +20,7 @@
                     </x-ui::scroll-area>
                 </x-ui::card.content>
                 <x-ui::card.footer><x-ui::button :size="$size" variant="outline"
-                        wire:click="moveAll({{ $selectedSide ? 'false' : 'true' }})"
+                        :attributes="$mode === 'controlled' ? new \Illuminate\View\ComponentAttributeBag(['wire:click' => 'moveAll('.($selectedSide ? 'false' : 'true').')']) : $this->fieldEdit($this->movedSelection(! $selectedSide))"
                         :disabled="$disabled || $readonly">{{ __('ui::ui.' . ($selectedSide ? 'remove' : 'add')) }}</x-ui::button></x-ui::card.footer>
             </x-ui::card>
         @endforeach

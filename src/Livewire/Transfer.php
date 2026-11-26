@@ -55,7 +55,8 @@ class Transfer extends ChoiceControl
         return $panels;
     }
 
-    public function moveAll(bool $select): void
+    /** @return list<string|int> */
+    public function movedSelection(bool $select): array
     {
         $selected = [];
         foreach ($this->selected as $value) {
@@ -72,7 +73,13 @@ class Transfer extends ChoiceControl
                 unset($selected[$key]);
             }
         }
-        $this->changeValue(array_values($selected));
+
+        return array_values($selected);
+    }
+
+    public function moveAll(bool $select): void
+    {
+        $this->changeValue($this->movedSelection($select));
         unset($this->selected, $this->selectedKeys, $this->selectedChoices, $this->label);
     }
 

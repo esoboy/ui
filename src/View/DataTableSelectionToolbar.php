@@ -11,15 +11,15 @@ final class DataTableSelectionToolbar extends Component
 
     public readonly int $count;
 
-    public function __construct(public readonly string $placement = 'table')
+    public function __construct(public readonly string $placement = 'table', public readonly bool $reactiveCount = false)
     {
         $this->dataTable = DataTable::enclosing();
-        $this->count = count($this->dataTable->selectedKeys());
+        $this->count = count($this->dataTable->boundValue($this->dataTable->selectionModel()) ?? []);
     }
 
     public function shouldRender(): bool
     {
-        return $this->count > 0;
+        return $this->reactiveCount || $this->count > 0;
     }
 
     public function render(): View

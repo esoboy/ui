@@ -1,5 +1,6 @@
 {
     "editContent": "编辑内容",
+    "requiredContent": "请输入内容。",
     "loading": "正在加载编辑器…",
     "placeholder": "输入内容…",
     "dragBlock": "拖动内容块",

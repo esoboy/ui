@@ -23,7 +23,7 @@
     'emptyDescription' => null,
 ])
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), $comboboxField, get_defined_vars()))
-<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class(['ui-'.$comboboxField, 'ui-'.$comboboxField.'-field'])->merge(['data-size' => $size]) }}>
+<{{ $binding->containerTag }} {{ $binding->directives }} {{ $attributes->only(['class', 'wire:key'])->class(['ui-'.$comboboxField, 'ui-'.$comboboxField.'-field'])->merge(['data-size' => $size]) }}>
     @livewire(
         'ui::'.$comboboxField,
         [

@@ -2,6 +2,9 @@
 
 namespace Esoboy\Ui\Livewire;
 
+use Esoboy\Ui\Support\Options;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 use InvalidArgumentException;
 use Livewire\Attributes\Computed;
 
@@ -57,7 +60,7 @@ abstract class ChoiceControl extends ValueControl
 
     protected static function choiceKey(string|int|null $value): string
     {
-        return get_debug_type($value).':'.$value;
+        return Options::key($value);
     }
 
     /** @return array<string, array{value: string|int|null, label: string, disabled: bool}> */
@@ -114,7 +117,44 @@ abstract class ChoiceControl extends ValueControl
         return isset($this->selectedKeys[self::choiceKey($value)]);
     }
 
+    /** @return list<string|int>|null */
+    public function multipleChoices(): ?array
+    {
+        if (! $this->multipleSelection()) {
+            return null;
+        }
+
+        $choices = [];
+        foreach ([...$this->selected, ...array_column($this->choices, 'value')] as $value) {
+            if ($value !== null) {
+                $choices[self::choiceKey($value)] = $value;
+            }
+        }
+
+        return array_values($choices);
+    }
+
+    public function choiceAttributes(string|int|null $value): ComponentAttributeBag
+    {
+        if ($this->mode === 'controlled') {
+            return new ComponentAttributeBag(['wire:click' => 'choose('.Js::from($value).')']);
+        }
+        if (! $this->multipleSelection()) {
+            return $this->fieldEdit($value);
+        }
+
+        return new ComponentAttributeBag([
+            'data-ui-edit' => $this->fieldId(),
+            'data-choice-option' => e(json_encode($value, JSON_THROW_ON_ERROR)),
+        ]);
+    }
+
     public function choose(string|int|null $value): void
+    {
+        $this->applyChoice($value);
+    }
+
+    protected function applyChoice(string|int|null $value, ?bool $include = null): void
     {
         if ($value === null && $this->multipleSelection()) {
             return;
@@ -124,10 +164,20 @@ abstract class ChoiceControl extends ValueControl
             return;
         }
 
-        $selection = $this->selected;
-        $this->changeValue($this->multipleSelection()
-            ? (in_array($value, $selection, true) ? array_values(array_filter($selection, fn ($item) => $item !== $value)) : [...$selection, $value])
-            : $value);
+        if ($this->multipleSelection()) {
+            $selection = $this->selected;
+            $present = in_array($value, $selection, true);
+            if ($include ?? ! $present) {
+                if (! $present) {
+                    $selection[] = $value;
+                }
+            } else {
+                $selection = array_values(array_filter($selection, fn ($item) => $item !== $value));
+            }
+            $this->changeValue($selection);
+        } else {
+            $this->changeValue($value);
+        }
         unset($this->selected, $this->selectedKeys, $this->selectedChoices, $this->label);
     }
 }

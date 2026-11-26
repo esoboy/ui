@@ -14,10 +14,10 @@ final class ToggleGroup extends Component
 
     public function __construct(public readonly string $type = 'single', public readonly string $variant = 'default',
         public readonly string $size = 'default', public readonly bool $disabled = false,
-        public readonly string $orientation = 'horizontal', public readonly int|float|string $spacing = 2)
+        public readonly string $orientation = 'horizontal', public readonly int|float|string $spacing = 2, ?string $uiSite = null)
     {
         $this->toggleGroup = $this;
-        $this->groupName = ControlAttributes::instanceName('toggle-group');
+        $this->groupName = ControlAttributes::instanceName('toggle-group', $uiSite);
     }
 
     public function render(): View

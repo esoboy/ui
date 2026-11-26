@@ -6,5 +6,5 @@
     $checked = \Esoboy\Ui\Support\ControlAttributes::checked($binding, $attributes->get('value'), $checked);
 @endphp
 <input {{ $attributes->except('disabled')->merge($binding->all())->class('ui-radio ui-radio-group-item')->merge([
-    'type' => 'radio', 'name' => $group?->get('name') ?? $radioGroup?->groupName, 'form' => $group?->get('form'),
+    'type' => 'radio', 'name' => $group?->get('name') ?? $radioGroup?->groupName, 'form' => $group?->get('form'), 'required' => $group?->get('required'),
 ]) }} @checked($checked) @disabled($group?->get('disabled') || $attributes->get('disabled'))>

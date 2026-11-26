@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'required_value' => 'Please fill in this field.',
     'questionnaire_progress' => 'Questionnaire progress',
     'questionnaire_position' => 'Question :current of :total',
     'questionnaire_required' => 'Choose an answer to continue, or skip an optional question.',

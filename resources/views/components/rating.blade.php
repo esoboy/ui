@@ -2,6 +2,6 @@
 @php
     $binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes, 'rating', get_defined_vars());
 @endphp
-@unless ($binding->loading->isEmpty())<fieldset {{ $binding->loading }} {{ $attributes->only('wire:key') }}>@endunless
+@if ($binding->directives->isNotEmpty() || $attributes->has('wire:key'))<{{ $binding->containerTag }} {{ $binding->directives }} {{ $attributes->only('wire:key') }}>@endif
 @livewire('ui::rating', [...$binding->parameters, 'max' => $max, 'size' => $size], key($binding->key))
-@unless ($binding->loading->isEmpty())</fieldset>@endunless
+@if ($binding->directives->isNotEmpty() || $attributes->has('wire:key'))</{{ $binding->containerTag }}>@endif

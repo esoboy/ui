@@ -3,4 +3,4 @@
     if (!in_array($type, ['single', 'multiple'], true)) throw new \InvalidArgumentException(__('ui::errors.toggle_group_type'));
     if (!in_array($orientation, ['horizontal', 'vertical'], true) || !is_numeric($spacing) || $spacing < 0 || $spacing > 12) throw new \InvalidArgumentException(__('ui::errors.toggle_group_layout'));
 @endphp
-<div data-orientation="{{ $orientation }}" data-spacing="{{ $spacing }}" data-size="{{ $size }}" x-data="uiChoiceGroup" x-on:keydown="navigate($event)" role="{{ $type === 'single' ? 'radiogroup' : 'group' }}" {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->style('--toggle-spacing: '.($spacing * .25).'rem')->class('ui-toggle-group group/toggle-group') }}>{{ $slot }}</div>
+<fieldset data-orientation="{{ $orientation }}" data-spacing="{{ $spacing }}" data-size="{{ $size }}" x-data="uiChoiceGroup" x-on:keydown="navigate($event)" role="{{ $type === 'single' ? 'radiogroup' : 'group' }}" {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->style('--toggle-spacing: '.($spacing * .25).'rem')->class('ui-toggle-group group/toggle-group') }}>{{ $slot }}</fieldset>

@@ -20,9 +20,17 @@ class TimePicker extends ValueControl
     #[Locked]
     public string $contentTarget = '';
 
+    public ?string $activeUnit = null;
+
+    public function timeSelection(string $unit, int $number): ?string
+    {
+        return ClockTime::replace(ClockTime::read($this->current, $this->seconds), $this->seconds, $unit, $number);
+    }
+
     public function chooseTime(string $unit, int $number): void
     {
-        $next = ClockTime::replace(ClockTime::read($this->current, $this->seconds), $this->seconds, $unit, $number);
+        $this->activeUnit = null;
+        $next = $this->timeSelection($unit, $number);
         if ($next !== null) {
             $this->changeValue($next);
         }

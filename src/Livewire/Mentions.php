@@ -34,6 +34,9 @@ class Mentions extends ValueControl
         if ($this->queryToken === null) {
             return [];
         }
+        if ($this->queryToken === '') {
+            return Options::validate($this->options);
+        }
         $query = Str::lower($this->queryToken);
 
         return array_values(array_filter(Options::validate($this->options), fn (array $option): bool => Str::contains(Str::lower($option['label']), $query) || Str::contains(Str::lower((string) $option['value']), $query)));
@@ -44,6 +47,11 @@ class Mentions extends ValueControl
         if (! $this->disabled && ! $this->readonly) {
             $this->dispatch('value-changed', value: $value);
         }
+    }
+
+    public function completion(string|int $value): string
+    {
+        return preg_replace_callback('/@[^\\s@]*$/u', fn (): string => '@'.$value.' ', (string) $this->current) ?? (string) $this->current;
     }
 
     public function choose(string|int $value, string $query): void
@@ -60,6 +68,12 @@ class Mentions extends ValueControl
                 return;
             }
         }
+    }
+
+    public function proposeText(string $draft): void
+    {
+        $this->changeValue($draft);
+        $this->dispatch('mention-proposed', draft: $draft)->self();
     }
 
     public function render(): View

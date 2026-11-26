@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'required_value' => '请填写此字段。',
     'questionnaire_progress' => '问卷进度',
     'questionnaire_position' => '第 :current 题，共 :total 题',
     'questionnaire_required' => '请选择或填写答案；非必答题也可以明确跳过。',

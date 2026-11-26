@@ -1,5 +1,6 @@
 {
     "editContent": "Edit content",
+    "requiredContent": "Please enter content.",
     "loading": "Loading editor…",
     "placeholder": "Type something…",
     "dragBlock": "Drag content block",

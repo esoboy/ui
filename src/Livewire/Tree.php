@@ -17,13 +17,14 @@ class Tree extends TreeControl
     {
         $visible = [];
         $open = [];
-        $expanded = array_fill_keys($this->expanded, true);
+        $expanded = array_fill_keys(array_map(self::choiceKey(...), $this->expanded), true);
         foreach ($this->rows as $row) {
-            if ($row['parent'] !== null && ! ($open[$row['parent']] ?? false)) {
+            if ($row['parent'] !== null && ! ($open[self::choiceKey($row['parent'])] ?? false)) {
                 continue;
             }
             $visible[] = $row;
-            $open[$row['value']] = isset($expanded[$row['value']]);
+            $key = self::choiceKey($row['value']);
+            $open[$key] = isset($expanded[$key]);
         }
 
         return $visible;

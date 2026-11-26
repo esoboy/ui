@@ -37,6 +37,13 @@ final readonly class NativeControl
         return new self($binding->key, $parameters['id'], $config, $binding->loading);
     }
 
+    public static function numericDirective(string $directive): string
+    {
+        $parts = array_filter(explode('.', $directive), static fn ($part) => $part !== 'number');
+
+        return implode('.', ['wire:model', 'number', ...array_slice($parts, 1)]);
+    }
+
     public function inputId(int $index): ?string
     {
         if ($this->id === null || $this->id === '') {
@@ -82,7 +89,7 @@ final readonly class NativeControl
             if ($config['length'] < 1 || $config['length'] > 12 || ! in_array($config['pattern'], ['numeric', 'alphanumeric'], true) || ! $validPositions) {
                 throw new InvalidArgumentException(__('ui::errors.otp_options'));
             }
-            if ($value !== null && (! is_string($value) || strlen($value) > $config['length'] || ! preg_match($config['pattern'] === 'numeric' ? '/^[0-9]*$/' : '/^[a-z0-9]*$/i', $value))) {
+            if ($value !== null && (! is_string($value) || ($config['mode'] !== 'bound' && (strlen($value) > $config['length'] || ! preg_match($config['pattern'] === 'numeric' ? '/^[0-9]*$/' : '/^[a-z0-9]*$/i', $value))))) {
                 throw new InvalidArgumentException(__('ui::errors.otp_content'));
             }
         } elseif ($component === 'editor') {

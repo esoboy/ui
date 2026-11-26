@@ -1,2 +1,1 @@
-@props(['open' => false])
-@includeIsolated('ui::partials.panel-state', ['kind' => 'collapsible', 'initial' => $open, 'settings' => [], 'attributes' => $attributes, 'slot' => $slot])
+@includeIsolated('ui::partials.panel-state', ['kind' => 'collapsible', 'initial' => $disclosure->isOpen(), 'settings' => [], 'attributes' => $attributes, 'slot' => $slot])

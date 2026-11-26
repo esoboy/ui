@@ -18,7 +18,7 @@
 ])
 @php($size ??= \Esoboy\Ui\View\ButtonGroup::defaultSize())
 @php($binding = \Esoboy\Ui\Support\ControlAttributes::from($attributes->except('class'), 'select', get_defined_vars()))
-<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class('ui-select ui-select-field') }}>
+<{{ $binding->containerTag }} {{ $binding->directives }} {{ $attributes->only(['class', 'wire:key'])->class('ui-select ui-select-field') }}>
     @livewire(
         'ui::select',
         [

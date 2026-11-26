@@ -1,4 +1,4 @@
-<div {{ $attributes->whereDoesntStartWith('wire:model')->except('name') }}>
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes) }} {{ $attributes->whereDoesntStartWith('wire:model')->except('name') }}>
     @if ($this->visibleRows === [])
         @include('ui::partials.empty-state', ['emptyMessage' => 'nodes', 'emptySize' => 'default', 'emptyIcon' => 'folder-tree'])
     @else

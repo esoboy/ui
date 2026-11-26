@@ -1,1 +1,1 @@
-@includeIsolated('ui::partials.panel-state', ['kind' => 'tabs', 'initial' => $tabsScope->selection(), 'settings' => ['tabsOrientation' => $tabsOrientation, 'values' => $tabsScope->values()], 'attributes' => $attributes, 'slot' => $slot])
+@includeIsolated('ui::partials.panel-state', ['kind' => 'tabs', 'initial' => $tabsScope->selection(), 'settings' => ['tabsOrientation' => $tabsOrientation, 'values' => $tabsScope->values(), 'fieldId' => $tabsScope->fieldId()], 'attributes' => $attributes, 'slot' => $tabsScope->content($slot)])

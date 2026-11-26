@@ -9,7 +9,7 @@
         'datetime-picker' => ['select_datetime', 'ui-list-popup ui-date-popup ui-popup-centered'],
     };
 @endphp
-<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only('wire:key') }} data-size="{{ $size }}" class="ui-{{ $picker }} ui-{{ $picker }}-field {{ $attributes->get('class') }}">
+<{{ $binding->containerTag }} {{ $binding->directives }} {{ $attributes->only('wire:key') }} data-size="{{ $size }}" class="ui-{{ $picker }} ui-{{ $picker }}-field {{ $attributes->get('class') }}">
     <div class="ui-picker-overlay" data-ui-overlay x-data="uiPopover">
         @livewire($picker === 'time-picker' ? 'ui::time-picker' : 'ui::date-picker', [
             ...$binding->parameters, ...$options, 'size' => $size, 'contentTarget' => $target,

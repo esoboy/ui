@@ -6,6 +6,11 @@ use InvalidArgumentException;
 
 final class Options
 {
+    public static function key(string|int|null $value): string
+    {
+        return get_debug_type($value).':'.$value;
+    }
+
     /**
      * @param  array<array-key, mixed>  $options
      * @return ($allowNull is true ? list<array{value: string|int|null, label: string, disabled: bool, group?: string, shortcut?: string, icon?: string, description?: string|list<string>, separatorBefore?: bool, separatorAfter?: bool}> : list<array{value: string|int, label: string, disabled: bool, group?: string, shortcut?: string, icon?: string, description?: string|list<string>, separatorBefore?: bool, separatorAfter?: bool}>)
@@ -21,7 +26,7 @@ final class Options
                 throw new InvalidArgumentException(__('ui::errors.option'));
             }
 
-            $key = $option['value'] === null ? 'null:' : 'value:'.$option['value'];
+            $key = self::key($option['value']);
             if (isset($seen[$key])) {
                 throw new InvalidArgumentException(__('ui::errors.duplicate_option', ['key' => $key]));
             }

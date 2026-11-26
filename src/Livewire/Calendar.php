@@ -4,6 +4,8 @@ namespace Esoboy\Ui\Livewire;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 use InvalidArgumentException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
@@ -188,32 +190,75 @@ class Calendar extends ValueControl
         }
     }
 
-    public function choose(string $date): void
+    /** @return list<string>|null */
+    public function multipleChoices(): ?array
+    {
+        if (! $this->multiple || $this->range) {
+            return null;
+        }
+        $dates = $this->selected;
+        for ($i = 0; $i < $this->numberOfMonths; $i++) {
+            array_push($dates, ...array_column($this->monthDays($i), 'date'));
+        }
+
+        return array_values(array_unique($dates));
+    }
+
+    public function dayAttributes(string $date): ComponentAttributeBag
+    {
+        if ($this->mode === 'controlled') {
+            return new ComponentAttributeBag(['wire:click' => 'choose('.Js::from($date).')']);
+        }
+        $attributes = $this->fieldEdit($this->dateSelection($date));
+        if (! $this->range) {
+            return $this->multiple ? $attributes->merge(['data-choice-option' => json_encode($date)]) : $attributes;
+        }
+        $lower = $this->min;
+        $upper = $this->max;
+        foreach ($this->disabledDates as $excluded) {
+            if ($excluded < $date && ($lower === null || $excluded >= $lower)) {
+                $lower = CarbonImmutable::parse($excluded)->addDay()->toDateString();
+            } elseif ($excluded > $date && ($upper === null || $excluded <= $upper)) {
+                $upper = CarbonImmutable::parse($excluded)->subDay()->toDateString();
+            }
+        }
+
+        return $attributes->merge(['data-range-date' => $date, 'data-lower' => $lower, 'data-upper' => $upper, 'data-invalid-anchor' => isset($this->selected[0]) && ! $this->allowed($this->selected[0]) ? $this->selected[0] : null]);
+    }
+
+    public function dateSelection(string $date): mixed
     {
         if (! $this->validDate($date) || ! $this->allowed($date)) {
-            return;
+            return $this->current;
         }
         $selected = $this->selected;
         if ($this->range) {
-            $next = [$date];
-            if (count($selected) === 1 && $this->allowed($selected[0])) {
-                $next[] = $selected[0];
-                sort($next);
-                foreach ($this->disabledDates as $excluded) {
-                    if ($excluded >= $next[0] && $excluded <= $next[1]) {
-                        return;
-                    }
+            if (count($selected) !== 1 || ! $this->allowed($selected[0])) {
+                return [$date];
+            }
+            $ends = [$selected[0], $date];
+            sort($ends);
+            foreach ($this->disabledDates as $excluded) {
+                if ($excluded >= $ends[0] && $excluded <= $ends[1]) {
+                    return $this->current;
                 }
             }
+
+            return $ends;
+        }
+
+        return $this->multiple
+            ? (in_array($date, $selected, true) ? array_values(array_diff($selected, [$date])) : [...$selected, $date])
+            : $date;
+    }
+
+    public function choose(string $date): void
+    {
+        $next = $this->dateSelection($date);
+        if ($next !== $this->current) {
             $this->changeValue($next);
             unset($this->selected, $this->days);
-
-            return;
         }
-        $this->changeValue($this->multiple
-            ? (in_array($date, $selected, true) ? array_values(array_diff($selected, [$date])) : [...$selected, $date])
-            : $date);
-        unset($this->selected, $this->days);
     }
 
     protected function validDate(string $date): bool

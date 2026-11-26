@@ -23,6 +23,8 @@ class DatePicker extends Calendar
     #[Locked]
     public string $contentTarget = '';
 
+    public ?string $activeUnit = null;
+
     /** @return list<string> Calendar days, independent of the clock precision. */
     #[Computed]
     public function selected(): array
@@ -50,27 +52,53 @@ class DatePicker extends Calendar
         return $this->withTime && $this->selected !== [] ? substr($this->current, 11) : null;
     }
 
-    public function choose(string $date): void
+    public function dateSelection(string $date): mixed
     {
         if (! $this->withTime) {
-            parent::choose($date);
+            return parent::dateSelection($date);
+        }
 
-            return;
+        return $this->validDate($date) && $this->allowed($date)
+            ? $date.'T'.($this->time() ?? ClockTime::midnight($this->seconds))
+            : $this->current;
+    }
+
+    public function updatedValue(mixed $value): void
+    {
+        parent::updatedValue($value);
+        $this->notifyCompletedSelection($value);
+    }
+
+    protected function changeValue(mixed $value): void
+    {
+        parent::changeValue($value);
+        if (! $this->disabled && ! $this->readonly) {
+            $this->notifyCompletedSelection($value);
         }
-        if ($this->validDate($date) && $this->allowed($date)) {
-            $this->changeValue($date.'T'.($this->time() ?? ClockTime::midnight($this->seconds)));
-            unset($this->selected, $this->days);
+    }
+
+    private function notifyCompletedSelection(mixed $value): void
+    {
+        if (! $this->withTime && ! $this->multiple && $value !== null && (! $this->range || (is_array($value) && count($value) === 2))) {
+            $this->dispatch('date-picked')->self();
         }
+    }
+
+    public function timeSelection(string $unit, int $number): ?string
+    {
+        if (! $this->withTime || $this->selected === [] || ! $this->allowed($this->selected[0])) {
+            return null;
+        }
+        $next = ClockTime::replace($this->time(), $this->seconds, $unit, $number);
+
+        return $next === null ? null : $this->selected[0].'T'.$next;
     }
 
     public function chooseTime(string $unit, int $number): void
     {
-        if (! $this->withTime || $this->selected === [] || ! $this->allowed($this->selected[0])) {
-            return;
-        }
-        $next = ClockTime::replace($this->time(), $this->seconds, $unit, $number);
-        if ($next !== null) {
-            $this->changeValue($this->selected[0].'T'.$next);
+        $this->activeUnit = null;
+        if (($next = $this->timeSelection($unit, $number)) !== null) {
+            $this->changeValue($next);
         }
     }
 

@@ -1,1 +1,1 @@
-<div role="radiogroup" {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->class('ui-radio-group')->merge(['data-size' => $size]) }}>{{ $slot }}</div>
+<fieldset role="{{ $attributes->get('role', $menu ? 'group' : 'radiogroup') }}" {{ $attributes->whereDoesntStartWith('wire:model')->except(['name', 'form', 'required', 'role'])->class(['ui-radio-group', 'ui-'.$menu.'-radio-group' => $menu !== null])->merge(['data-size' => $size, 'aria-required' => $attributes->get('required') ? 'true' : null]) }}>{{ $slot }}</fieldset>

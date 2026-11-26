@@ -5,10 +5,10 @@
 @forelse ($groups as $group)
     @php($groupKey = md5(serialize($group->first()['value'])))
     @if ($group->first()['separatorBefore'] ?? false)
-        <div wire:key="separator-{{ $groupKey }}" class="ui-select-separator" role="separator"></div>
+        <div wire:key="before-{{ $groupKey }}" class="ui-select-separator" role="separator"></div>
     @endif
-    <div wire:key="group-{{ $groupKey }}" class="ui-select-group" role="group" @isset($group->first()['group']) aria-label="{{ $group->first()['group'] }}" @endisset>
-        @isset($group->first()['group'])<div class="ui-option-group-label" role="presentation">{{ $group->first()['group'] }}</div>@endisset
+    <div wire:key="select-group-{{ $groupKey }}" class="ui-select-group" role="group" @isset($group->first()['group']) aria-label="{{ $group->first()['group'] }}" @endisset>
+        @isset($group->first()['group'])<div wire:key="label-{{ $groupKey }}" class="ui-option-group-label" role="presentation">{{ $group->first()['group'] }}</div>@endisset
         @include('ui::livewire.partials.options', ['choices' => $group, 'clientSelect' => true, 'showGroupLabels' => false])
     </div>
 @empty

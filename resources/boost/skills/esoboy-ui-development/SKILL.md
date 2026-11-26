@@ -66,3 +66,5 @@ metadata:
 - 使用 `<x-ui::data-table :rows="$orders" :columns="$columns" />` 展示宿主查询的记录。列按键定义，例如 `['status' => ['label' => '状态']]`。使用唯一行键，数组默认取 `id`，Eloquent 模型默认取主键。传入分页器可生成分页导航。
 - 编辑 Markdown 时使用 `<x-ui::editor wire:model="body" input-type="markdown" output-type="markdown" />`。展示已保存的 Markdown 用 `<x-ui::rich-text :value="$body" input-type="markdown" />`，已有的富文本 HTML 可使用 `input-type="html"`。Rich Text 在服务端转换 Markdown、清理不安全的 HTML 并应用展示样式，保留原文中的附件标题与链接内容。
 - 图标使用包内 Lucide 清单中的正式名称，例如 `<x-ui::icon name="circle-question-mark" />`。可在已安装包的 `resources/icons/catalog.php` 中查找名称。
+
+纯 Blade 布局使用可输入页码的分页时，在公共布局的 `</body>` 前放置一次 `@stack('ui-forms')`。跳页按钮和输入框通过 `form` 属性关联独立的 GET 表单。Livewire 页面使用 `@teleport('body')`。

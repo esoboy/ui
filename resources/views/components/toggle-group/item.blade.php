@@ -8,6 +8,6 @@
     $binding = \Esoboy\Ui\Support\ControlAttributes::groupBinding($attributes, $group);
     $selected = \Esoboy\Ui\Support\ControlAttributes::checked($binding, $attributes->get('value'), $selected);
 @endphp
-<label class="ui-toggle-group-item ui-toggle-group-item-variant-{{ $variant }} {{ $attributes->get('class') }}" data-size="{{ $size }}"><input type="{{ $type === 'multiple' ? 'checkbox' : 'radio' }}" {{ $attributes->except(['class', 'disabled'])->merge($binding->all())->merge(['name' => $group?->get('name') ?? ($type === 'single' ? $toggleGroup?->groupName : null), 'form' => $group?->get('form')]) }} @checked($selected)
+<label {{ $attributes->only('wire:key') }} class="ui-toggle-group-item ui-toggle-group-item-variant-{{ $variant }} {{ $attributes->get('class') }}" data-size="{{ $size }}"><input type="{{ $type === 'multiple' ? 'checkbox' : 'radio' }}" {{ $attributes->except(['class', 'disabled', 'wire:key'])->merge($binding->all())->merge(['name' => $group?->get('name') ?? ($type === 'single' ? $toggleGroup?->groupName : null), 'form' => $group?->get('form'), 'required' => $type === 'single' ? $group?->get('required') : null]) }} @checked($selected)
         @disabled($toggleGroup?->disabled || $attributes->get('disabled')) class="ui-visually-hidden"><span class="ui-toggle-control ui-toggle-control-variant-{{ $variant }}"
         data-size="{{ $size }}">{{ $slot }}</span></label>

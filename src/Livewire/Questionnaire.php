@@ -20,6 +20,8 @@ class Questionnaire extends ValueControl
 {
     use HasEmptyState;
 
+    public const ANSWERED = 'answered';
+
     /** @var array<int, array<string, mixed>> */
     #[Reactive]
     public array $items = [];
@@ -144,8 +146,11 @@ class Questionnaire extends ValueControl
             if (! $question['multiple']) {
                 $choices = $text !== '' ? [] : array_slice($choices, 0, 1);
             }
-            $status = $choices !== [] || $text !== '' ? 'answered' : (! $question['required'] && ($answer['status'] ?? '') === 'skipped' ? 'skipped' : 'unanswered');
-            $result[$question['name']] = ['choices' => $choices, 'text' => $text, 'status' => $status];
+            $normalized = $this->answerValue($choices, $text);
+            if ($normalized['status'] === 'unanswered' && ! $question['required'] && ($answer['status'] ?? '') === 'skipped') {
+                $normalized['status'] = 'skipped';
+            }
+            $result[$question['name']] = $normalized;
         }
 
         return $result;
@@ -184,13 +189,23 @@ class Questionnaire extends ValueControl
             $answer['choices'] = [];
         }
         $this->writeAnswer($question['name'], $answer);
+        if ($this->mode === 'controlled') {
+            $this->dispatch('questionnaire-restore', owner: $this->getId(), name: $question['name'], proposal: $text);
+        }
+    }
+
+    /** @param list<string> $choices
+     * @return Answer
+     */
+    public function answerValue(array $choices, string $text): array
+    {
+        return ['choices' => $choices, 'text' => $text, 'status' => $choices !== [] || trim($text) !== '' ? self::ANSWERED : 'unanswered'];
     }
 
     /** @param Answer $answer */
     private function writeAnswer(string $name, array $answer): void
     {
-        $answer['status'] = $answer['choices'] !== [] || trim($answer['text']) !== '' ? 'answered' : 'unanswered';
-        $this->changeValue([...$this->answers, $name => $answer]);
+        $this->changeValue([...$this->answers, $name => $this->answerValue($answer['choices'], $answer['text'])]);
         unset($this->answers);
         $this->invalid = null;
     }

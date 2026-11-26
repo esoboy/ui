@@ -1,2 +1,1 @@
-@props(['initialOpen' => false])
-@includeIsolated('ui::partials.panel-state', ['kind' => 'trace', 'initial' => $initialOpen, 'settings' => [], 'attributes' => $attributes, 'slot' => $slot])
+@includeIsolated('ui::partials.panel-state', ['kind' => 'trace', 'initial' => $disclosure->isOpen(), 'settings' => [], 'attributes' => $attributes, 'slot' => $slot])

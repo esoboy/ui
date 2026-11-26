@@ -1,4 +1,4 @@
-<div data-ui-overlay x-data="uiPopover"
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes) }} data-ui-overlay x-data="uiPopover"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'aria-label', 'aria-labelledby'])->class('ui-tree-select-body') }}>
     <x-ui::select.trigger><x-ui::button variant="outline" :size="$size" :disabled="$disabled" :id="$attributes->get('id')"
             {{ $attributes->whereStartsWith('aria-')->class('ui-select-control') }} aria-haspopup="tree" :data-size="$size"

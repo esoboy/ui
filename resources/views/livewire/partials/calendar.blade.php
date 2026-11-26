@@ -47,7 +47,8 @@
                             @foreach ($week as $day)
                                 <td wire:key="date-{{ $visiblePeriod->month }}-{{ $day['date'] }}" class="{{ $dayClasses[$day['date']] ?? '' }}" data-hidden="{{ $day['hidden'] ? 'true' : 'false' }}" data-disabled="{{ $day['disabled'] ? 'true' : 'false' }}" aria-selected="{{ $day['selected'] || $day['inRange'] ? 'true' : 'false' }}" data-today="{{ $day['today'] ? 'true' : 'false' }}" data-range="{{ $day['inRange'] ? 'middle' : ($range && $day['selected'] ? ($day['date'] === $this->selected[0] ? 'start' : 'end') : '') }}">
                                     <x-ui::button variant="ghost" size="icon" data-calendar-day :data-selected-single="$day['selected'] ? 'true' : 'false'" :data-range-middle="$day['inRange'] ? 'true' : 'false'" :data-outside="$day['current'] ? 'false' : 'true'" :aria-label="$day['date']" :aria-current="$day['today'] ? 'date' : null"
-                                        :disabled="$disabled || $readonly || $day['disabled']" :wire:click="'choose('.\Illuminate\Support\Js::from($day['date']).')'"
+                                        :data-part="($withTime ?? false) ? '0' : null" :data-width="($withTime ?? false) ? 10 : null"
+                                        :disabled="$disabled || $readonly || $day['disabled']" :attributes="$this->dayAttributes($day['date'])"
                                         wire:key="day-{{ $monthOffset }}-{{ $day['date'] }}">{{ $day['label'] }}@if($day['current'] && isset($dayLabels[$day['date']]))<span>{{ $dayLabels[$day['date']] }}</span>@endif</x-ui::button>
                                 </td>
                             @endforeach

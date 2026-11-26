@@ -16,3 +16,5 @@ composer require esoboy/ui
 ```
 
 在布局的 `<head>` 中，将 `@uiScript` 放在启动 Livewire 或 Alpine 的脚本前。表单绑定、局部主题和可运行的 Blade 示例见随包文档。[接入指南](resources/boost/skills/esoboy-ui-development/SKILL.md) · [组件示例](resources/boost/skills/esoboy-ui-development/references/components.md)
+
+纯 Blade 布局使用可输入页码的分页时，在公共布局的 `</body>` 前放置一次 `@stack('ui-forms')`。跳页按钮和输入框通过 `form` 属性关联独立的 GET 表单。Livewire 页面使用 `@teleport('body')`。

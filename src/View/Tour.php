@@ -2,6 +2,7 @@
 
 namespace Esoboy\Ui\View;
 
+use Esoboy\Ui\Support\ControlAttributes;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
@@ -11,6 +12,13 @@ final class Tour extends Component
 
     /** @var list<int> */
     private array $steps = [];
+
+    private ?string $stepEvent = null;
+
+    public function stepEvent(): string
+    {
+        return $this->stepEvent ??= 'ui-tour-step-'.hash('xxh128', $this->attributes->get('id') ?? $this->attributes->get('wire:key') ?? ControlAttributes::instanceName('tour-step', $this->attributes->get('ui-site')));
+    }
 
     public function __construct(public readonly bool $initialOpen = false)
     {

@@ -4,7 +4,6 @@ namespace Esoboy\Ui\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
 
 /**
@@ -21,13 +20,23 @@ class Select extends PopupOptionControl
     #[Reactive]
     public bool $required = false;
 
-    #[Locked]
-    public mixed $initialSelection = null;
-
-    public function mount(mixed $initialValue = null): void
+    public function confirmChoice(string|int|null $value, bool $include): void
     {
-        parent::mount($initialValue);
-        $this->initialSelection = $this->current;
+        $this->applyChoice($value, $include);
+    }
+
+    public function usesNativeSelect(): bool
+    {
+        if ($this->multiple || $this->mode === 'controlled') {
+            return false;
+        }
+        foreach ($this->choices as $choice) {
+            if (! is_string($choice['value']) || in_array($choice['value'], ['', 'null'], true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /** @return list<array{value: string|int|null, label: string, disabled: bool}> */
@@ -35,7 +44,7 @@ class Select extends PopupOptionControl
     public function formDefaults(): array
     {
         $defaults = [];
-        foreach ($this->selectionValues($this->initialSelection) as $id) {
+        foreach ($this->selectionValues($this->initialFormValue) as $id) {
             if ($option = $this->optionFor($id)) {
                 $defaults[] = $option;
             }
@@ -54,14 +63,7 @@ class Select extends PopupOptionControl
     public function resetSelection(): void
     {
         $valid = array_column($this->formDefaults, 'value');
-        $this->changeValue($this->multiple ? $valid : ($valid[0] ?? null));
-    }
-
-    public function updatedValue(mixed $value): void
-    {
-        if ($this->mode !== 'controlled') {
-            $this->dispatch('value-changed', value: $value);
-        }
+        $this->applyValue($this->multiple ? $valid : ($valid[0] ?? null));
     }
 
     public function updatedOptions(): void

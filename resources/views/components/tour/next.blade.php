@@ -1,1 +1,2 @@
-@includeIsolated('ui::partials.step', ['direction' => 1, 'attributes' => $attributes->class('ui-tour-next'), 'slot' => $slot])
+@aware(['tour' => null])
+<span {{ $attributes->class('ui-tour-next') }} wire:click.prevent="$dispatch('{{ $tour?->stepEvent() }}', { direction: 1 })">{{ $slot }}</span>

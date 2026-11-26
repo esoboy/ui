@@ -1,4 +1,4 @@
-<div data-disabled="{{ $disabled ? 'true' : 'false' }}" @if($paginated ?? false) data-confirmed-icon="{{ $this->current }}" @endif data-ui-overlay x-data="uiCombobox" x-on:keydown="navigate($event)"
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes) }} data-disabled="{{ $disabled ? 'true' : 'false' }}" @if($paginated ?? false) data-confirmed-icon="{{ $this->current }}" @endif data-ui-overlay x-data="uiCombobox" x-on:keydown="navigate($event)"
     x-on:pointerdown.capture="if (!opened) $el.toggleAttribute('data-touch', $event.pointerType === 'touch')"
     x-on:keydown.capture="if (!opened) $el.removeAttribute('data-touch')"
     x-on:focusout="if (!$root.contains($event.relatedTarget)) close()"
@@ -45,32 +45,7 @@
             @endif
         @endif
     </div>
-    @if (($paginated ?? false) && $attributes->get('name'))
-        <input type="hidden"  name="{{ $attributes->get('name') }}" value="{{ $this->current }}" wire:bind:value="{{ $mode === 'controlled' ? 'externalValue' : 'value' }}"
-            {{ $attributes->only('form') }} @disabled($disabled || $this->current === null) wire:bind:disabled="disabled || {{ $mode === 'controlled' ? 'externalValue' : 'value' }} == null">
-    @else
-        @include('ui::livewire.partials.selection-input')
-    @endif
+    @include('ui::livewire.partials.selection-input', [
+        'pendingChoices' => ($paginated ?? false) && $attributes->has('name') ? array_column($this->pageResults, 'value') : [],
+    ])
 </div>
-
-@if ($paginated ?? false)
-    @script
-    <script>
-        $wire.$js('pick', async (name) => {
-            if ($wire.disabled || $wire.readonly) return
-            if ($wire.mode === 'controlled') return $wire.choose(name)
-            const confirmed = $wire.$el.dataset.confirmedIcon || null
-            $wire.query = $wire.searchInPopup ? '' : name
-            $wire.value = name
-            try {
-                await $wire.confirmIcon(name)
-            } catch {
-                if ($wire.$el.isConnected && $wire.value === name) {
-                    $wire.value = confirmed
-                    $wire.query = $wire.searchInPopup ? '' : (confirmed ?? '')
-                }
-            }
-        })
-    </script>
-    @endscript
-@endif

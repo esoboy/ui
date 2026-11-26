@@ -60,6 +60,12 @@ class TagsInput extends ValueControl
         unset($this->tags);
     }
 
+    public function resetFormValue(): void
+    {
+        $this->draft = '';
+        parent::resetFormValue();
+    }
+
     public function render(): View
     {
         return view('ui::livewire.tags-input');

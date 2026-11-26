@@ -1,6 +1,6 @@
-<div {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'invalid', 'placeholder'])->class('ui-picker-body') }}
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes) }} {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except(['id', 'name', 'class', 'invalid', 'placeholder'])->class('ui-picker-body') }}
     @unless ($withTime)
-        x-on:value-changed.self="if (!$wire.multiple && (!$wire.range || $event.detail.value.length === 2)) close(true)"
+        x-on:date-picked.self="close(true)"
     @endunless>
     @include('ui::livewire.partials.picker-trigger', [
         'label' => $withTime ? str_replace('T', ' ', $this->current ?? '') : implode(__('ui::ui.list_separator'), $this->selected),

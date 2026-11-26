@@ -1,5 +1,5 @@
-<div role="group" x-data="uiQuestionnaire"
-    x-on:keydown="navigate($event)" x-on:reset.window="if ($event.target === ($el.querySelector('input[form]')?.form ?? $el.closest('form'))) $nextTick(() => { if (!$event.defaultPrevented) $wire.resetAnswers() })"
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes, 'resetAnswers') }} role="group" x-data="uiQuestionnaire"
+    x-on:keydown="navigate($event)"
     x-on:questionnaire-focus.stop="focusItem($event.detail.invalid)"
     {{ $attributes->whereDoesntStartWith('wire:model')->except('name')->class('ui-questionnaire-body') }}>
     @php
@@ -9,11 +9,13 @@
         $question = $questions[$position] ?? null;
         $uid = $this->getId();
     @endphp
+    @include('ui::livewire.partials.model-field')
     @if ($question)
         @php
             $answer = $answers[$question['name']];
             $hasError = $invalid === $question['name'] || $question['error'] !== '';
             $answerName = $question['name'];
+            $fieldName = $answerName.($question['multiple'] ? '[]' : '');
             $shortcutIndex = 0;
         @endphp
         @if($layout === 'card')
@@ -42,9 +44,9 @@
             @else @include('ui::livewire.partials.questionnaire-actions') @endif
         @endif
         @foreach ($answers as $name => $previous)
-            @continue((! $readonly && $name === $question['name']) || $previous['status'] !== 'answered')
+            @continue(($mode !== 'controlled' && ! $readonly && $name === $question['name']) || $previous['status'] !== 'answered')
             @foreach ([...$previous['choices'], ...($previous['text'] !== '' ? [$previous['text']] : [])] as $value)
-                <input type="hidden" wire:key="answer-{{ $uid }}-{{ $name }}-{{ $loop->index }}" {{ $attributes->only('form') }} name="{{ $name }}" value="{{ $value }}" @disabled($disabled)>
+                <input type="hidden" wire:key="answer-{{ $uid }}-{{ $name }}-{{ $loop->index }}" {{ $attributes->only('form') }} name="{{ $name }}{{ collect($questions)->firstWhere('name', $name)['multiple'] ? '[]' : '' }}" value="{{ $value }}" @disabled($disabled)>
             @endforeach
         @endforeach
     @else

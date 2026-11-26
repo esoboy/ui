@@ -12,6 +12,6 @@
     </x-ui::popover.trigger>
     @if ($showClear)
         <x-ui::button class="ui-picker-clear" variant="ghost" size="icon-xs" :aria-label="__('ui::ui.clear')"
-            wire:click="clear" x-on:click="trigger.focus({ preventScroll: true })"><x-ui::icon name="x" /></x-ui::button>
+            :attributes="$mode === 'controlled' ? new \Illuminate\View\ComponentAttributeBag(['wire:click' => 'clear']) : $this->fieldEdit(($multiple ?? false) || ($range ?? false) ? [] : null)" x-on:click="trigger.focus({ preventScroll: true })"><x-ui::icon name="x" /></x-ui::button>
     @endif
 </div>

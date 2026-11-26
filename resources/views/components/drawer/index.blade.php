@@ -5,5 +5,6 @@
     }
     if ($initialSnapPoint !== null && !in_array($initialSnapPoint, $snapPoints, true)) throw new \InvalidArgumentException(__('ui::errors.drawer_initial_point'));
 @endphp
-<div {{ $attributes->merge(['class' => 'ui-drawer', 'data-swipe-handle' => $showSwipeHandle ? 'true' : 'false']) }} data-ui-overlay x-data="uiDrawer(@js($initialOpen), @js($modal), @js($snapPoints), @js($initialSnapPoint), @js($snapToSequentialPoints))" x-modelable="opened" x-id="['ui-dialog']">
+<div {{ $attributes->whereDoesntStartWith('wire:model')->except('value')->merge(['class' => 'ui-drawer', 'data-swipe-handle' => $showSwipeHandle ? 'true' : 'false']) }} @if ($attributes->whereStartsWith('x-model')->isNotEmpty()) x-modelable="opened" @endif data-ui-overlay x-data="uiDrawer(@js($initialOpen), @js($modal), @js($snapPoints), @js($initialSnapPoint), @js($snapToSequentialPoints))" x-id="['ui-dialog']">
+    @includeIsolated('ui::partials.dialog-state', ['kind' => 'drawer', 'attributes' => $attributes, 'initialOpen' => $initialOpen])
     {{ $slot }}</div>

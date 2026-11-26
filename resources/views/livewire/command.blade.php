@@ -1,4 +1,4 @@
-<div x-data="uiCommand"
+<div {{ \Esoboy\Ui\Support\ControlAttributes::formReset($attributes) }} x-data="uiCommand"
     {{ $attributes->whereDoesntStartWith(['wire:model', 'aria-'])->except('name')->class('ui-command-body')->merge(['data-size' => $size]) }}>
     <div class="ui-command-input-wrapper">
         <x-ui::input-group :size="$size">
@@ -15,7 +15,7 @@
                 @unless($loop->first)<div wire:key="separator-{{ $group }}" class="ui-command-separator" role="separator"></div>@endunless
                 <div wire:key="group-{{ $group }}" class="ui-command-group" role="group" @if($group !== '') aria-label="{{ $group }}" @endif>
                     @if($group !== '')
-                        <div class="ui-command-group-heading">{{ $group }}</div>
+                        <div wire:key="label-{{ $group }}" class="ui-command-group-heading">{{ $group }}</div>
                     @endif
                     @include('ui::livewire.partials.options', ['choices' => $choices, 'optionSlot' => 'command-item', 'showGroupLabels' => false, 'retainInputFocus' => true])
                 </div>

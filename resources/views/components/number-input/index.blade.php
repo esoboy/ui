@@ -1,37 +1,19 @@
 @props(['size' => 'default', 'value', 'initialValue', 'min' => null, 'max' => null, 'step' => 1])
 @php
     $binding = \Esoboy\Ui\Support\NativeControl::from($attributes, 'number-input', get_defined_vars(), ['min' => $min, 'max' => $max, 'step' => $step]);
-    $disabled = $binding->config['disabled'];
-    $readonly = $binding->config['readonly'];
-    $fieldAttributes = \Esoboy\Ui\Support\ControlAttributes::forInput($attributes, [
-        'name', 'required', 'placeholder', 'autocomplete', 'autofocus', 'inputmode',
-        'enterkeyhint', 'list', 'form', 'tabindex', 'invalid',
-    ]);
-    $model = $attributes->whereStartsWith('wire:model');
-    $directive = array_key_first($model->all());
-    if ($directive !== null && !in_array('number', explode('.', $directive), true)) {
-        $model = new \Illuminate\View\ComponentAttributeBag([$directive.'.number' => $binding->config['model']]);
-    }
+    $config = $binding->config;
+    $directives = $attributes->whereStartsWith('wire:')->whereDoesntStartWith(['wire:model', 'wire:blur', 'wire:focus', 'wire:change'])->except('wire:key');
 @endphp
-<{{ $binding->containerTag }} {{ $binding->loading }} {{ $attributes->only(['class', 'wire:key'])->class('ui-number-input ui-number-input-field') }}>
-    <div x-data="uiNumber" @if($binding->key) wire:key="{{ $binding->key }}" @endif
-        data-mode="{{ $binding->config['mode'] }}" x-on:input.capture="typed($event)" x-on:change.capture="commit()" x-on:keydown.enter.capture="commit()"
-        x-effect="@if($binding->config['mode'] === 'bound') $wire.$get(@js($binding->config['model'])); @endif $nextTick(() => measure())"
-        {{ $attributes->whereDoesntStartWith('wire:model')->except(['class', 'wire:key', 'id', ...array_keys($fieldAttributes->all())])->class('ui-number-input-body') }}>
-        <x-ui::input-group :size="$size">
-        <x-ui::input-group.addon>
-        <x-ui::input-group.button size="icon-xs" x-on:click="step(-1)" x-bind:disabled="!decrease" :disabled="$disabled || $readonly || ($min !== null && $binding->config['value'] !== null && $binding->config['value'] <= $min)"
-            :aria-label="__('ui::ui.decrease')"><x-ui::icon name="minus" /></x-ui::input-group.button>
-        </x-ui::input-group.addon>
-        <x-ui::input-group.input type="number" x-ref="number"  :value="$binding->config['value']" :id="$binding->id" :min="$min"
-            :max="$max" :step="$step" :disabled="$disabled" :readonly="$readonly"
-            :attributes="$fieldAttributes->merge($model->all())" />
-        <x-ui::input-group.addon align="inline-end">
-        <x-ui::input-group.button size="icon-xs" x-on:click="step(1)" x-bind:disabled="!increase" :disabled="$disabled || $readonly || ($max !== null && $binding->config['value'] !== null && $binding->config['value'] >= $max)" :aria-label="__('ui::ui.increase')"><x-ui::icon
-                name="plus" /></x-ui::input-group.button>
-        </x-ui::input-group.addon>
-        </x-ui::input-group>
-    </div>
+<{{ $binding->containerTag }} {{ $directives }} {{ $attributes->only(['class', 'wire:key'])->class('ui-number-input ui-number-input-field') }}>
+    @if ($config['mode'] === 'controlled')
+        @livewire('ui::number-input', [
+            'mode' => 'controlled', 'externalValue' => $config['value'], 'disabled' => $config['disabled'], 'readonly' => $config['readonly'],
+            'settings' => compact('min', 'max', 'step', 'size'), 'applicationLocale' => app()->getLocale(),
+            'fieldAttributes' => $attributes->whereDoesntStartWith('wire:')->except('class')->all(),
+        ], key($binding->key))
+    @else
+        @include('ui::partials.number-input', [...$config, 'numberValue' => $config['value'], 'id' => $binding->id, 'controlKey' => $binding->key])
+    @endif
     {{ $slot }}
     @isset($footer)
         <div class="ui-number-input-footer">{{ $footer }}</div>
